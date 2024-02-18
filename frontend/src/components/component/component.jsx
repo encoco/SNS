@@ -46,7 +46,7 @@ export default function Component() {
               <Link className="block h-10 pl-16 pr-4 py-2 font-medium rounded-md hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-gray-50 text-white" to="#">Shorts</Link>
               <Link className="block h-10 pl-16 pr-4 py-2 font-medium rounded-md hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-gray-50 text-white" to="#">Following</Link>
               <Link className="block h-10 pl-16 pr-4 py-2 font-medium rounded-md hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-gray-50 text-white" to="#">Settings</Link>
-              <Link className="block h-10 pl-16 pr-4 py-2 font-medium rounded-md hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-gray-50 text-white" to="#">Logout</Link>
+              <Link className="block h-10 pl-16 pr-4 py-2 font-medium rounded-md hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-gray-50 text-white" to="/Login">Login</Link>
 	        </nav>
 	        </div>
 		</div>
@@ -80,6 +80,7 @@ export default function Component() {
       <div className="grid grid-cols-1 gap-4 p-4">
       <div className="grid gap-4 w-full max-w-4xl mx-auto">
         <div className="grid gap-2">
+		
 		
 			{/* 글은 여기부터*/}
           <div className="rounded-xl bg-white p-4 grid gap-4 border border-gray-100 dark:border-gray-800">
@@ -1708,6 +1709,9 @@ export default function Component() {
         </div>
       </div>
 	 </div>
+	 
+	 
+	 
 	 {/* 맨 위로 버튼 */}
       {showTopBtn && (
         <button
