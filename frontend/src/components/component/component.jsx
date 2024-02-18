@@ -3,7 +3,7 @@
  * @see https://v0.dev/t/N6iHQ9bkQai
  */
 import { Button } from "./ui/button"
-import React, { useState } from 'react';
+import React, { useState , useEffect} from 'react';
 import { Link } from "react-router-dom";
 import { Input } from "./ui/input"
 
@@ -11,6 +11,25 @@ import { Input } from "./ui/input"
 export default function Component() {
 	
   const [isNavExpanded, setIsNavExpanded] = useState(false);
+  const [showTopBtn, setShowTopBtn] = useState(false);
+  
+  useEffect(() => {
+    window.addEventListener("scroll", () => {
+      if (window.scrollY > 300) {
+        setShowTopBtn(true);
+      } else {
+        setShowTopBtn(false);
+      }
+    });
+  }, []);
+
+  // 맨 위로 스크롤하는 함수
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth' // 부드러운 스크롤
+    });
+  };
   
   return (
 	  <div className="flex min-h-screen bg-gray-100">
@@ -21,13 +40,13 @@ export default function Component() {
 	        {/* 네비게이션 바 내용, 마우스 오버 시 가시성 조정 및 세로 중앙 정렬 */}
 	        <div className={`flex flex-col justify-center h-full opacity-0 ${isNavExpanded ? "opacity-100" : ""} transition-opacity duration-300 ease-in-out`}>
 	          <nav className="mt-20">
-              <Link className="block h-10 pl-16 pr-4 py-2 font-medium rounded-md hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-gray-50" to="/hjkadj.jsp">Home</Link>
-              <Link className="block h-10 pl-16 pr-4 py-2 font-medium rounded-md hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-gray-50" to="#">MyPage</Link>
-              <Link className="block h-10 pl-16 pr-4 py-2 font-medium rounded-md hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-gray-50" to="#">Message</Link>
-              <Link className="block h-10 pl-16 pr-4 py-2 font-medium rounded-md hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-gray-50" to="#">Shorts</Link>
-              <Link className="block h-10 pl-16 pr-4 py-2 font-medium rounded-md hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-gray-50" to="#">Following</Link>
-              <Link className="block h-10 pl-16 pr-4 py-2 font-medium rounded-md hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-gray-50" to="#">Settings</Link>
-              <Link className="block h-10 pl-16 pr-4 py-2 font-medium rounded-md hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-gray-50" to="#">Logout</Link>
+              <Link className="block h-10 pl-16 pr-4 py-2 font-medium rounded-md hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-gray-50 text-white" to="/">Home</Link>
+              <Link className="block h-10 pl-16 pr-4 py-2 font-medium rounded-md hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-gray-50 text-white" to="#">MyPage</Link>
+              <Link className="block h-10 pl-16 pr-4 py-2 font-medium rounded-md hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-gray-50 text-white" to="#">Message</Link>
+              <Link className="block h-10 pl-16 pr-4 py-2 font-medium rounded-md hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-gray-50 text-white" to="#">Shorts</Link>
+              <Link className="block h-10 pl-16 pr-4 py-2 font-medium rounded-md hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-gray-50 text-white" to="#">Following</Link>
+              <Link className="block h-10 pl-16 pr-4 py-2 font-medium rounded-md hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-gray-50 text-white" to="#">Settings</Link>
+              <Link className="block h-10 pl-16 pr-4 py-2 font-medium rounded-md hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-gray-50 text-white" to="#">Logout</Link>
 	        </nav>
 	        </div>
 		</div>
@@ -1684,36 +1703,21 @@ export default function Component() {
               </div>
               {/* 여기까지*/}  
               
-              
-              
-              
-              
-              
-              
-              
-              
-              
-              
-              
-              
-              
-              
-              
-              
-              
-              
-              
-              
-              
-              
-              
-              
-              
             </div>
           </div>
         </div>
       </div>
 	 </div>
+	 {/* 맨 위로 버튼 */}
+      {showTopBtn && (
+        <button
+          className="fixed bottom-10 right-10 bg-white hover:bg-gray-100 text-gray-900 font-bold rounded-full h-12 w-12 flex justify-center items-center border-4 border-gray-900 cursor-pointer"
+          onClick={scrollToTop}
+          style={{ width: '50px', height: '50px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}
+        >
+          ▲
+        </button>
+      )}
     </div>
   )
 }
