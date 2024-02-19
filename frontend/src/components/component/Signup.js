@@ -8,19 +8,70 @@ import { Button } from "./ui/button"
 import axios from 'axios';
 
 	function Signup() {
+			  
 	  const navigate = useNavigate();
 	  const [id, setId] = useState('');
 	  const [password, setPassword] = useState('');
 	  const [passwordCheck, setPasswordCheck] = useState('');
 	  const [email, setEmail] = useState('');
 	  const [phone, setPhone] = useState('');
-	
-	  const handleSignup = async () => {
-	    // 비밀번호 확인 로직 추가
-	    if (password !== passwordCheck) {
-	      alert('Passwords do not match');
-	      return;
+	  
+	  const validateForm = () => {
+	    // 필수 입력 값 확인
+	    if (!id || !password || !passwordCheck || !email || !phone) {
+	      alert('모든 필드를 입력해주세요.');
+	      return false;
 	    }
+	    // 비밀번호 일치 확인
+	    if (password !== passwordCheck) {
+	      alert('비밀번호가 일치하지 않습니다.');
+	      return false;
+	    }
+	    const passwordRegex = /^(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*])(?=.{8,20})/;
+		  if (!passwordRegex.test(password)) {
+		    alert('비밀번호는 8자 이상 20자 미만이며, 소문자, 숫자, 특수기호를 각각 하나 이상 포함해야 합니다.');
+		    return false;
+		  }
+	    // 이메일 형식 검증
+	    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+	    if (!emailRegex.test(email)) {
+	      alert('유효하지 않은 이메일 형식입니다.');
+	      return false;
+	    }
+	    // 전화번호 형식 검증 (예시: 단순 숫자와 하이픈만 허용)
+	    const phoneRegex = /^[0-9\-]+$/;
+	    if (!phoneRegex.test(phone)) {
+	      alert('유효하지 않은 전화번호 형식입니다.');
+	      return false;
+	    }
+	    return true;
+	  };
+	const checkIdDuplicate = async () => {
+	    try {
+	      const response = await axios.post('http://localhost:8080/api/checkId', {
+	        id: id,
+	      });
+	      if (response.data.isDuplicate) {
+	        alert(response.data.message); 
+	        return true; // 중복된 ID가 있음
+	      }
+	      return false; // 중복된 ID가 없음
+	    } catch (error) {
+	      if (error.response && error.response.data.isDuplicate) {
+	        alert(error.response.data.message); 
+	        return true; 
+	      } else {
+	        alert('ID 중복 검사 중 오류가 발생했습니다.');
+	        return true;
+	      }
+	    }
+	};
+	  
+	  const handleSignup = async () => {
+    	if (!validateForm()) return; // 폼 검증 실패 시 중단
+    	const isDuplicate = await checkIdDuplicate(); // ID 중복 검사
+    	if (isDuplicate) return; // ID가 중복되었으면 여기서 처리 중단
+	    // 비밀번호 확인 로직 추가
 	    try {
 	      const response = await axios.post('http://localhost:8080/api/Signup', {
 	        id: id,
@@ -28,12 +79,12 @@ import axios from 'axios';
 	        email: email,
 	        phone: phone,
 	      });
-	      console.log(response.data);
 	      navigate('/Login'); // 회원가입 성공 후 로그인 페이지로 이동
 	    } catch (error) {
 	      console.error('회원가입 실패', error);
 	    }
 	  };
+	  
 	  return (
 	    <div className="flex flex-col gap-6 p-4 sm:p-6 items-center justify-center min-h-screen">
 	      <div className="w-full max-w-[400px]">
