@@ -4,16 +4,17 @@
  */
 import { Button } from "./ui/button"
 import React, { useState , useEffect} from 'react';
-import { Link } from "react-router-dom";
+import { Link , useNavigate} from "react-router-dom";
 import { Input } from "./ui/input"
-
+import axios from 'axios';
 
 export default function Component() {
 	
   const [isNavExpanded, setIsNavExpanded] = useState(false);
   const [showTopBtn, setShowTopBtn] = useState(false);
-  
-  useEffect(() => {
+  const navigate = useNavigate();
+  // 맨 위로 스크롤하는 버튼 on/off
+  useEffect(() => {  
     window.addEventListener("scroll", () => {
       if (window.scrollY > 300) {
         setShowTopBtn(true);
@@ -31,6 +32,17 @@ export default function Component() {
     });
   };
   
+  const logout = async () => {
+	  try {
+	    const response = await axios.get('http://localhost:8080/api/Logout');
+	   	alert('로그아웃 완료');
+	   	navigate('/');
+	   	
+	  } catch (error) {
+		  console.log(error);
+	    alert('다시 시도해주세요.');
+	  }
+	};
   return (
 	  <div className="flex min-h-screen bg-gray-100">
 	      <div className="fixed top-0 bottom-0 z-10" onMouseEnter={() => setIsNavExpanded(true)} onMouseLeave={() => setIsNavExpanded(false)}>
@@ -40,13 +52,14 @@ export default function Component() {
 	        {/* 네비게이션 바 내용, 마우스 오버 시 가시성 조정 및 세로 중앙 정렬 */}
 	        <div className={`flex flex-col justify-center h-full opacity-0 ${isNavExpanded ? "opacity-100" : ""} transition-opacity duration-300 ease-in-out`}>
 	          <nav className="mt-20">
-              <Link className="block h-10 pl-16 pr-4 py-2 font-medium rounded-md hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-gray-50 text-white" to="/">Home</Link>
+              <Link className="block h-10 pl-16 pr-4 py-2 font-medium rounded-md hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-gray-50 text-white" to="/index">Home</Link>
               <Link className="block h-10 pl-16 pr-4 py-2 font-medium rounded-md hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-gray-50 text-white" to="#">MyPage</Link>
               <Link className="block h-10 pl-16 pr-4 py-2 font-medium rounded-md hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-gray-50 text-white" to="#">Message</Link>
               <Link className="block h-10 pl-16 pr-4 py-2 font-medium rounded-md hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-gray-50 text-white" to="#">Shorts</Link>
               <Link className="block h-10 pl-16 pr-4 py-2 font-medium rounded-md hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-gray-50 text-white" to="#">Following</Link>
               <Link className="block h-10 pl-16 pr-4 py-2 font-medium rounded-md hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-gray-50 text-white" to="#">Settings</Link>
-              <Link className="block h-10 pl-16 pr-4 py-2 font-medium rounded-md hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-gray-50 text-white" to="/Login">Login</Link>
+              {/*<Link className="block h-10 pl-16 pr-4 py-2 font-medium rounded-md hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-gray-50 text-white" to="/Login">Login</Link>*/}
+              <button className="block h-10 pl-16 pr-4 py-2 font-medium rounded-md hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-gray-50 text-white" onClick={logout}>Logout</button>
 	        </nav>
 	        </div>
 		</div>

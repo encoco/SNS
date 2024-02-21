@@ -48,5 +48,12 @@ public class Users {
 	public void setEmail(String email) {
 		this.email = email;
 	}
+	@Override
+	public String toString() {
+		return "Users [User_Id=" + User_Id + ", id=" + id + ", password=" + password + ", phone=" + phone + ", email="
+				+ email + "]";
+	}
+	
+	
 
 }
