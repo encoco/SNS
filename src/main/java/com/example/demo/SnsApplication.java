@@ -9,9 +9,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @SpringBootApplication(exclude = SecurityAutoConfiguration.class)
 public class SnsApplication {
-	public static void main(String[] args) {
-		SpringApplication.run(SnsApplication.class, args);
-	}
 	@Bean
 	public WebMvcConfigurer corsConfigurer() {
 	    return new WebMvcConfigurer() {
@@ -21,4 +18,9 @@ public class SnsApplication {
 	        }
 	    };
 	}
+
+	public static void main(String[] args) {
+		SpringApplication.run(SnsApplication.class, args);
+	}
+
 }

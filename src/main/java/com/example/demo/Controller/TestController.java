@@ -5,15 +5,20 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.example.demo.Config.auth.PrincipalDetails;
 import com.example.demo.Repository.UsersRepository;
 import com.example.demo.Service.UsersService;
-import com.example.demo.entity.Users;
 
+import DTO.UsersDTO;
 import jakarta.servlet.http.HttpSession;
 
 @RestController
@@ -30,12 +35,14 @@ public class TestController {
 
 	@GetMapping("/")
 	public String index() {
+
 		return "index.html";
 	}
 
 	@PostMapping("/checkId")
-    public ResponseEntity<?> checkId(@RequestBody Users request) {
-		boolean exists = repository.existsById(request.getId());
+    public ResponseEntity<?> checkId(@RequestBody UsersDTO request) {
+		System.out.println("CheckId in");
+		boolean exists = repository.existsByUsername(request.getUsername());
         if (exists) {
             // ID가 이미 존재하는 경우, 클라이언트에게 중복임을 알리는 응답을 보냅니다.
         	return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("isDuplicate", true, "message", "이미 사용 중인 ID입니다."));
@@ -46,21 +53,39 @@ public class TestController {
     }
 
 	@PostMapping("/Signup")
-    public ResponseEntity<Users> signup(@RequestBody Users request) {
-        Users savedUser = Uservice.registerUser(request); // 서비스 계층을 통해 사용자 정보 저장
-        return new ResponseEntity<>(savedUser, HttpStatus.CREATED); // 저장된 사용자 정보와 함께 201 Created 상태 코드 반환
+	public ResponseEntity<UsersDTO> signup(@RequestBody UsersDTO request) {
+	    String userId = Uservice.registerUser(request); 
+	    UsersDTO savedUser = new UsersDTO();
+	    savedUser.setUsername(userId); 
+	    return new ResponseEntity<>(savedUser, HttpStatus.CREATED); // ID가 설정된 기본 DTO와 함께 반환
+	}
+
+	// 8080/user/info 접근 시 : {"id":14,"username":"t","password":"대충암호화","phone":"01012311234","email":"wdjw@naf.com","role":"ROLE_USER"}
+	@CrossOrigin(origins = "http://localhost:3000")
+    @GetMapping("/user/info")
+    public ResponseEntity<UsersDTO> userInfo() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        System.out.println(authentication);
+        if (authentication != null && authentication.getPrincipal() instanceof PrincipalDetails) {
+            PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
+            UsersDTO userDTO = principalDetails.getUsersDTO();
+            return ResponseEntity.ok(userDTO); // 사용자 정보를 JSON 형태로 반환
+        }
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null); // 인증되지 않은 접근 처리
     }
 	
-	@PostMapping("/Login")
-	public ResponseEntity<Users> login(@RequestBody Users request, HttpSession session) {
-		Users auth = Uservice.findbyId(request); // 0: 비밀번호 틀림, 1: 로그인 성공, 2: 계정 없음
-	    if (auth != null) { // 로그인 성공
-	        session.setAttribute("user", auth); // 세션에 사용자 정보 저장
-	        return new ResponseEntity<>(auth, HttpStatus.OK); // 성공적으로 로그인 처리 후 사용자 정보와 함께 200 OK 상태 코드 반환
-	    } else { // 계정 없거나 틀림
-	        return new ResponseEntity<>(HttpStatus.NOT_FOUND); // 404 Not Found 상태 코드 반환
-	    }
-	}
+	@CrossOrigin(origins = "http://localhost:3000")
+    @GetMapping("/auth/test")
+    public String testSecurityContext() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null) {
+            // 인증 객체의 주요 정보 로그로 출력
+            return "Authentication: " + authentication.toString() + "\n" +
+                    "Principal: " + authentication.getPrincipal().toString() + "\n" +
+                    "Authorities: " + authentication.getAuthorities().toString();
+        }
+        return "No authentication information found.";
+    }
 	@GetMapping("/Logout")
     public ResponseEntity<?> logout(HttpSession session) {
         // 세션 무효화

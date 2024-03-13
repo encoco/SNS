@@ -7,33 +7,68 @@ import { Button } from "./ui/button"
 import axios from 'axios';
 
 function LoginPage() {
-  const [id, setId] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const { login } = useAuth();
+  const { logout } = useAuth();
   const navigate = useNavigate();
   
   const goToSignUp = () => {
     navigate('/Signup'); // '/signup'은 회원가입 페이지의 경로로, 실제 경로에 맞게 수정해야 합니다.
   };
-
+   const redirectToIndex = () => {
+	  navigate('/index');
+	  console.log("들어왔냐");
+   };
   const handleLogin = async () => {
-    try {
-      const response = await axios.post('http://localhost:8080/api/Login', {
-        id: id,
-        password: password
-      });
-      alert('로그인 성공');
-      await login({ id, password }); // 예시 로그인 함수
-      navigate('/index'); // 회원가입 성공 후 로그인 페이지로 이동
-    } catch (error) {
-      alert('계정 정보를 확인해주세요.');
-    }
-  };
-  
+	  try {
+	    const params = new URLSearchParams();
+	    params.append('username', username);
+	    params.append('password', password);
+	
+	    const response = await axios.post('http://localhost:8080/api/Login', params, {
+	      headers: {
+	        'Content-Type': 'application/x-www-form-urlencoded'
+	      },
+	      credentials: 'include' // 세션 쿠키를 클라이언트에서 서버로 전송하기 위해 필요한 옵션
+	    });
+	    sessionStorage.setItem('userInfo', JSON.stringify(response.data));
+	    await login({ username, password }); // 예시 로그인 함수
+	    alert('로그인 성공');
+	    redirectToIndex();
+	  } catch (error) {
+		  
+	    if (error.response) {
+	      const status = error.response.status;
+	      if (status === 401 || status === 403) {
+	        alert('계정 정보를 확인해주세요.');
+	      } else {
+	        alert('로그인 중 문제가 발생했습니다. 다시 시도해주세요.');
+	      }
+	    } else {
+	      alert('서버와의 연결에 문제가 발생했습니다.');
+	    }
+	  }
+	};  
+	
   const handleSubmit = async (e) => {
     e.preventDefault(); // 기본 제출 동작 방지
     await handleLogin(); // 로그인 처리
   };
+  
+  const handleGetUserInfo = async () => {
+	  try {
+	    const userInfoStr = sessionStorage.getItem('userInfo');
+	    if (userInfoStr) {
+	      const userInfo = JSON.parse(userInfoStr);
+	      console.log('저장된 사용자 정보:', userInfo);
+	    } else {
+	      console.log('저장된 사용자 정보가 없습니다.');
+	    }
+	  } catch (error) {
+	    console.error('사용자 정보를 가져오는데 실패했습니다.', error);
+	  }
+	};
 
   return (
     <div className="flex flex-col gap-6 p-4 sm:p-6 items-center justify-center min-h-screen">
@@ -45,11 +80,13 @@ function LoginPage() {
           </div>
 
         
+        
+        
         <form onSubmit={handleSubmit}>
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="id">Username</Label>
-              <Input id="id" placeholder="r___k18" value={id} onChange={(e) => setId(e.target.value)} />
+              <Label htmlFor="username">Username</Label>
+              <Input id="username" placeholder="r___k18" value={username} onChange={(e) => setUsername(e.target.value)} />
             </div>
             <div className="space-y-2">
               <Label htmlFor="password">Password</Label>
@@ -67,13 +104,24 @@ function LoginPage() {
         <br/>
         
         <div className="space-y-4">
-          <Button className="w-full" style={{ backgroundColor: '#03C75A'}} variant="outline">
+          <Button className="w-full" style={{ backgroundColor: '#03C75A'}} variant="outline"
+          						onClick={() => window.location.href='http://localhost:8080/oauth2/authorization/naver'} >          
             Login with Naver
           </Button>
-          <Button className="w-full" variant="outline">
+          <Button className="w-full" style={{ backgroundColor: '#03C75A'}} variant="outline"
+          						onClick={handleGetUserInfo} >          
+            test
+          </Button>
+          <Button className="w-full" style={{ backgroundColor: '#03C75A'}} variant="outline"
+          						onClick={logout} >          
+            logout
+          </Button>
+          <Button className="w-full" variant="outline"
+          										onClick={() => window.location.href='http://localhost:8080/oauth2/authorization/google'}>
             Login with Google
           </Button>
-          <Button className="w-full" style={{ backgroundColor: '#FEE500'}} variant="outline">
+          <Button className="w-full" style={{ backgroundColor: '#FEE500'}} variant="outline"
+          							 onClick={() => window.location.href='http://localhost:8080/oauth2/authorization/kakao'}>
             Login with Kakao
           </Button>
         </div>

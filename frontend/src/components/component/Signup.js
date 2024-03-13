@@ -10,7 +10,7 @@ import axios from 'axios';
 	function Signup() {
 			  
 	  const navigate = useNavigate();
-	  const [id, setId] = useState('');
+	  const [username, setusername] = useState('');
 	  const [password, setPassword] = useState('');
 	  const [passwordCheck, setPasswordCheck] = useState('');
 	  const [email, setEmail] = useState('');
@@ -18,7 +18,7 @@ import axios from 'axios';
 	  
 	  const validateForm = () => {
 	    // 필수 입력 값 확인
-	    if (!id || !password || !passwordCheck || !email || !phone) {
+	    if (!username || !password || !passwordCheck || !email || !phone) {
 	      alert('모든 필드를 입력해주세요.');
 	      return false;
 	    }
@@ -49,7 +49,7 @@ import axios from 'axios';
 	const checkIdDuplicate = async () => {
 	    try {
 	      const response = await axios.post('http://localhost:8080/api/checkId', {
-	        id: id,
+	        username: username,
 	      });
 	      if (response.data.isDuplicate) {
 	        alert(response.data.message); 
@@ -74,12 +74,13 @@ import axios from 'axios';
 	    // 비밀번호 확인 로직 추가
 	    try {
 	      const response = await axios.post('http://localhost:8080/api/Signup', {
-	        id: id,
+	        username: username,
 	        password: password,
 	        email: email,
 	        phone: phone,
 	      });
-	      navigate('/Login'); // 회원가입 성공 후 로그인 페이지로 이동
+	      alert('완');
+	      navigate('/'); // 회원가입 성공 후 로그인 페이지로 이동
 	    } catch (error) {
 	      console.error('회원가입 실패', error);
 	    }
@@ -94,8 +95,8 @@ import axios from 'axios';
 	        </div>
 	        <div className="space-y-4">
 	          <div className="space-y-2">
-	            <Label htmlFor="id">ID</Label>
-	            <Input id="id" placeholder="r___k18" value={id} onChange={(e) => setId(e.target.value)} />
+	            <Label htmlFor="username">ID</Label>
+	            <Input id="username" placeholder="r___k18" value={username} onChange={(e) => setusername(e.target.value)} />
 	          </div>
 	          <div className="space-y-2">
 	            <Label htmlFor="password">Password</Label>
