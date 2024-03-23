@@ -15,10 +15,10 @@ export default function Component() {
   // 세션 스토리지에서 사용자 정보 로드
   useEffect(() => {
     const storedUserInfo = sessionStorage.getItem('userInfo');
+    console.log(storedUserInfo);
     if (storedUserInfo) {
       const userJSON = JSON.parse(storedUserInfo);
       setUserInfo(userJSON);
-     console.log("useEffect : " + userInfo);
     }
   }, []);
   
@@ -27,6 +27,7 @@ export default function Component() {
 	    const userInfoStr = sessionStorage.getItem('userInfo');
 	    if (userInfoStr) {
 	      const userInfo = JSON.parse(userInfoStr);
+	      console.log(userInfo);
 	    } else {
 	      console.log('저장된 사용자 정보가 없습니다.');
 	    }

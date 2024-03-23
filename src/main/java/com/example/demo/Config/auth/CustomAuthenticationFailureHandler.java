@@ -1,4 +1,4 @@
-package com.example.demo.Config;
+package com.example.demo.Config.auth;
 
 import java.io.IOException;
 
@@ -14,8 +14,8 @@ public class CustomAuthenticationFailureHandler implements AuthenticationFailure
 	@Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
                                         AuthenticationException exception) throws IOException, ServletException {
-        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // 401 상태 코드 설정
+        System.out.println("실패");
+		response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // 401 상태 코드 설정
         response.getWriter().append("Authentication failed");
-        System.out.println("login fail");
     }
 }

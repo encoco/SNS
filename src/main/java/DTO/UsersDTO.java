@@ -10,8 +10,8 @@ import lombok.Setter;
 
 
 @Data
-@Builder
 @Setter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class UsersDTO {
@@ -44,4 +44,7 @@ public class UsersDTO {
 		return "UsersDTO [id=" + id + ", username=" + username + ", password=" + password + ", phone=" + phone
 				+ ", email=" + email + ", role=" + role + "]";
 	}
+
+
+
 }

@@ -1,5 +1,7 @@
 package com.example.demo.Controller;
 
+import java.io.IOException;
+import java.util.Collections;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,33 +14,33 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.example.demo.Config.auth.PrincipalDetails;
 import com.example.demo.Repository.UsersRepository;
 import com.example.demo.Service.UsersService;
-
 import DTO.UsersDTO;
 import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 @RestController
 @RequestMapping("/api")
 public class TestController {
 	private final UsersRepository repository;
 	private final UsersService Uservice;
-
+	
 	@Autowired
     public TestController(UsersRepository repository, UsersService Uservice) {
         this.repository = repository;
         this.Uservice = Uservice;
     }
-
-	@GetMapping("/")
-	public String index() {
-
-		return "index.html";
-	}
-
+	
+	@GetMapping("/api/test")
+    public String hello() {
+        return "테스트입니다.";
+    }
+	
 	@PostMapping("/checkId")
     public ResponseEntity<?> checkId(@RequestBody UsersDTO request) {
 		System.out.println("CheckId in");
@@ -51,12 +53,13 @@ public class TestController {
             return ResponseEntity.ok(Map.of("isDuplicate", false, "message", "사용 가능한 ID입니다."));
         }
     }
-
+	
+	 
 	@PostMapping("/Signup")
 	public ResponseEntity<UsersDTO> signup(@RequestBody UsersDTO request) {
-	    String userId = Uservice.registerUser(request); 
+	    String userId = Uservice.registerUser(request);
 	    UsersDTO savedUser = new UsersDTO();
-	    savedUser.setUsername(userId); 
+	    savedUser.setUsername(userId);
 	    return new ResponseEntity<>(savedUser, HttpStatus.CREATED); // ID가 설정된 기본 DTO와 함께 반환
 	}
 
@@ -73,7 +76,7 @@ public class TestController {
         }
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null); // 인증되지 않은 접근 처리
     }
-	
+
 	@CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/auth/test")
     public String testSecurityContext() {
@@ -86,6 +89,7 @@ public class TestController {
         }
         return "No authentication information found.";
     }
+
 	@GetMapping("/Logout")
     public ResponseEntity<?> logout(HttpSession session) {
         // 세션 무효화

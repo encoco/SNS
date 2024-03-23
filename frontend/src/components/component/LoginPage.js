@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom'; // useNavigate 훅 임포트
+import React, { useState,useEffect } from 'react';
+import { useNavigate, Link,useLocation } from 'react-router-dom'; // useNavigate 훅 임포트
 import { useAuth } from '../../contexts/AuthContext';
 import { Label } from "./ui/label"
 import { Input } from "./ui/input"
@@ -12,14 +12,35 @@ function LoginPage() {
   const { login } = useAuth();
   const { logout } = useAuth();
   const navigate = useNavigate();
-  
+	 
+	 
+	useEffect(() => {
+	  const queryParams = new URLSearchParams(window.location.search);
+	  const userParam = queryParams.get('user');
+	
+	  if (userParam) {
+	    // 'user' 쿼리 파라미터에서 정보 추출 및 변환
+	    // 예시: "UsersInfoDTO(nickname=, phone=010-7137-5740, email=wkdwlgjs111@naver.com, role=ROLE_USER_SNS)"
+	    const userInfoString = userParam.slice(userParam.indexOf('(') + 1, -1); // 괄호 안의 내용 추출
+	    const userInfoArray = userInfoString.split(', '); // 쉼표로 분리하여 배열로 변환
+	
+	    // 배열의 각 요소를 키-값 쌍으로 변환
+	    const userInfoObj = userInfoArray.reduce((obj, item) => {
+	      const [key, value] = item.split('=');
+	      obj[key] = value;
+	      return obj;
+	    }, {});
+	
+	    // sessionStorage에 저장
+	    sessionStorage.setItem('userInfo', JSON.stringify(userInfoObj));
+	    alert('로그인 성공');
+	    navigate('/index');
+	  }
+	}, []);
+	
   const goToSignUp = () => {
     navigate('/Signup'); // '/signup'은 회원가입 페이지의 경로로, 실제 경로에 맞게 수정해야 합니다.
   };
-   const redirectToIndex = () => {
-	  navigate('/index');
-	  console.log("들어왔냐");
-   };
   const handleLogin = async () => {
 	  try {
 	    const params = new URLSearchParams();
@@ -32,10 +53,12 @@ function LoginPage() {
 	      },
 	      credentials: 'include' // 세션 쿠키를 클라이언트에서 서버로 전송하기 위해 필요한 옵션
 	    });
+	    console.log(response);
 	    sessionStorage.setItem('userInfo', JSON.stringify(response.data));
+	    
 	    await login({ username, password }); // 예시 로그인 함수
 	    alert('로그인 성공');
-	    redirectToIndex();
+	    navigate('/index');
 	  } catch (error) {
 		  
 	    if (error.response) {
@@ -50,6 +73,8 @@ function LoginPage() {
 	    }
 	  }
 	};  
+	
+	
 	
   const handleSubmit = async (e) => {
     e.preventDefault(); // 기본 제출 동작 방지
@@ -105,7 +130,7 @@ function LoginPage() {
         
         <div className="space-y-4">
           <Button className="w-full" style={{ backgroundColor: '#03C75A'}} variant="outline"
-          						onClick={() => window.location.href='http://localhost:8080/oauth2/authorization/naver'} >          
+          						onClick={() => window.location.href='http://localhost:8080/oauth2/authorization/naver'} >
             Login with Naver
           </Button>
           <Button className="w-full" style={{ backgroundColor: '#03C75A'}} variant="outline"
@@ -117,11 +142,11 @@ function LoginPage() {
             logout
           </Button>
           <Button className="w-full" variant="outline"
-          										onClick={() => window.location.href='http://localhost:8080/oauth2/authorization/google'}>
+          							onClick={() => window.location.href='http://localhost:8080/oauth2/authorization/google'} >
             Login with Google
           </Button>
           <Button className="w-full" style={{ backgroundColor: '#FEE500'}} variant="outline"
-          							 onClick={() => window.location.href='http://localhost:8080/oauth2/authorization/kakao'}>
+          							 onClick={() => window.location.href='http://localhost:8080/oauth2/authorization/kakao'} >
             Login with Kakao
           </Button>
         </div>
