@@ -28,6 +28,11 @@ public class BoardController {
     public ResponseEntity<?> writeBoard(@RequestBody BoardDTO boardDTO) {
         // 받아온 글 내용을 서비스를 통해 저장하고, 결과에 따라 적절한 응답을 반환합니다.
         try {
+        	System.out.println("change");
+        	System.out.println("change");
+        	System.out.println("change");
+        	System.out.println("change");
+        	System.out.println("change");
         	System.out.println(boardDTO);
             boardService.writeBoard(boardDTO);
             return ResponseEntity.ok("글이 성공적으로 작성되었습니다.");

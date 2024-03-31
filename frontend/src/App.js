@@ -4,7 +4,7 @@ import { useAuth } from './contexts/AuthContext';
 
 import LoginPage from './components/component/LoginPage';
 import SignupPage from './components/component/Signup';
-import Component from './components/component/Component';
+import Component from './components/component/component';
 import BoardWrite from './components/component/BoardWrite';
 
 
