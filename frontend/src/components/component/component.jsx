@@ -13,29 +13,7 @@ export default function Component() {
   const [userInfo, setUserInfo] = useState(null);
 
   // 세션 스토리지에서 사용자 정보 로드
-  useEffect(() => {
-    const storedUserInfo = sessionStorage.getItem('userInfo');
-    console.log(storedUserInfo);
-    if (storedUserInfo) {
-      const userJSON = JSON.parse(storedUserInfo);
-      setUserInfo(userJSON);
-    }
-  }, []);
   
-   const handleGetUserInfo = async () => {
-	  try {
-	    const userInfoStr = sessionStorage.getItem('userInfo');
-	    if (userInfoStr) {
-	      const userInfo = JSON.parse(userInfoStr);
-	      console.log(userInfo);
-	    } else {
-	      console.log('저장된 사용자 정보가 없습니다.');
-	    }
-	  } catch (error) {
-	    console.error('사용자 정보를 가져오는데 실패했습니다.', error);
-	  }
-	};
-
   
   // 스크롤 이벤트 리스너 설정 및 정리
   useEffect(() => {
@@ -79,20 +57,22 @@ export default function Component() {
 	  <div className="flex min-h-screen bg-gray-100">
 	      <div className="fixed top-0 bottom-0 z-10" onMouseEnter={() => setIsNavExpanded(true)} onMouseLeave={() => setIsNavExpanded(false)}>
 	        {/* 마우스를 올렸을 때 너비가 확장되는 효과를 위한 div */}
-	        <div className={`w-12 h-full bg-gray-900 transition-width duration-300 ease-in-out ${isNavExpanded ? "w-60" : "w-12"}`}>
+	        <div className={`w-12 h-full bg-green-400 transition-width duration-300 ease-in-out ${isNavExpanded ? "w-60" : "w-12"}`}>
 	        
 	        {/* 네비게이션 바 내용, 마우스 오버 시 가시성 조정 및 세로 중앙 정렬 */}
 	        <div className={`flex flex-col justify-center h-full opacity-0 ${isNavExpanded ? "opacity-100" : ""} transition-opacity duration-300 ease-in-out`}>
 	          <nav className="mt-20">
-              <Link className="block h-10 pl-16 pr-4 py-2 font-medium rounded-md hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-gray-50 text-white" to="/index">Home</Link>
-              <Link className="block h-10 pl-16 pr-4 py-2 font-medium rounded-md hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-gray-50 text-white" to="#">MyPage</Link>
-              <Link className="block h-10 pl-16 pr-4 py-2 font-medium rounded-md hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-gray-50 text-white" to="#">Message</Link>
-              <Link className="block h-10 pl-16 pr-4 py-2 font-medium rounded-md hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-gray-50 text-white" to="#">Shorts</Link>
-              <Link className="block h-10 pl-16 pr-4 py-2 font-medium rounded-md hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-gray-50 text-white" to="#">Following</Link>
-              <Link className="block h-10 pl-16 pr-4 py-2 font-medium rounded-md hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-gray-50 text-white" to="#">Settings</Link>
-              {/*<Link className="block h-10 pl-16 pr-4 py-2 font-medium rounded-md hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-gray-50 text-white" to="/Login">Login</Link>*/}
-              <button className="block h-10 pl-16 pr-4 py-2 font-medium rounded-md hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-gray-50 text-white" onClick={handleLogout}>Logout</button>
-	        </nav>
+	              <Link className="block h-10 pl-16 pr-4 py-2 font-medium rounded-md hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-gray-50 text-white" to="/index">Home</Link>
+	              <Link className="block h-10 pl-16 pr-4 py-2 font-medium rounded-md hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-gray-50 text-white" to="#">MyPage</Link>
+	              <Link className="block h-10 pl-16 pr-4 py-2 font-medium rounded-md hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-gray-50 text-white" to="#">Message</Link>
+	              <Link className="block h-10 pl-16 pr-4 py-2 font-medium rounded-md hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-gray-50 text-white" to="#">Shorts</Link>
+	              <Link className="block h-10 pl-16 pr-4 py-2 font-medium rounded-md hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-gray-50 text-white" to="#">Following</Link>
+	              <Link className="block h-10 pl-16 pr-4 py-2 font-medium rounded-md hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-gray-50 text-white" to="#">Settings</Link>
+                <Link className="block h-10 pl-16 pr-4 py-2 font-medium rounded-md hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-gray-50 text-white" to="/BoardWrite">글쓰기</Link>
+	              <button className="block h-10 pl-16 pr-4 py-2 font-medium 
+	              						rounded-md  hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-gray-50
+	                text-white" onClick={handleLogout}>Logout</button>
+	          </nav>
 	        </div>
 		</div>
       </div>
@@ -104,7 +84,7 @@ export default function Component() {
           <form className="flex items-center gap-2 w-full max-w-md">
 	      <div className="flex items-center space-x-2">
 	        <FlagIcon className="h-8 w-8" />
-	        <h1 className="text-2xl font-bold tracking-tighter">Feed</h1>
+	        
 	      </div>
 	      <SearchIcon className="h-5 w-5" />
 	      <Input
@@ -129,18 +109,14 @@ export default function Component() {
 		
 			{/* 글은 여기부터*/}
           <div className="rounded-xl bg-white p-4 grid gap-4 border border-gray-100 dark:border-gray-800">
-           		<div>
-			      <button onClick={handleGetUserInfo} >내 정보 보기 {sessionStorage.userInfo.id} lll</button>
-			      
-			      
-			      
-			      
-			      
-			      
-			      
-			      
-			      
-			    </div>
+   			{userInfo && (
+				  <div>
+				    <p>닉네임: {userInfo.nickname}</p>
+				    <p>전화번호: {userInfo.phone}</p>
+				    <p>이메일: {userInfo.email}</p>
+				    <p>역할: {userInfo.role}</p>
+				  </div>
+			)}
             <div className="flex items-center space-x-2">
               <img
                 alt="Avatar"

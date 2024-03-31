@@ -4,10 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.example.demo.DTO.UsersDTO;
 import com.example.demo.Repository.UsersRepository;
 import com.example.demo.entity.UsersEntity;
-
-import DTO.UsersDTO;
 
 @Service
 public class UsersService {

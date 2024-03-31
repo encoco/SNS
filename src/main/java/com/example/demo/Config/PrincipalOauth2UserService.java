@@ -10,10 +10,10 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.Config.auth.PrincipalDetails;
+import com.example.demo.DTO.UsersDTO;
 import com.example.demo.Repository.UsersRepository;
 import com.example.demo.entity.UsersEntity;
 
-import DTO.UsersDTO;
 import lombok.RequiredArgsConstructor;
 
 @Service

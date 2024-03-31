@@ -1,4 +1,4 @@
-package DTO;
+package com.example.demo.DTO;
 
 import com.example.demo.entity.UsersEntity;
 

@@ -8,7 +8,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
-import DTO.UsersDTO;
+import com.example.demo.DTO.UsersDTO;
 
 //시큐리티 로그인 시 오브젝트 = Authentication 타입 객체 안에 User 정보가 있어야 함.
 // User 오브젝트 타입 -> UserDetails 타입 객체
@@ -81,6 +81,6 @@ public class PrincipalDetails implements UserDetails, OAuth2User{
 		return null;
 	}
 
-	
+
 
 }

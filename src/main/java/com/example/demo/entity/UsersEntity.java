@@ -1,6 +1,8 @@
 package com.example.demo.entity;
 
-import DTO.UsersDTO;
+
+import com.example.demo.DTO.UsersDTO;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;

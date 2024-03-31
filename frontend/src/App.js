@@ -5,6 +5,9 @@ import { useAuth } from './contexts/AuthContext';
 import LoginPage from './components/component/LoginPage';
 import SignupPage from './components/component/Signup';
 import Component from './components/component/Component';
+import BoardWrite from './components/component/BoardWrite';
+
+
 
 // 로그인 상태에 따라 접근 권한을 조절하는 컴포넌트
 const PrivateRoute = ({ children }) => {
@@ -24,6 +27,7 @@ function App() {
         <Route path="/" element={<PublicRoute><LoginPage /></PublicRoute>} />
         <Route path="/signup" element={<PublicRoute><SignupPage /></PublicRoute>} />
         <Route path="/index" element={<PrivateRoute><Component /></PrivateRoute>} />
+        <Route path="/BoardWrite" element={<PrivateRoute><BoardWrite /></PrivateRoute>} />
       </Routes>
     </div>
   );

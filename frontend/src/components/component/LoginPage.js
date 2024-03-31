@@ -13,7 +13,7 @@ function LoginPage() {
   const { logout } = useAuth();
   const navigate = useNavigate();
 	 
-	 
+	
 	useEffect(() => {
 	  const queryParams = new URLSearchParams(window.location.search);
 	  const userParam = queryParams.get('user');
@@ -33,13 +33,12 @@ function LoginPage() {
 	
 	    // sessionStorage에 저장
 	    sessionStorage.setItem('userInfo', JSON.stringify(userInfoObj));
-	    alert('로그인 성공');
 	    navigate('/index');
 	  }
 	}, []);
 	
   const goToSignUp = () => {
-    navigate('/Signup'); // '/signup'은 회원가입 페이지의 경로로, 실제 경로에 맞게 수정해야 합니다.
+    navigate('/Signup'); 
   };
   const handleLogin = async () => {
 	  try {
@@ -53,7 +52,7 @@ function LoginPage() {
 	      },
 	      credentials: 'include' // 세션 쿠키를 클라이언트에서 서버로 전송하기 위해 필요한 옵션
 	    });
-	    console.log(response);
+	    
 	    sessionStorage.setItem('userInfo', JSON.stringify(response.data));
 	    
 	    await login({ username, password }); // 예시 로그인 함수
@@ -85,8 +84,7 @@ function LoginPage() {
 	  try {
 	    const userInfoStr = sessionStorage.getItem('userInfo');
 	    if (userInfoStr) {
-	      const userInfo = JSON.parse(userInfoStr);
-	      console.log('저장된 사용자 정보:', userInfo);
+	      const userInfo = JSON.parse(userInfoStr);	      
 	    } else {
 	      console.log('저장된 사용자 정보가 없습니다.');
 	    }
