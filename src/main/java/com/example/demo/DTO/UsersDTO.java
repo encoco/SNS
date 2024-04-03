@@ -17,6 +17,7 @@ import lombok.Setter;
 public class UsersDTO {
 	private int id;
 	private String username;
+	private String nickname;
     private String password;
     private String phone;
 	private String email;
@@ -24,27 +25,15 @@ public class UsersDTO {
 	@Builder.Default
     private String role = "ROLE_USER";
 
-
-
 	public static UsersDTO toDTO(UsersEntity dto) {
         return UsersDTO.builder()
                 .id(dto.getId())
                 .username(dto.getUsername())
+                .nickname(dto.getNickname())
                 .password(dto.getPassword())
                 .phone(dto.getPhone())
                 .email(dto.getEmail())
                 .role(dto.getRole())
                 .build();
     }
-
-
-
-	@Override
-	public String toString() {
-		return "UsersDTO [id=" + id + ", username=" + username + ", password=" + password + ", phone=" + phone
-				+ ", email=" + email + ", role=" + role + "]";
-	}
-
-
-
 }

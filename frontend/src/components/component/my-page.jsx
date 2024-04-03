@@ -51,7 +51,7 @@ function Mypage() {
       <div className="flex min-h-screen border-r border-gray-200 dark:border-gray-800">
   		<div className="fixed top-0 bottom-0 z-10" onMouseEnter={() => setIsNavExpanded(true)} onMouseLeave={() => setIsNavExpanded(false)}>
 		        {/* 마우스를 올렸을 때 너비가 확장되는 효과를 위한 div */}
-		       	<div className={`w-19 h-full bg-green-400 border-r border-gray-200 dark:border-gray-800 transition-width duration-300 ease-in-out ${isNavExpanded ? "w-60" : "w-12"}`}>
+		       	<div className={`w-19 h-full bg-black border-r border-gray-200 dark:border-gray-800 transition-width duration-300 ease-in-out ${isNavExpanded ? "w-60" : "w-12"}`}>
 		        {/* 네비게이션 바 내용, 마우스 오버 시 가시성 조정 및 세로 중앙 정렬 */}
 		        <div className={`flex flex-col justify-center h-full opacity-0 ${isNavExpanded ? "opacity-100" : ""} transition-opacity duration-300 ease-in-out`}>
 		        	<div className="w-full flex justify-center mt-5 flex-col items-center">
@@ -60,15 +60,13 @@ function Mypage() {
 					</div>
 		          <nav className="mt-20">
 		              <Link className="block h-10 pl-16 pr-4 py-2 font-medium rounded-md hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-gray-50 text-white" to="/index">홈</Link>
+		              <Link className="block h-10 pl-16 pr-4 py-2 font-medium rounded-md hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-gray-50 text-white" to="/BoardWrite">글쓰기</Link>
 		              <Link className="block h-10 pl-16 pr-4 py-2 font-medium rounded-md hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-gray-50 text-white" to="/mypage">마이페이지</Link>
 		              <Link className="block h-10 pl-16 pr-4 py-2 font-medium rounded-md hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-gray-50 text-white" to="#">메세지</Link>
-		              <Link className="block h-10 pl-16 pr-4 py-2 font-medium rounded-md hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-gray-50 text-white" to="#">Shorts</Link>
-		              <Link className="block h-10 pl-16 pr-4 py-2 font-medium rounded-md hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-gray-50 text-white" to="#">Following</Link>
 		              <Link className="block h-10 pl-16 pr-4 py-2 font-medium rounded-md hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-gray-50 text-white" to="#">환경 설정</Link>
-	                <Link className="block h-10 pl-16 pr-4 py-2 font-medium rounded-md hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-gray-50 text-white" to="/BoardWrite">글쓰기</Link>
 		              <button className="block h-10 pl-16 pr-4 py-2 font-medium 
 		              						rounded-md  hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-gray-50
-		                text-white" onClick={handleLogout}>Logout</button>
+		                text-white" onClick={handleLogout}>로그아웃</button>
 		          </nav>
 		        </div>
 			</div>

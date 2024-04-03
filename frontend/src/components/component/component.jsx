@@ -10,9 +10,27 @@ export default function Component() {
   const [showTopBtn, setShowTopBtn] = useState(false);
   const navigate = useNavigate();
   const { logout } = useAuth();
-  const [userInfo, setUserInfo] = useState(null);
+  const [posts, setPosts] = useState([]);
+  
+  useEffect(() => {
+    // 서버로부터 글 목록 받아오는 함수
+    const fetchPosts = async () => {
+      try {
+		const id = JSON.parse(sessionStorage.getItem('userInfo') || '{}').id;
+        const response = await axios.get(`http://localhost:8080/api/boardList?id=${id}`);
+        console.log(response.data);
+        const pngn = response.pagination;
+    	console.log(pngn);
+        setPosts(response.data);
+      } catch (error) {
+        console.error("글 목록을 불러오는 데 실패했습니다.", error);
+      }
+    };
 
-  // 세션 스토리지에서 사용자 정보 로드
+    fetchPosts(); // 함수 실행
+  }, []); // 빈 배열을 전달하여 컴포넌트가 마운트될 때만 실행되도록 함
+
+
   
   
   // 스크롤 이벤트 리스너 설정 및 정리
@@ -51,13 +69,11 @@ export default function Component() {
 	  }
    };
    
-	
-	
   return (
 	  <div className="flex min-h-screen bg-gray-100">
 	      <div className="fixed top-0 bottom-0 z-10" onMouseEnter={() => setIsNavExpanded(true)} onMouseLeave={() => setIsNavExpanded(false)}>
 		        {/* 마우스를 올렸을 때 너비가 확장되는 효과를 위한 div */}
-		        <div className={`w-12 h-full bg-green-400 transition-width duration-300 ease-in-out ${isNavExpanded ? "w-60" : "w-12"}`}>
+		        <div className={`w-12 h-full bg-black transition-width duration-300 ease-in-out ${isNavExpanded ? "w-60" : "w-12"}`}>
 		        {/* 네비게이션 바 내용, 마우스 오버 시 가시성 조정 및 세로 중앙 정렬 */}
 		        <div className={`flex flex-col justify-center h-full opacity-0 ${isNavExpanded ? "opacity-100" : ""} transition-opacity duration-300 ease-in-out`}>
 		        	<div className="w-full flex justify-center mt-5 flex-col items-center">
@@ -66,15 +82,13 @@ export default function Component() {
 					</div>
 		          <nav className="mt-20">
 		              <Link className="block h-10 pl-16 pr-4 py-2 font-medium rounded-md hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-gray-50 text-white" to="/index">홈</Link>
+		              <Link className="block h-10 pl-16 pr-4 py-2 font-medium rounded-md hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-gray-50 text-white" to="/BoardWrite">글쓰기</Link>
 		              <Link className="block h-10 pl-16 pr-4 py-2 font-medium rounded-md hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-gray-50 text-white" to="/mypage">마이페이지</Link>
 		              <Link className="block h-10 pl-16 pr-4 py-2 font-medium rounded-md hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-gray-50 text-white" to="#">메세지</Link>
-		              <Link className="block h-10 pl-16 pr-4 py-2 font-medium rounded-md hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-gray-50 text-white" to="#">Shorts</Link>
-		              <Link className="block h-10 pl-16 pr-4 py-2 font-medium rounded-md hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-gray-50 text-white" to="#">Following</Link>
 		              <Link className="block h-10 pl-16 pr-4 py-2 font-medium rounded-md hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-gray-50 text-white" to="#">환경 설정</Link>
-	                <Link className="block h-10 pl-16 pr-4 py-2 font-medium rounded-md hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-gray-50 text-white" to="/BoardWrite">글쓰기</Link>
 		              <button className="block h-10 pl-16 pr-4 py-2 font-medium 
 		              						rounded-md  hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-gray-50
-		                text-white" onClick={handleLogout}>Logout</button>
+		                text-white" onClick={handleLogout}>로그아웃</button>
 		          </nav>
 		        </div>
 			</div>
@@ -85,10 +99,7 @@ export default function Component() {
        <div className="flex flex-col w-full ml-60 mt-16">
 	    <div className="flex justify-center items-center flex-col w-full">
           <form className="flex items-center gap-2 w-full max-w-md">
-	      <div className="flex items-center space-x-2">
-	        <FlagIcon className="h-8 w-8" />
-	        
-	      </div>
+	      
 	      <SearchIcon className="h-5 w-5" />
 	      <Input
 	        className="w-full h-10 font-normal rounded-none dark:placeholder-gray-400"
@@ -108,262 +119,45 @@ export default function Component() {
       <div className="grid grid-cols-1 gap-4 p-4">
       <div className="grid gap-4 w-full max-w-4xl mx-auto">
         <div className="grid gap-2">
-		
-		
 			{/* 글은 여기부터*/}
-          <div className="rounded-xl bg-white p-4 grid gap-4 border border-gray-100 dark:border-gray-800">
-   			{userInfo && (
-				  <div>
-				    <p>닉네임: {userInfo.nickname}</p>
-				    <p>전화번호: {userInfo.phone}</p>
-				    <p>이메일: {userInfo.email}</p>
-				    <p>역할: {userInfo.role}</p>
-				  </div>
-			)}
-            <div className="flex items-center space-x-2">
-              <img
-                alt="Avatar"
-                className="rounded-full"
-                height="40"
-                src="/placeholder.svg"
-                style={{
-                  aspectRatio: "40/40",
-                  objectFit: "cover",
-                }}
-                width="40"
-              />
-              <div className="grid gap-1">
-                <div className="font-semibold">Bob</div>
-                <div className="text-xs text-gray-500 dark:text-gray-400">5 minutes ago</div>
-              </div>
-            </div>
-            <div className="line-clamp-3">
-              <p>
-                This is another post in the feed. It is also an example of a post with some text that is being truncated
-                because it is too long. I hope you can see how the line clamp works in this example.
-              </p>
-            </div>
-            <div className="flex space-x-4"> {/* 이 클래스를 추가합니다 */}
-              <Button className="w-8 h-8" size="icon" variant="outline">
-                <HeartIcon className="w-4 h-4" />
-                <span className="sr-only">Like</span>
-              </Button>
-              <Button className="w-8 h-8" size="icon" variant="outline">
-                <MessageCircleIcon className="w-4 h-4" />
-                <span className="sr-only">Comment</span>
-              </Button>
-              <Button className="w-8 h-8" size="icon" variant="outline">
-                <ShareIcon className="w-4 h-4" />
-                <span className="sr-only">Share</span>
-              </Button>
-            </div>
-              </div>
-              {/* 여기까지*/}
-              {/* 글은 여기부터*/}
-          <div className="rounded-xl bg-white p-4 grid gap-4 border border-gray-100 dark:border-gray-800">
-            <div className="flex items-center space-x-2">
-              <img
-                alt="Avatar"
-                className="rounded-full"
-                height="40"
-                src="/placeholder.svg"
-                style={{
-                  aspectRatio: "40/40",
-                  objectFit: "cover",
-                }}
-                width="40"
-              />
-              <div className="grid gap-1">
-                <div className="font-semibold">Bob</div>
-                <div className="text-xs text-gray-500 dark:text-gray-400">5 minutes ago</div>
-              </div>
-            </div>
-            <div className="line-clamp-3">
-              <p>
-                This is another post in the feed. It is also an example of a post with some text that is being truncated
-                because it is too long. I hope you can see how the line clamp works in this example.
-              </p>
-            </div>
-            <div className="flex space-x-4"> {/* 이 클래스를 추가합니다 */}
-              <Button className="w-8 h-8" size="icon" variant="outline">
-                <HeartIcon className="w-4 h-4" />
-                <span className="sr-only">Like</span>
-              </Button>
-              <Button className="w-8 h-8" size="icon" variant="outline">
-                <MessageCircleIcon className="w-4 h-4" />
-                <span className="sr-only">Comment</span>
-              </Button>
-              <Button className="w-8 h-8" size="icon" variant="outline">
-                <ShareIcon className="w-4 h-4" />
-                <span className="sr-only">Share</span>
-              </Button>
-            </div>
-              </div>
-              {/* 여기까지*/}
-              {/* 글은 여기부터*/}
-          <div className="rounded-xl bg-white p-4 grid gap-4 border border-gray-100 dark:border-gray-800">
-            <div className="flex items-center space-x-2">
-              <img
-                alt="Avatar"
-                className="rounded-full"
-                height="40"
-                src="/placeholder.svg"
-                style={{
-                  aspectRatio: "40/40",
-                  objectFit: "cover",
-                }}
-                width="40"
-              />
-              <div className="grid gap-1">
-                <div className="font-semibold">Bob</div>
-                <div className="text-xs text-gray-500 dark:text-gray-400">5 minutes ago</div>
-              </div>
-            </div>
-            <div className="line-clamp-3">
-              <p>
-                This is another post in the feed. It is also an example of a post with some text that is being truncated
-                because it is too long. I hope you can see how the line clamp works in this example.
-              </p>
-            </div>
-            <div className="flex space-x-4"> {/* 이 클래스를 추가합니다 */}
-              <Button className="w-8 h-8" size="icon" variant="outline">
-                <HeartIcon className="w-4 h-4" />
-                <span className="sr-only">Like</span>
-              </Button>
-              <Button className="w-8 h-8" size="icon" variant="outline">
-                <MessageCircleIcon className="w-4 h-4" />
-                <span className="sr-only">Comment</span>
-              </Button>
-              <Button className="w-8 h-8" size="icon" variant="outline">
-                <ShareIcon className="w-4 h-4" />
-                <span className="sr-only">Share</span>
-              </Button>
-            </div>
-              </div>
-              {/* 여기까지*/}
-              {/* 글은 여기부터*/}
-          <div className="rounded-xl bg-white p-4 grid gap-4 border border-gray-100 dark:border-gray-800">
-            <div className="flex items-center space-x-2">
-              <img
-                alt="Avatar"
-                className="rounded-full"
-                height="40"
-                src="/placeholder.svg"
-                style={{
-                  aspectRatio: "40/40",
-                  objectFit: "cover",
-                }}
-                width="40"
-              />
-              <div className="grid gap-1">
-                <div className="font-semibold">Bob</div>
-                <div className="text-xs text-gray-500 dark:text-gray-400">5 minutes ago</div>
-              </div>
-            </div>
-            <div className="line-clamp-3">
-              <p>
-                This is another post in the feed. It is also an example of a post with some text that is being truncated
-                because it is too long. I hope you can see how the line clamp works in this example.
-              </p>
-            </div>
-            <div className="flex space-x-4"> {/* 이 클래스를 추가합니다 */}
-              <Button className="w-8 h-8" size="icon" variant="outline">
-                <HeartIcon className="w-4 h-4" />
-                <span className="sr-only">Like</span>
-              </Button>
-              <Button className="w-8 h-8" size="icon" variant="outline">
-                <MessageCircleIcon className="w-4 h-4" />
-                <span className="sr-only">Comment</span>
-              </Button>
-              <Button className="w-8 h-8" size="icon" variant="outline">
-                <ShareIcon className="w-4 h-4" />
-                <span className="sr-only">Share</span>
-              </Button>
-            </div>
-              </div>
-              {/* 여기까지*/}
-              {/* 글은 여기부터*/}
-          <div className="rounded-xl bg-white p-4 grid gap-4 border border-gray-100 dark:border-gray-800">
-            <div className="flex items-center space-x-2">
-              <img
-                alt="Avatar"
-                className="rounded-full"
-                height="40"
-                src="/placeholder.svg"
-                style={{
-                  aspectRatio: "40/40",
-                  objectFit: "cover",
-                }}
-                width="40"
-              />
-              <div className="grid gap-1">
-                <div className="font-semibold">Bob</div>
-                <div className="text-xs text-gray-500 dark:text-gray-400">5 minutes ago</div>
-              </div>
-            </div>
-            <div className="line-clamp-3">
-              <p>
-                This is another post in the feed. It is also an example of a post with some text that is being truncated
-                because it is too long. I hope you can see how the line clamp works in this example.
-              </p>
-            </div>
-            <div className="flex space-x-4"> {/* 이 클래스를 추가합니다 */}
-              <Button className="w-8 h-8" size="icon" variant="outline">
-                <HeartIcon className="w-4 h-4" />
-                <span className="sr-only">Like</span>
-              </Button>
-              <Button className="w-8 h-8" size="icon" variant="outline">
-                <MessageCircleIcon className="w-4 h-4" />
-                <span className="sr-only">Comment</span>
-              </Button>
-              <Button className="w-8 h-8" size="icon" variant="outline">
-                <ShareIcon className="w-4 h-4" />
-                <span className="sr-only">Share</span>
-              </Button>
-            </div>
-              </div>
-              {/* 여기까지*/}  {/* 글은 여기부터*/}
-          <div className="rounded-xl bg-white p-4 grid gap-4 border border-gray-100 dark:border-gray-800">
-            <div className="flex items-center space-x-2">
-              <img
-                alt="Avatar"
-                className="rounded-full"
-                height="40"
-                src="/placeholder.svg"
-                style={{
-                  aspectRatio: "40/40",
-                  objectFit: "cover",
-                }}
-                width="40"
-              />
-              <div className="grid gap-1">
-                <div className="font-semibold">Bob</div>
-                <div className="text-xs text-gray-500 dark:text-gray-400">5 minutes ago</div>
-              </div>
-            </div>
-            <div className="line-clamp-3">
-              <p>
-                This is another post in the feed. It is also an example of a post with some text that is being truncated
-                because it is too long. I hope you can see how the line clamp works in this example.
-              </p>
-            </div>
-            <div className="flex space-x-4"> {/* 이 클래스를 추가합니다 */}
-              <Button className="w-8 h-8" size="icon" variant="outline">
-                <HeartIcon className="w-4 h-4" />
-                <span className="sr-only">Like</span>
-              </Button>
-              <Button className="w-8 h-8" size="icon" variant="outline">
-                <MessageCircleIcon className="w-4 h-4" />
-                <span className="sr-only">Comment</span>
-              </Button>
-              <Button className="w-8 h-8" size="icon" variant="outline">
-                <ShareIcon className="w-4 h-4" />
-                <span className="sr-only">Share</span>
-              </Button>
-            </div>
-              </div>
-              {/* 여기까지*/}  
-              
+			     {
+					  posts.map((post) => (
+					    <div key={post.board_id} className="rounded-xl bg-white p-4 grid gap-4 border border-gray-100 dark:border-gray-800">
+					      <div className="flex items-center space-x-2">
+					        {/* 게시글의 사용자 아바타 이미지; 실제 이미지 주소가 있다면 'src'를 변경하세요. */}
+					        <img
+					          alt="Avatar"
+					          className="rounded-full"
+					          src="/placeholder.svg" // 예시 URL, 실제 경로로 대체 필요
+					          style={{
+					            aspectRatio: "40/40",
+					            objectFit: "cover",
+					          }}
+					          width="40"
+					        />
+					        <div className="grid gap-1">
+					          {/* 게시글 작성자와 시간을 나타내는 부분; 이 예제에서는 해당 정보가 없어 생략됨 */}
+					          <div className="font-semibold">{post.id}</div>
+					          <div className="text-xs text-gray-500 dark:text-gray-400">{post.date}</div>
+					        </div>
+					      </div>
+					      <div className="line-clamp-3">
+					        {/* 게시글 내용 */}
+					        <p>{post.content}</p>
+					      </div>
+					      {/* 이미지나 비디오가 있는 경우 이를 렌더링하는 로직을 추가할 수 있습니다. */}
+					      {post.img && <img src={post.img} alt="Post" />}
+					      {post.video && <video src={post.video} controls />}
+					      {/* 버튼과 아이콘 부분은 예시이며, 실제 구현에 맞게 조정해야 합니다. */}
+					      <div className="flex space-x-4 flex-wrap">
+							  <button className="w-10 h-8">Like</button> 
+							  <button className="w-16 h-8">Comment</button>
+							  <button className="w-16 h-8">Share</button> 
+							</div>
+					    </div>
+					  ))
+					}
+		{/*여기까지*/}
             </div>
           </div>
         </div>

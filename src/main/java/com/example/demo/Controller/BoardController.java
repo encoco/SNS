@@ -1,5 +1,6 @@
 package com.example.demo.Controller;
 
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.DTO.BoardDTO;
@@ -24,11 +27,17 @@ public class BoardController {
 	
 	private final BoardService boardService;
 	
-    @PostMapping("/boardList")
+	@GetMapping("/boardList")
+	public ResponseEntity<?> ReadList(@RequestParam("id") int id) {
+	    List<BoardDTO> posts = boardService.getPost(id);
+	    System.out.println("Controller : " + posts);
+	    return ResponseEntity.ok(posts); 
+	}
+	
+    @PostMapping("/boardWrite")
     public ResponseEntity<?> writeBoard(@RequestBody BoardDTO boardDTO) {
         // 받아온 글 내용을 서비스를 통해 저장하고, 결과에 따라 적절한 응답을 반환합니다.
         try {
-        	System.out.println(boardDTO);
             boardService.writeBoard(boardDTO);
             return ResponseEntity.ok("글이 성공적으로 작성되었습니다.");
         } catch (Exception e) {

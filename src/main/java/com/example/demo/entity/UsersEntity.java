@@ -18,17 +18,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UsersEntity {
-	@Override
-	public String toString() {
-		return "UsersEntity [id=" + id + ", username=" + username + ", password=" + password + ", phone=" + phone
-				+ ", email=" + email + ", role=" + role + "]";
-	}
-
-
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id; //DB가서 pk id로 바꾸기
 	private String username;
+	private String nickname;
     private String password;
     private String phone;
 	private String email;
@@ -54,12 +48,15 @@ public class UsersEntity {
 	public String getRole() {
 		return role;
 	}
-
+	public String getNickname() {
+		return nickname;
+	}
 
 	public static UsersEntity toEntity(UsersDTO dto) {
         return UsersEntity.builder()
                 .id(dto.getId())
                 .username(dto.getUsername())
+                .nickname(dto.getNickname())
                 .password(dto.getPassword())
                 .phone(dto.getPhone())
                 .email(dto.getEmail())

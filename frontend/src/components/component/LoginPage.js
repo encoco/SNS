@@ -86,7 +86,7 @@ function LoginPage() {
       <div className="w-full max-w-[400px]">
         
           <div className="text-center py-6">
-            <h1 className="text-3xl font-bold">우리 SNS</h1>
+            <h1 className="text-3xl font-bold">SNS</h1>
             <p className="text-gray-500 dark:text-gray-400">환영합니다!</p>
           </div>
 
@@ -108,7 +108,7 @@ function LoginPage() {
                 비밀번호를 잊으셨나요?
               </Link>
             </div>
-            <Button type="submit" className="w-full mb-2">들어가기</Button>
+            <Button type="submit" className="w-full mb-2">로그인</Button>
             <Button className="w-full mb-2" onClick={goToSignUp}>회원가입</Button>
           </div>
         </form>

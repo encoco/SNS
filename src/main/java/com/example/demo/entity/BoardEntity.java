@@ -2,10 +2,8 @@ package com.example.demo.entity;
 
 
 
-import org.springframework.web.multipart.MultipartFile;
-
+import java.time.LocalDateTime;
 import com.example.demo.DTO.BoardDTO;
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -15,7 +13,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import net.sf.jsqlparser.expression.DateTimeLiteralExpression.DateTime;
 
 @Entity
 @Table(name = "Board")
@@ -31,7 +28,7 @@ public class BoardEntity {
 	private String img;
     private String video;
     private String content;
-	private DateTime date;
+    private String date;
 
 	public static BoardEntity toEntity(BoardDTO dto) {
         return BoardEntity.builder()

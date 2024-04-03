@@ -8,13 +8,13 @@ import { AuthProvider } from './contexts/AuthContext'; // AuthProvider 임포트
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <React.StrictMode>
+  
     <BrowserRouter>
       <AuthProvider> {/* AuthProvider로 모든 컴포넌트를 감싸기 */}
         <App />
       </AuthProvider>
     </BrowserRouter>
-  </React.StrictMode>
+  
 );
 
 reportWebVitals();
