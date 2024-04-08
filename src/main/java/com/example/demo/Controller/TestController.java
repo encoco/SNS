@@ -1,93 +1,99 @@
 package com.example.demo.Controller;
 
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.apache.http.HttpResponse;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
+import com.example.demo.Config.JwtUtil;
 import com.example.demo.Config.auth.PrincipalDetails;
 import com.example.demo.DTO.UsersDTO;
 import com.example.demo.Repository.UsersRepository;
 import com.example.demo.Service.UsersService;
-
+import io.jsonwebtoken.Claims;
+import jakarta.servlet.ServletResponse;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import lombok.RequiredArgsConstructor;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api")
 public class TestController {
 	private final UsersRepository repository;
 	private final UsersService Uservice;
-
-	@Autowired
-    public TestController(UsersRepository repository, UsersService Uservice) {
-        this.repository = repository;
-        this.Uservice = Uservice;
-    }
-
+	private final JwtUtil jwtutil;
 
 	@PostMapping("/checkId")
     public ResponseEntity<?> checkId(@RequestBody UsersDTO request) {
 		System.out.println("CheckId in");
-		boolean exists = repository.existsByUsername(request.getUsername());
-        if (exists) {
-            // ID가 이미 존재하는 경우, 클라이언트에게 중복임을 알리는 응답을 보냅니다.
-        	return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("isDuplicate", true, "message", "이미 사용 중인 ID입니다."));
+		boolean username = repository.existsByUsername(request.getUsername());
+		boolean nickname = repository.existsByNickname(request.getNickname());
+        if (username) {
+        	return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("isDuplicate", true, "message", "이미 사용 중인 아이디입니다."));
+        } 
+        else if(nickname) {
+        	return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("isDuplicate", true, "message", "이미 사용 중인 닉네임입니다."));
         } else {
             // ID가 중복되지 않는 경우, 사용 가능하다는 응답을 보냅니다.
             return ResponseEntity.ok(Map.of("isDuplicate", false, "message", "사용 가능한 ID입니다."));
         }
     }
 
-
 	@PostMapping("/Signup")
 	public ResponseEntity<UsersDTO> signup(@RequestBody UsersDTO request) {
-	    String userId = Uservice.registerUser(request);
-	    UsersDTO savedUser = new UsersDTO();
-	    savedUser.setUsername(userId);
-	    return new ResponseEntity<>(savedUser, HttpStatus.CREATED); // ID가 설정된 기본 DTO와 함께 반환
+		Uservice.registerUser(request);
+	    return new ResponseEntity<>(HttpStatus.CREATED); // ID가 설정된 기본 DTO와 함께 반환
 	}
 
-	// 8080/user/info 접근 시 : {"id":14,"username":"t","password":"대충암호화","phone":"01012311234","email":"wdjw@naf.com","role":"ROLE_USER"}
-	@CrossOrigin(origins = "http://localhost:3000")
-    @GetMapping("/user/info")
-    public ResponseEntity<UsersDTO> userInfo() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        System.out.println(authentication);
-        if (authentication != null && authentication.getPrincipal() instanceof PrincipalDetails) {
-            PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
-            UsersDTO userDTO = principalDetails.getUsersDTO();
-            return ResponseEntity.ok(userDTO); // 사용자 정보를 JSON 형태로 반환
-        }
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null); // 인증되지 않은 접근 처리
-    }
-
-	@CrossOrigin(origins = "http://localhost:3000")
-    @GetMapping("/auth/test")
-    public String testSecurityContext() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null) {
-            // 인증 객체의 주요 정보 로그로 출력
-            return "Authentication: " + authentication.toString() + "\n" +
-                    "Principal: " + authentication.getPrincipal().toString() + "\n" +
-                    "Authorities: " + authentication.getAuthorities().toString();
-        }
-        return "No authentication information found.";
-    }
-
 	@GetMapping("/Logout")
-    public ResponseEntity<?> logout(HttpSession session) {
-        // 세션 무효화
-        session.invalidate();
+    public ResponseEntity<?> logout(HttpServletResponse response) {
+        Cookie refreshTokenCookie = new Cookie("refreshToken", null); // 쿠키 이름을 refreshToken으로 변경
+        refreshTokenCookie.setMaxAge(0); // 쿠키의 만료 시간을 0으로 설정하여 즉시 만료
+        refreshTokenCookie.setPath("/"); // 모든 경로에서 유효한 쿠키로 설정
+        response.addCookie(refreshTokenCookie); // 쿠키를 응답에 추가하여 클라이언트에 전송, 삭제됨을 알림
+
         return new ResponseEntity<>("You've been logged out successfully.", HttpStatus.OK);
     }
+	
+	@PostMapping("/test")
+	public ResponseEntity<?> test(@RequestParam String code) {
+		System.out.println(code);
+		return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body("완");
+	}
+	
+	@PostMapping("/refreshToken")
+	public ResponseEntity<?> refreshToken(@RequestBody String refreshToken){
+	    try {
+	    	String[] parts = refreshToken.split("\":\"", 2);
+	        String rawToken = parts[1].substring(0, parts[1].length() - 2);
+	        String token = rawToken.replace("\\\"", "");
+	        System.out.println("token : " + token);
+	        
+	        int id = jwtutil.getUserIdFromToken(token);
+	        UsersDTO dto = new UsersDTO();
+	        PrincipalDetails userDetails = new PrincipalDetails(dto);
+	        // 새 액세스 토큰 생성
+	        String newAccessToken = jwtutil.generateToken(userDetails,300);
+	        System.out.println("newtoken : " + newAccessToken);
+
+	        return ResponseEntity.ok(newAccessToken);
+	    } catch (Exception e) {
+	    	e.printStackTrace(); // 이를 통해 예외의 상세 정보를 콘솔에 출력
+	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("다시 로그인 해주세요");
+	    }
+	}
 }
 

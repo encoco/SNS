@@ -1,17 +1,17 @@
 package com.example.demo.DTO;
 
 
-import org.springframework.web.multipart.MultipartFile;
-
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 import com.example.demo.entity.BoardEntity;
-
+import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import net.sf.jsqlparser.expression.DateTimeLiteralExpression.DateTime;
 
 
 @Getter
@@ -25,9 +25,23 @@ public class BoardDTO {
 	private String img;
     private String video;
     private String content;
-	private DateTime date;
+    
+    @Builder.Default
+    private String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm"));
 
 
+	@Override
+	public String toString() {
+	    return "BoardDTO{" +
+	            "board_id=" + board_id +
+	            ", id=" + id +
+	            ", img='" + img + '\'' +
+	            ", video='" + video + '\'' +
+	            ", content='" + content + '\'' +
+	            ", date=" + date +
+	            '}';
+	}
+	
 	public static BoardDTO toDTO(BoardEntity dto) {
         return BoardDTO.builder()
                 .board_id(dto.getBoard_id())
@@ -38,15 +52,20 @@ public class BoardDTO {
                 .date(dto.getDate())
                 .build();
     }
-
-
-
-	@Override
-	public String toString() {
-		return "BoardDTO [board_id=" + board_id +" id=" + id + ", img=" + img + ", video=" + video + ", content=" + content
-				+ ", date=" + date+ "]";
+	
+	
+	public static List<BoardDTO> ToDtoList(List<BoardEntity> entities) {
+	    List<BoardDTO> dtos = new ArrayList<>();
+	    for (BoardEntity entity : entities) {
+	        BoardDTO dto = new BoardDTO();
+	        dto.setBoard_id(entity.getBoard_id());
+	        dto.setId(entity.getId());
+	        dto.setImg(entity.getImg());
+	        dto.setVideo(entity.getVideo());
+	        dto.setDate(entity.getDate());
+	        dto.setContent(entity.getContent());
+	        dtos.add(dto);
+	    }
+	    return dtos;
 	}
-
-
-
 }

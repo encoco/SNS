@@ -1,7 +1,8 @@
 import React, { createContext, useContext, useState } from 'react';
-// Create the context outside of any component just once
+import axios from 'axios';
+
 const AuthContext = createContext({
-  users: null, // This is just for initial value; it's not used directly
+  users: null, 
   login: () => {},
   logout: () => {},
 });
@@ -11,7 +12,6 @@ export function useAuth() {
   return useContext(AuthContext);
 }
 
-// Provider component that encapsulates the state logic and provides it to the rest of the app
 export const AuthProvider = ({ children }) => {
   const [users, setUser] = useState(null);
 
@@ -21,10 +21,17 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = () => {
-    setUser(null);
-    sessionStorage.removeItem('userInfo'); // 세션 스토리지에서 사용자 정보 제거
-    alert("로그아웃 하셨습니다.");
-  };
+	  try {
+	    axios.get('http://localhost:8080/api/Logout', {
+	      withCredentials: true
+	    });
+	    // 여기서 응답 처리
+	    localStorage.removeItem('userInfo'); // 세션 스토리지에서 사용자 정보 제거
+	    alert("로그아웃 하셨습니다.");
+	  } catch (error) {
+	    console.error('로그아웃 오류', error);
+	  }
+	};
 
   return (
     <AuthContext.Provider value={{ users, login, logout }}>

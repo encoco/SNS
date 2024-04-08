@@ -14,6 +14,7 @@ import axios from 'axios';
 	  const [password, setPassword] = useState('');
 	  const [passwordCheck, setPasswordCheck] = useState('');
 	  const [email, setEmail] = useState('');
+	  const [Nick, setNick] = useState('');
 	  const [phone, setPhone] = useState('');
 	  
 	  const validateForm = () => {
@@ -50,6 +51,7 @@ import axios from 'axios';
 	    try {
 	      const response = await axios.post('http://localhost:8080/api/checkId', {
 	        username: username,
+	        nickname : Nick
 	      });
 	      if (response.data.isDuplicate) {
 	        alert(response.data.message); 
@@ -58,10 +60,11 @@ import axios from 'axios';
 	      return false; // 중복된 ID가 없음
 	    } catch (error) {
 	      if (error.response && error.response.data.isDuplicate) {
-	        alert(error.response.data.message); 
+	        alert(error.response.data.message);
+	        console.log(error); 
 	        return true; 
 	      } else {
-	        alert('ID 중복 검사 중 오류가 발생했습니다.');
+	        alert('다시 시도해주세요.');
 	        return true;
 	      }
 	    }
@@ -76,6 +79,7 @@ import axios from 'axios';
 	      const response = await axios.post('http://localhost:8080/api/Signup', {
 	        username: username,
 	        password: password,
+	        nickname : Nick,
 	        email: email,
 	        phone: phone,
 	      });
@@ -88,34 +92,43 @@ import axios from 'axios';
 	  
 	  return (
 	    <div className="flex flex-col gap-6 p-4 sm:p-6 items-center justify-center min-h-screen">
+	    	<div className="absolute top-4 left-4">
+                <Button onClick={() => navigate(-1)}>뒤로가기</Button>
+            </div>
 	      <div className="w-full max-w-[400px]">
 	        <div className="text-center py-6">
-	          <h1 className="text-3xl font-bold">Join us</h1>
-	          <p className="text-gray-500 dark:text-gray-400">Create your account</p>
+	          <h1 className="text-3xl font-bold">회원가입</h1>
+	          <p className="text-gray-500 dark:text-gray-400"></p>
 	        </div>
 	        <div className="space-y-4">
 	          <div className="space-y-2">
-	            <Label htmlFor="username">ID</Label>
+	            <Label htmlFor="username">아이디</Label>
 	            <Input id="username" placeholder="r___k18" value={username} onChange={(e) => setusername(e.target.value)} />
 	          </div>
+	          
 	          <div className="space-y-2">
-	            <Label htmlFor="password">Password</Label>
+	            <Label htmlFor="Nick">닉네임</Label>
+	            <Input id="Nick" value={Nick} onChange={(e) => setNick(e.target.value)} />
+	          </div>
+	          
+	          <div className="space-y-2">
+	            <Label htmlFor="password">비밀번호</Label>
 	            <Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
 	          </div>
 	          <div className="space-y-2">
-	            <Label htmlFor="passwordck">Password Check</Label>
+	            <Label htmlFor="passwordck">비밀번호 확인</Label>
 	            <Input id="passwordck" type="password" value={passwordCheck} onChange={(e) => setPasswordCheck(e.target.value)} />
 	          </div>
 	          <div className="space-y-2">
-	            <Label htmlFor="phone">Phone Number</Label>
+	            <Label htmlFor="phone">휴대폰 번호</Label>
 	            <Input id="phone" value={phone} onChange={(e) => setPhone(e.target.value)} />
 	          </div>
 	          <div className="space-y-2">
-	            <Label htmlFor="email">Email</Label>
+	            <Label htmlFor="email">이메일</Label>
 	            <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
 	          </div>
 	          
-	          <Button className="w-full" onClick={handleSignup}>Join</Button>
+	          <Button className="w-full" onClick={handleSignup}>회원가입</Button>
 	        </div>
 	      </div>
 	    </div>

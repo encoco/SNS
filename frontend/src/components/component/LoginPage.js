@@ -16,45 +16,55 @@ function LoginPage() {
 	
 	useEffect(() => {
 	  const queryParams = new URLSearchParams(window.location.search);
-	  const userParam = queryParams.get('user');
-	
-	  if (userParam) {
-	    // 'user' 쿼리 파라미터에서 정보 추출 및 변환
-	    // 예시: "UsersInfoDTO(nickname=, phone=010-7137-5740, email=wkdwlgjs111@naver.com, role=ROLE_USER_SNS)"
-	    const userInfoString = userParam.slice(userParam.indexOf('(') + 1, -1); // 괄호 안의 내용 추출
-	    const userInfoArray = userInfoString.split(', '); // 쉼표로 분리하여 배열로 변환
-	
-	    // 배열의 각 요소를 키-값 쌍으로 변환
-	    const userInfoObj = userInfoArray.reduce((obj, item) => {
-	      const [key, value] = item.split('=');
-	      obj[key] = value;
-	      return obj;
-	    }, {});
-	
-	    // sessionStorage에 저장
-	    sessionStorage.setItem('userInfo', JSON.stringify(userInfoObj));
-	    navigate('/index');
+	  const code = queryParams.get('code');
+	  console.log(code);
+	  try {
+		    const response = axios.post('http://localhost:8080/api/test', {code}, {
+	             withCredentials: true
+	        });
+		    console.log(response);
+		  }
+		  catch{
+			console.log("error");
+		  }
+		
+	  if (code) {
+	    // localStorage에 저장
+	    console.log('asd');
 	  }
 	}, []);
 	
   const goToSignUp = () => {
     navigate('/Signup'); 
   };
+   
+  const gocookie = async () => {
+	  try {
+	    const response = await axios.post('http://localhost:8080/api/test', {}, {
+             withCredentials: true
+        });
+	    console.log(response);
+	  }
+	  catch{
+		console.log("error");
+	  }
+	};
+	
   const handleLogin = async () => {
 	  try {
 	    const params = new URLSearchParams();
 	    params.append('username', username);
 	    params.append('password', password);
-	
+	    
 	    const response = await axios.post('http://localhost:8080/api/Login', params, {
 	      headers: {
 	        'Content-Type': 'application/x-www-form-urlencoded'
 	      },
-	      credentials: 'include' // 세션 쿠키를 클라이언트에서 서버로 전송하기 위해 필요한 옵션
+	      withCredentials: true
 	    });
-	    
-	    sessionStorage.setItem('userInfo', JSON.stringify(response.data));
-	    
+	    const accessToken = response.data.accessToken; // 서버 응답 형식에 따라 조정 필요
+	    localStorage.setItem('userInfo', JSON.stringify(response.data.accessToken));
+	    console.log(response);
 	    await login({ username, password }); // 예시 로그인 함수
 	    alert('로그인 성공');
 	    navigate('/index');
@@ -79,19 +89,7 @@ function LoginPage() {
     e.preventDefault(); // 기본 제출 동작 방지
     await handleLogin(); // 로그인 처리
   };
-  
-  const handleGetUserInfo = async () => {
-	  try {
-	    const userInfoStr = sessionStorage.getItem('userInfo');
-	    if (userInfoStr) {
-	      const userInfo = JSON.parse(userInfoStr);	      
-	    } else {
-	      console.log('저장된 사용자 정보가 없습니다.');
-	    }
-	  } catch (error) {
-	    console.error('사용자 정보를 가져오는데 실패했습니다.', error);
-	  }
-	};
+ 
 
   return (
     <div className="flex flex-col gap-6 p-4 sm:p-6 items-center justify-center min-h-screen">
@@ -127,17 +125,21 @@ function LoginPage() {
         <br/>
         
         <div className="space-y-4">
+        <Button className="w-full" style={{ backgroundColor: '#03C75A'}} variant="outline"
+          						onClick={gocookie} >
+            cookie
+          </Button>
           <Button className="w-full" style={{ backgroundColor: '#03C75A'}} variant="outline"
           						onClick={() => window.location.href='http://localhost:8080/oauth2/authorization/naver'} >
-            Naver
+            NAVER
           </Button>
           <Button className="w-full" variant="outline"
           							onClick={() => window.location.href='http://localhost:8080/oauth2/authorization/google'} >
-            Google
+            GOOGLE
           </Button>
           <Button className="w-full" style={{ backgroundColor: '#FEE500'}} variant="outline"
           							 onClick={() => window.location.href='http://localhost:8080/oauth2/authorization/kakao'} >
-            Kakao
+            KAKAO
           </Button>
         </div>
       </div>

@@ -33,7 +33,7 @@ const TextArea = styled.textarea`
 	function BoardWrite() {
 		const navigate = useNavigate();
 		const [content, setContent] = useState('');
-		 const [img, setimg] = useState(null);
+		const [img, setimg] = useState(null);
 
 		  // 파일이 선택되었을 때 호출되는 함수
 		  const handleFileChange = (event) => {
@@ -57,9 +57,9 @@ const TextArea = styled.textarea`
 		// '업로드' 버튼을 클릭시 호출
 		const Write = async () => {
 		  try {
-			const id = JSON.parse(sessionStorage.getItem('userInfo') || '{}').id;
+			const id = JSON.parse(localStorage.getItem('userInfo') || '{}').id;
 			console.log(id);
-		    const response = await axios.post('http://localhost:8080/api/boardList', {
+		    const response = await axios.post('http://localhost:8080/api/boardWrite', {
 		      id, // 여기에 id 값을 추가
 		      content,
 		      img
