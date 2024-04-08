@@ -12,12 +12,12 @@ import Mypage from './components/component/my-page';
 
 // 로그인 상태에 따라 접근 권한을 조절하는 컴포넌트
 const PrivateRoute = ({ children }) => {
-  const userInfo = sessionStorage.getItem('userInfo'); // sessionStorage에서 userInfo 가져오기
+  const userInfo = localStorage.getItem('userInfo'); // localStorage에서 userInfo 가져오기
   return userInfo ? children : <Navigate to="/" />; // userInfo가 있으면 자식 컴포넌트를, 없으면 로그인 페이지로 리다이렉트
 };
 
 const PublicRoute = ({ children }) => {
-  const userInfo = sessionStorage.getItem('userInfo');
+  const userInfo = localStorage.getItem('userInfo');
   return userInfo ? <Navigate to="/index" /> : children; // userInfo가 있으면 메인 페이지로, 없으면 자식 컴포넌트를 리턴
 };
 

@@ -4,6 +4,7 @@ import { Link , useNavigate} from "react-router-dom";
 import { Input } from "./ui/input"
 import axios from 'axios';
 import { useAuth } from '../../contexts/AuthContext'; // 경로는 실제 구조에 맞게 조정해야 함
+import api from "../../api";
 
 export default function Component() {
   const [isNavExpanded, setIsNavExpanded] = useState(false);
@@ -13,22 +14,23 @@ export default function Component() {
   const [posts, setPosts] = useState([]);
   
   useEffect(() => {
-    // 서버로부터 글 목록 받아오는 함수
     const fetchPosts = async () => {
       try {
-		const id = JSON.parse(sessionStorage.getItem('userInfo') || '{}').id;
-        const response = await axios.get(`http://localhost:8080/api/boardList?id=${id}`);
+        // api 인스턴스 사용
+        const info = localStorage.getItem('userInfo');
+        const response = await api.get(`/boardList`, {info});
         console.log(response.data);
-        const pngn = response.pagination;
-    	console.log(pngn);
         setPosts(response.data);
       } catch (error) {
-        console.error("글 목록을 불러오는 데 실패했습니다.", error);
+        console.error("Error fetching posts", error);
+        if (error.response && error.response.status === 401) {
+          // 로그인 페이지로 리다이렉트하거나 로그아웃 처리
+          //navigate('/');
+        }
       }
     };
-
-    fetchPosts(); // 함수 실행
-  }, []); // 빈 배열을 전달하여 컴포넌트가 마운트될 때만 실행되도록 함
+    fetchPosts();
+  }, [logout, navigate]);
 
 
   
@@ -36,7 +38,7 @@ export default function Component() {
   // 스크롤 이벤트 리스너 설정 및 정리
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 300) {
+     if (window.scrollY > 300) {
         setShowTopBtn(true);
       } else {
         setShowTopBtn(false);
@@ -59,10 +61,8 @@ export default function Component() {
   
   const handleLogout = async () => {
 	  try {
-	    const response = await axios.get('http://localhost:8080/api/Logout');
 	   	logout();
 	   	navigate('/');
-	   	
 	  } catch (error) {
 		  console.log(error);
 	    alert('다시 시도해주세요.');
@@ -120,44 +120,38 @@ export default function Component() {
       <div className="grid gap-4 w-full max-w-4xl mx-auto">
         <div className="grid gap-2">
 			{/* 글은 여기부터*/}
-			     {
-					  posts.map((post) => (
-					    <div key={post.board_id} className="rounded-xl bg-white p-4 grid gap-4 border border-gray-100 dark:border-gray-800">
-					      <div className="flex items-center space-x-2">
-					        {/* 게시글의 사용자 아바타 이미지; 실제 이미지 주소가 있다면 'src'를 변경하세요. */}
-					        <img
-					          alt="Avatar"
-					          className="rounded-full"
-					          src="/placeholder.svg" // 예시 URL, 실제 경로로 대체 필요
-					          style={{
-					            aspectRatio: "40/40",
-					            objectFit: "cover",
-					          }}
-					          width="40"
-					        />
-					        <div className="grid gap-1">
-					          {/* 게시글 작성자와 시간을 나타내는 부분; 이 예제에서는 해당 정보가 없어 생략됨 */}
-					          <div className="font-semibold">{post.id}</div>
-					          <div className="text-xs text-gray-500 dark:text-gray-400">{post.date}</div>
-					        </div>
+			    {Array.isArray(posts) && posts.map((post) => (
+					  <div key={post.board_id} className="rounded-xl bg-white p-4 grid gap-4 border border-gray-100 dark:border-gray-800">
+					    <div className="flex items-center space-x-2">
+					      <img
+					        alt="Avatar"
+					        className="rounded-full"
+					        src="/placeholder.svg"
+					        style={{
+					          aspectRatio: "40/40",
+					          objectFit: "cover",
+					        }}
+					        width="40"
+					      />
+					      <div className="grid gap-1">
+					        <div className="font-semibold">{post.id}</div>
+					        <div className="text-xs text-gray-500 dark:text-gray-400">{post.date}</div>
 					      </div>
-					      <div className="line-clamp-3">
-					        {/* 게시글 내용 */}
-					        <p>{post.content}</p>
-					      </div>
-					      {/* 이미지나 비디오가 있는 경우 이를 렌더링하는 로직을 추가할 수 있습니다. */}
-					      {post.img && <img src={post.img} alt="Post" />}
-					      {post.video && <video src={post.video} controls />}
-					      {/* 버튼과 아이콘 부분은 예시이며, 실제 구현에 맞게 조정해야 합니다. */}
-					      <div className="flex space-x-4 flex-wrap">
-							  <button className="w-10 h-8">Like</button> 
-							  <button className="w-16 h-8">Comment</button>
-							  <button className="w-16 h-8">Share</button> 
-							</div>
 					    </div>
-					  ))
-					}
+					    <div className="line-clamp-3">
+					      <p>{post.content}</p>
+					    </div>
+					    {post.img && <img src={post.img} alt="Post" />}
+					    {post.video && <video src={post.video} controls />}
+					    <div className="flex space-x-4 flex-wrap">
+					      <button className="w-10 h-8">Like</button> 
+					      <button className="w-16 h-8">Comment</button>
+					      <button className="w-16 h-8">Share</button> 
+					    </div>
+					  </div>
+					))}
 		{/*여기까지*/}
+		
             </div>
           </div>
         </div>
