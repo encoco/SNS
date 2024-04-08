@@ -69,7 +69,7 @@ public class TestController {
     }
 	
 	@PostMapping("/test")
-	public ResponseEntity<?> test(@RequestParam String code) {
+	public ResponseEntity<?> test(@RequestParam(name="code") String code) {
 		System.out.println(code);
 		return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body("완");
 	}
