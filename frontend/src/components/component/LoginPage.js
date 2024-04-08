@@ -98,8 +98,8 @@ function LoginPage() {
       <div className="w-full max-w-[400px]">
         
           <div className="text-center py-6">
-            <h1 className="text-3xl font-bold">Welcome</h1>
-            <p className="text-gray-500 dark:text-gray-400">Enter your email to login</p>
+            <h1 className="text-3xl font-bold">SNS</h1>
+            <p className="text-gray-500 dark:text-gray-400">환영합니다!</p>
           </div>
 
         
@@ -108,20 +108,20 @@ function LoginPage() {
         <form onSubmit={handleSubmit}>
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="username">Username</Label>
+              <Label htmlFor="username">아이디</Label>
               <Input id="username" placeholder="r___k18" value={username} onChange={(e) => setUsername(e.target.value)} />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password">비밀번호</Label>
               <Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)}/>
             </div>
             <div className="mt-4 space-y-2 text-center">
               <Link className="text-sm underline" to="#">
-                Forgot your password?
+                비밀번호를 잊으셨나요?
               </Link>
             </div>
-            <Button type="submit" className="w-full mb-2">Login</Button>
-            <Button className="w-full mb-2" onClick={goToSignUp}>Join Us</Button>
+            <Button type="submit" className="w-full mb-2">로그인</Button>
+            <Button className="w-full mb-2" onClick={goToSignUp}>회원가입</Button>
           </div>
         </form>
         <br/>
@@ -129,23 +129,15 @@ function LoginPage() {
         <div className="space-y-4">
           <Button className="w-full" style={{ backgroundColor: '#03C75A'}} variant="outline"
           						onClick={() => window.location.href='http://localhost:8080/oauth2/authorization/naver'} >
-            Login with Naver
-          </Button>
-          <Button className="w-full" style={{ backgroundColor: '#03C75A'}} variant="outline"
-          						onClick={handleGetUserInfo} >          
-            test
-          </Button>
-          <Button className="w-full" style={{ backgroundColor: '#03C75A'}} variant="outline"
-          						onClick={logout} >          
-            logout
+            Naver
           </Button>
           <Button className="w-full" variant="outline"
           							onClick={() => window.location.href='http://localhost:8080/oauth2/authorization/google'} >
-            Login with Google
+            Google
           </Button>
           <Button className="w-full" style={{ backgroundColor: '#FEE500'}} variant="outline"
           							 onClick={() => window.location.href='http://localhost:8080/oauth2/authorization/kakao'} >
-            Login with Kakao
+            Kakao
           </Button>
         </div>
       </div>

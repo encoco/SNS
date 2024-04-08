@@ -61,7 +61,8 @@ const TextArea = styled.textarea`
 			console.log(id);
 		    const response = await axios.post('http://localhost:8080/api/boardList', {
 		      id, // 여기에 id 값을 추가
-		      content
+		      content,
+		      img
 		    });
 		   	console.log(response);  // 서버로부터 받은 응답을 콘솔에 출력
 		   	navigate('/'); // 글 작성이 완료되면 홈페이지로 이동
