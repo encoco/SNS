@@ -16,21 +16,11 @@ function LoginPage() {
 	
 	useEffect(() => {
 	  const queryParams = new URLSearchParams(window.location.search);
-	  const code = queryParams.get('code');
-	  console.log(code);
-	  try {
-		    const response = axios.post('http://localhost:8080/api/test', {code}, {
-	             withCredentials: true
-	        });
-		    console.log(response);
-		  }
-		  catch{
-			console.log("error");
-		  }
-		
-	  if (code) {
-	    // localStorage에 저장
-	    console.log('asd');
+	  const accesstoken = queryParams.get('accesstoken');
+	  
+	  if (accesstoken) {
+		localStorage.setItem('userInfo', accesstoken);
+	    navigate('/index');
 	  }
 	}, []);
 	

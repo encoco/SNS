@@ -46,7 +46,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
     	            .path("/")
     	            .build();
     	    System.out.println("handler : " + cookie.toString());
-    	    
+    	    System.out.println(userDTO.toString());
     	    response.setHeader(HttpHeaders.SET_COOKIE, cookie.toString());
             // Access Token만 JSON 응답으로 반환
             Map<String, String> tokenMap = new HashMap<>();
@@ -54,7 +54,9 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
             String tokensJson = new ObjectMapper().writeValueAsString(tokenMap);
             response.setContentType("application/json;charset=UTF-8");
             response.getWriter().write(tokensJson); // 클라이언트로 응답 전송
-            
+            if(userDTO.getRole().equals("ROLE_USER_SNS")) {
+            	response.sendRedirect("http://localhost:3000/?accesstoken="+accessToken);
+            }
         }
     }
 }
