@@ -2,8 +2,8 @@ package com.example.demo.entity;
 
 
 
-import java.time.LocalDateTime;
 import com.example.demo.DTO.BoardDTO;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -30,20 +30,21 @@ public class BoardEntity {
     private String content;
     private String date;
 
-	public static BoardEntity toEntity(BoardDTO dto) {
+    public static BoardEntity toEntity(BoardDTO dto) {
         return BoardEntity.builder()
         		.board_id(dto.getBoard_id())
                 .id(dto.getId())
-                .img(dto.getImg())
+                .img(dto.getImgpath())
                 .video(dto.getVideo())
                 .content(dto.getContent())
                 .date(dto.getDate())
                 .build();
     }
+
 	@Override
 	public String toString() {
-		return "BoardEntity [board_id=" + board_id + ", id=" + id + ", img=" + img + ", video=" + video + ", content=" + content
-				+ ", date=" + date + "]";
+		return "BoardEntity [board_id=" + board_id + ", id=" + id + ", img=" + img  + ", video="
+				+ video + ", content=" + content + ", date=" + date + "]";
 	}
 
 }

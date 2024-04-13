@@ -7,6 +7,7 @@ import { Label } from "./ui/label"
 import { Input } from "./ui/input"
 import { Button } from "./ui/button"
 import axios from 'axios';
+import api from "../../api";
 
 //npm install styled-components 설치함!
 const Container = styled.div`
@@ -56,20 +57,27 @@ const TextArea = styled.textarea`
 		
 		// '업로드' 버튼을 클릭시 호출
 		const Write = async () => {
-		  try {
-			const access = localStorage.getItem("userInfo");
-		    const response = await axios.post('http://localhost:8080/api/boardWrite', {
-		      access,
-		      content,
-		      img
-		    });
-		   	console.log(response);  // 서버로부터 받은 응답을 콘솔에 출력
-		   	navigate('/'); // 글 작성이 완료되면 홈페이지로 이동
-		   	
-		  } catch (error) {
-			  console.log(error);
-		    alert('글쓰기에 실패했습니다. 다시 시도해주세요.');
-		  }
+
+			const formData = new FormData(); // FormData 객체 생성
+		    formData.append('content', content); // 글 내용 추가
+			if (img) {
+				formData.append('img', img); // 이미지 파일 추가
+			}
+		  	
+		  	try {
+		    	const response = await api.post('/boardWrite', formData, {
+			      headers: {
+			        'Content-Type': 'multipart/form-data',
+			      },
+			      withCredentials: true,
+			    });
+				console.log(response);
+				alert('글쓰기 완료');
+				navigate("/");
+			  	} catch (error) {
+			    console.log(error);
+			    alert('글쓰기에 실패했습니다. 다시 시도해주세요.');
+			}
 	   };
 	  return (
 	    <Container>

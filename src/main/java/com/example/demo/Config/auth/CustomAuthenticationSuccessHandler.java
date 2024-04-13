@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
@@ -15,8 +14,8 @@ import org.springframework.stereotype.Component;
 import com.example.demo.Config.JwtUtil;
 import com.example.demo.DTO.UsersDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import jakarta.servlet.ServletException;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -24,13 +23,13 @@ import lombok.RequiredArgsConstructor;
 @Component
 @RequiredArgsConstructor
 public class CustomAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
-	
+
 	private final JwtUtil jwtUtil;
 	@Value("${jwt.expirationTime.access}")
     private long accessExpirationTime;
 	@Value("${jwt.expirationTime.refresh}")
     private long refreshExpirationTime;
-    
+
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
                                         Authentication authentication) throws IOException, ServletException {
@@ -40,17 +39,16 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
         	String accessToken = jwtUtil.generateToken(userDetails,accessExpirationTime); // Access Token 생성
             String refreshToken = jwtUtil.generateToken(userDetails,refreshExpirationTime); // Refresh Token 생성
             UsersDTO userDTO = userDetails.getUsersDTO();
-            
+
             ResponseCookie cookie = ResponseCookie.from("refreshToken", refreshToken)
     	            .httpOnly(true)
     	            .path("/")
     	            .build();
-    	    System.out.println("handler : " + cookie.toString());
-    	    System.out.println(userDTO.toString());
     	    response.setHeader(HttpHeaders.SET_COOKIE, cookie.toString());
             // Access Token만 JSON 응답으로 반환
             Map<String, String> tokenMap = new HashMap<>();
             tokenMap.put("accessToken", accessToken);
+            System.out.println(tokenMap);
             String tokensJson = new ObjectMapper().writeValueAsString(tokenMap);
             response.setContentType("application/json;charset=UTF-8");
             response.getWriter().write(tokensJson); // 클라이언트로 응답 전송
