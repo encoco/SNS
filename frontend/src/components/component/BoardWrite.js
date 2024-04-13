@@ -82,7 +82,7 @@ const TextArea = styled.textarea`
 	    <Container>
 		      <Title>게시글 작성</Title>
 		      <TextArea value={content} onChange={handleContentChange} placeholder="내용을 입력하세요..." />
-		      <input type="file" name="img" id="img" onChange={handleFileChange} />
+		      <input type="file" name="img" id="img" onChange={handleFileChange} multiple />
 		      <Button onClick={Write}>업로드하기</Button>
 		</Container>
 	  );

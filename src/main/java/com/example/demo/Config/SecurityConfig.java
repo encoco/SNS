@@ -12,6 +12,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 
 import com.example.demo.Config.auth.CustomAuthenticationFailureHandler;
 import com.example.demo.Config.auth.CustomAuthenticationSuccessHandler;
+import com.example.demo.Service.PrincipalOauth2UserService;
 
 import lombok.RequiredArgsConstructor;
 

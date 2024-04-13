@@ -1,10 +1,11 @@
-package com.example.demo.Config.auth;
+package com.example.demo.Service;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import com.example.demo.Config.auth.PrincipalDetails;
 import com.example.demo.DTO.UsersDTO;
 import com.example.demo.Repository.UsersRepository;
 import com.example.demo.entity.UsersEntity;

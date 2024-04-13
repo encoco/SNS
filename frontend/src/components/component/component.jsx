@@ -136,7 +136,7 @@ export default function Component() {
 					    <div className="line-clamp-3">
 					      <p>{post.content}</p>
 					    </div>
-					    {post.img && <img src={post.img} alt="Post" />}
+					    {post.imgpath && <img src={post.imgpath} alt="Post" />}
 					    {post.video && <video src={post.video} controls />}
 					    <div className="flex space-x-4 flex-wrap">
 					      <button className="w-10 h-8">Like</button> 
@@ -146,7 +146,6 @@ export default function Component() {
 					  </div>
 					))}
 		{/*여기까지*/}
-		
             </div>
           </div>
         </div>

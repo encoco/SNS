@@ -39,7 +39,6 @@ public class BoardController {
 	    try {
 	    	int userId = tokenAtId(request.getHeader("Authorization"));
 	        List<BoardDTO> posts = boardService.getPost(userId);
-	        System.out.println(posts);
 	        return ResponseEntity.ok(posts);
 	    } catch (Exception e) {
 	        System.out.println("서버 오류");
@@ -52,7 +51,7 @@ public class BoardController {
         try {
         	int userId= tokenAtId(request.getHeader("Authorization"));
         	boardDTO.setId(userId);
-        	System.out.println(boardDTO.toString());
+        	
             boardService.writeBoard(boardDTO);
             return ResponseEntity.ok("글이 성공적으로 작성되었습니다.");
         } catch (Exception e) {
