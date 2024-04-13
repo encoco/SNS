@@ -1,7 +1,6 @@
 package com.example.demo.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -16,7 +15,7 @@ import lombok.RequiredArgsConstructor;
 public class BoardService {
 
 	public final BoardRepository boardRepository;
-	
+
 	public List<BoardDTO> getPost(int id){
 		if(boardRepository.findByid(id) != null) {
 			List<BoardEntity> entity = boardRepository.findByid(id);
@@ -25,11 +24,11 @@ public class BoardService {
 		}
 		return null;
 	}
-	
+
 	public void writeBoard(BoardDTO boardDTO) {
 		BoardEntity board = BoardEntity.toEntity(boardDTO);
 		System.out.println(board);
 		boardRepository.save(board);
 	}
-	
+
 }

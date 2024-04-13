@@ -33,7 +33,7 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService{
 		String username = "";
 		UsersDTO user = new UsersDTO();
 		String authPW = "oauthsecuritypasswor";
-		user.setPassword(passwordEncoder.encode(authPW));  
+		user.setPassword(passwordEncoder.encode(authPW));
 		if(userRequest.getClientRegistration().getRegistrationId().equals("google")) {
 			Map<String,Object> resp = super.loadUser(userRequest).getAttributes();
 			username = userRequest.getClientRegistration().getRegistrationId() + "_" +resp.get("sub");

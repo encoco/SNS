@@ -1,14 +1,9 @@
 package com.example.demo.Controller;
 
-import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.http.HttpResponse;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,16 +11,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
 import com.example.demo.Config.JwtUtil;
-import com.example.demo.Config.auth.PrincipalDetails;
 import com.example.demo.DTO.UsersDTO;
 import com.example.demo.Repository.UsersRepository;
 import com.example.demo.Service.UsersService;
-import io.jsonwebtoken.Claims;
-import jakarta.servlet.ServletResponse;
+
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -38,12 +32,11 @@ public class TestController {
 
 	@PostMapping("/checkId")
     public ResponseEntity<?> checkId(@RequestBody UsersDTO request) {
-		System.out.println("CheckId in");
 		boolean username = repository.existsByUsername(request.getUsername());
 		boolean nickname = repository.existsByNickname(request.getNickname());
         if (username) {
         	return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("isDuplicate", true, "message", "이미 사용 중인 아이디입니다."));
-        } 
+        }
         else if(nickname) {
         	return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("isDuplicate", true, "message", "이미 사용 중인 닉네임입니다."));
         } else {
@@ -67,33 +60,23 @@ public class TestController {
 
         return new ResponseEntity<>("You've been logged out successfully.", HttpStatus.OK);
     }
-	
+
 	@PostMapping("/test")
 	public ResponseEntity<?> test(@RequestParam(name="code") String code) {
-		System.out.println(code);
 		return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body("완");
 	}
-	
-	@PostMapping("/refreshToken")
-	public ResponseEntity<?> refreshToken(@RequestBody String refreshToken){
-	    try {
-	    	String[] parts = refreshToken.split("\":\"", 2);
-	        String rawToken = parts[1].substring(0, parts[1].length() - 2);
-	        String token = rawToken.replace("\\\"", "");
-	        System.out.println("token : " + token);
-	        
-	        int id = jwtutil.getUserIdFromToken(token);
-	        UsersDTO dto = new UsersDTO();
-	        PrincipalDetails userDetails = new PrincipalDetails(dto);
-	        // 새 액세스 토큰 생성
-	        String newAccessToken = jwtutil.generateToken(userDetails,300);
-	        System.out.println("newtoken : " + newAccessToken);
 
-	        return ResponseEntity.ok(newAccessToken);
-	    } catch (Exception e) {
-	    	e.printStackTrace(); // 이를 통해 예외의 상세 정보를 콘솔에 출력
-	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("다시 로그인 해주세요");
-	    }
-	}
+	@PostMapping("/refresh")
+    public ResponseEntity<?> refreshToken(HttpServletRequest request) {
+        // 리프레시 토큰 검증 로직
+		String refreshToken = (String) request.getAttribute("refreshToken");
+        if (refreshToken != null && jwtutil.validateToken(refreshToken)) {
+            String newAccessToken = jwtutil.newAccessToken(refreshToken);
+            System.out.println("~@~#~#NewToken : " + newAccessToken);
+            return ResponseEntity.ok().body(newAccessToken);
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid Refresh Token");
+        }
+    }
 }
 

@@ -14,21 +14,16 @@ export default function Component() {
   const [posts, setPosts] = useState([]);
   
   useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        // api 인스턴스 사용
-        const info = localStorage.getItem('userInfo');
-        const response = await api.get(`/boardList`, {info});
-        console.log(response.data);
-        setPosts(response.data);
-      } catch (error) {
-        console.error("Error fetching posts", error);
-        if (error.response && error.response.status === 401) {
-          // 로그인 페이지로 리다이렉트하거나 로그아웃 처리
-          //navigate('/');
-        }
-      }
-    };
+	 const fetchPosts = async () => {
+	  try {
+	    const response = await api.get(`/boardList`,{
+		  withCredentials: true,
+		});
+	    setPosts(response.data);
+	  } catch (error) {
+	    console.log(error);
+	  }
+	};
     fetchPosts();
   }, [logout, navigate]);
 

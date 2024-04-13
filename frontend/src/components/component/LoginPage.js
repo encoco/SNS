@@ -33,7 +33,6 @@ function LoginPage() {
 	    const response = await axios.post('http://localhost:8080/api/test', {}, {
              withCredentials: true
         });
-	    console.log(response);
 	  }
 	  catch{
 		console.log("error");
@@ -53,8 +52,7 @@ function LoginPage() {
 	      withCredentials: true
 	    });
 	    const accessToken = response.data.accessToken; // 서버 응답 형식에 따라 조정 필요
-	    localStorage.setItem('userInfo', JSON.stringify(response.data.accessToken));
-	    console.log(response);
+	    localStorage.setItem('userInfo', response.data.accessToken);
 	    await login({ username, password }); // 예시 로그인 함수
 	    alert('로그인 성공');
 	    navigate('/index');
@@ -89,10 +87,7 @@ function LoginPage() {
             <h1 className="text-3xl font-bold">SNS</h1>
             <p className="text-gray-500 dark:text-gray-400">환영합니다!</p>
           </div>
-
-        
-        
-        
+                  
         <form onSubmit={handleSubmit}>
           <div className="space-y-4">
             <div className="space-y-2">

@@ -5,8 +5,11 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.springframework.web.multipart.MultipartFile;
+
 import com.example.demo.entity.BoardEntity;
-import jakarta.persistence.Column;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -22,10 +25,11 @@ import lombok.Setter;
 public class BoardDTO {
 	private int board_id;
 	private int id;
-	private String img;
+	private MultipartFile img;
+	private String imgpath;
     private String video;
     private String content;
-    
+
     @Builder.Default
     private String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm"));
 
@@ -41,26 +45,26 @@ public class BoardDTO {
 	            ", date=" + date +
 	            '}';
 	}
-	
+
 	public static BoardDTO toDTO(BoardEntity dto) {
         return BoardDTO.builder()
                 .board_id(dto.getBoard_id())
                 .id(dto.getId())
-                .img(dto.getImg())
+                .imgpath(dto.getImg())
                 .video(dto.getVideo())
                 .content(dto.getContent())
                 .date(dto.getDate())
                 .build();
     }
-	
-	
+
+
 	public static List<BoardDTO> ToDtoList(List<BoardEntity> entities) {
 	    List<BoardDTO> dtos = new ArrayList<>();
 	    for (BoardEntity entity : entities) {
 	        BoardDTO dto = new BoardDTO();
 	        dto.setBoard_id(entity.getBoard_id());
 	        dto.setId(entity.getId());
-	        dto.setImg(entity.getImg());
+	        dto.setImgpath(entity.getImg());
 	        dto.setVideo(entity.getVideo());
 	        dto.setDate(entity.getDate());
 	        dto.setContent(entity.getContent());

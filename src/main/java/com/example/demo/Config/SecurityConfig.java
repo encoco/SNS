@@ -9,13 +9,10 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
-import org.springframework.web.filter.CorsFilter;
 
 import com.example.demo.Config.auth.CustomAuthenticationFailureHandler;
 import com.example.demo.Config.auth.CustomAuthenticationSuccessHandler;
 
-import java.util.*;
 import lombok.RequiredArgsConstructor;
 
 @Configuration
@@ -40,7 +37,7 @@ public class SecurityConfig {
                 authorizeRequests
                     .requestMatchers("/",  "/login/**",  "/oauth2/**",  "/api/**",  "/user/**").permitAll()
                     .anyRequest().authenticated() // 위에 지정된 경로를 제외한 모든 요청은 인증이 필요합니다. user, admin,
-                    
+
             )
             .addFilterBefore(jwtFilter(jwtutil), UsernamePasswordAuthenticationFilter.class)
             .formLogin(formLogin ->

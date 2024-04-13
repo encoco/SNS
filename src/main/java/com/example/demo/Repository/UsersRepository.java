@@ -10,7 +10,7 @@ public interface UsersRepository extends JpaRepository<UsersEntity, Integer> {
 	public boolean existsByUsername(String username);
 	public boolean existsByNickname(String nickname);
 	public UsersEntity findByUsername(String username);
-	
+
 }
 
 
