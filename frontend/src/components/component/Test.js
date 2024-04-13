@@ -1,4 +1,4 @@
-/*BoardWrite*/
+/*test*/
 
 import React, { useState } from 'react';
 import { useNavigate,Link } from 'react-router-dom'; // useNavigate 훅 임포트
@@ -30,7 +30,7 @@ const TextArea = styled.textarea`
   resize: none;
 `;
 
-	function BoardWrite() {
+	function Test() {
 		const navigate = useNavigate();
 		const [content, setContent] = useState('');
 		const [img, setimg] = useState(null);
@@ -57,9 +57,10 @@ const TextArea = styled.textarea`
 		// '업로드' 버튼을 클릭시 호출
 		const Write = async () => {
 		  try {
-			const access = localStorage.getItem("userInfo");
-		    const response = await axios.post('http://localhost:8080/api/boardWrite', {
-		      access,
+			const id = JSON.parse(localStorage.getItem('userInfo') || '{}').id;
+			console.log(id);
+		    const response = await axios.post('http://localhost:8080/api/Test', {
+		      id, // 여기에 id 값을 추가
 		      content,
 		      img
 		    });
@@ -71,14 +72,43 @@ const TextArea = styled.textarea`
 		    alert('글쓰기에 실패했습니다. 다시 시도해주세요.');
 		  }
 	   };
+	   
+	   function uploadFile() {
+		  const input = document.getElementById('fileInput');
+		  
+		  if (input.files.length > 0) {
+		    const file = input.files[0];
+		    const formData = new FormData();
+		    
+		    // 'file'은 서버에서 기대하는 필드 이름입니다.
+		    formData.append('file', file);
+		
+		    axios.post('서버 업로드 URL', formData, {
+		      headers: {
+		        // 'Content-Type': 'multipart/form-data'는 Axios가 자동으로 설정해 줍니다.
+		        'Content-Type': 'multipart/form-data'
+		      }
+		    })
+		    .then(function (response) {
+		      console.log('File uploaded successfully', response);
+		    })
+		    .catch(function (error) {
+		      console.log('Error uploading file', error);
+		    });
+		  } else {
+		    console.log('No file selected');
+		  }
+		}
+
 	  return (
 	    <Container>
 		      <Title>게시글 작성</Title>
 		      <TextArea value={content} onChange={handleContentChange} placeholder="내용을 입력하세요..." />
-		      <input type="file" name="img" id="img" onChange={handleFileChange} />
+		      <input type="file" id="fileInput" />
+			  <Button onClick={uploadFile}>Upload File</Button>
 		      <Button onClick={Write}>업로드하기</Button>
 		</Container>
 	  );
 	}
 
-export default BoardWrite;
+export default Test;

@@ -7,6 +7,7 @@ import SignupPage from './components/component/Signup';
 import Component from './components/component/component';
 import BoardWrite from './components/component/BoardWrite';
 import Mypage from './components/component/my-page';
+import Test from './components/component/Test';
 
 
 
@@ -30,6 +31,8 @@ function App() {
         <Route path="/index" element={<PrivateRoute><Component /></PrivateRoute>} />
         <Route path="/BoardWrite" element={<PrivateRoute><BoardWrite /></PrivateRoute>} />
         <Route path="/mypage" element={<PrivateRoute><Mypage/></PrivateRoute>} />
+        
+        <Route path="/Test" element={<PrivateRoute><Test/></PrivateRoute>} />
       </Routes>
     </div>
   );

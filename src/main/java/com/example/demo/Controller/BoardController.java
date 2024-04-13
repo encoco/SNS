@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.Config.JwtUtil;
@@ -51,9 +52,13 @@ public class BoardController {
 	}
 	
     @PostMapping("/boardWrite")
-    public ResponseEntity<?> writeBoard(@RequestBody BoardDTO boardDTO) {
+    public ResponseEntity<?> writeBoard(@RequestBody BoardDTO boardDTO,@RequestParam(name="access") String token) {
         // 받아온 글 내용을 서비스를 통해 저장하고, 결과에 따라 적절한 응답을 반환합니다.
+    	System.out.println("PostMapping 잘넘어옴");
         try {
+        	int id = jwtUtil.getUserIdFromToken(token);
+        	boardDTO.setId(id);
+        	System.out.println(boardDTO.toString());
             boardService.writeBoard(boardDTO);
             return ResponseEntity.ok("글이 성공적으로 작성되었습니다.");
         } catch (Exception e) {

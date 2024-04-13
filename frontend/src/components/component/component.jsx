@@ -86,6 +86,9 @@ export default function Component() {
 		              <Link className="block h-10 pl-16 pr-4 py-2 font-medium rounded-md hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-gray-50 text-white" to="/mypage">마이페이지</Link>
 		              <Link className="block h-10 pl-16 pr-4 py-2 font-medium rounded-md hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-gray-50 text-white" to="#">메세지</Link>
 		              <Link className="block h-10 pl-16 pr-4 py-2 font-medium rounded-md hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-gray-50 text-white" to="#">환경 설정</Link>
+		              
+		              <Link className="block h-10 pl-16 pr-4 py-2 font-medium rounded-md hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-gray-50 text-white" to="/test">test</Link>
+		              
 		              <button className="block h-10 pl-16 pr-4 py-2 font-medium 
 		              						rounded-md  hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-gray-50
 		                text-white" onClick={handleLogout}>로그아웃</button>
