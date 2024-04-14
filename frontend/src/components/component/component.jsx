@@ -5,6 +5,7 @@ import { Input } from "./ui/input"
 import axios from 'axios';
 import { useAuth } from '../../contexts/AuthContext'; // 경로는 실제 구조에 맞게 조정해야 함
 import api from "../../api";
+import ImageSlider from './ImageSlider'; // ImageSlider 컴포넌트를 import
 
 export default function Component() {
   const [isNavExpanded, setIsNavExpanded] = useState(false);
@@ -133,11 +134,11 @@ export default function Component() {
 					        <div className="text-xs text-gray-500 dark:text-gray-400">{post.date}</div>
 					      </div>
 					    </div>
+					    {post.imgpath && <ImageSlider imgpath={post.imgpath} />}
+					    {post.video && <video src={post.video} controls />}
 					    <div className="line-clamp-3">
 					      <p>{post.content}</p>
 					    </div>
-					    {post.imgpath && <img src={post.imgpath} alt="Post" />}
-					    {post.video && <video src={post.video} controls />}
 					    <div className="flex space-x-4 flex-wrap">
 					      <button className="w-10 h-8">Like</button> 
 					      <button className="w-16 h-8">Comment</button>

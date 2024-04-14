@@ -34,18 +34,18 @@ const TextArea = styled.textarea`
 	function BoardWrite() {
 		const navigate = useNavigate();
 		const [content, setContent] = useState('');
-		const [img, setimg] = useState(null);
+		 const [images, setImages] = useState([]);
 
 		  // 파일이 선택되었을 때 호출되는 함수
 		  const handleFileChange = (event) => {
 		    // 사용자가 선택한 첫 번째 파일을 상태로 설정
-		    setimg(event.target.files[0]);
+		    setImages([...event.target.files]);
 		  };
 		
 		  // 선택된 파일 정보를 출력하는 함수 (예시)
 		  const displayFileInfo = () => {
-		    if (img) {
-		      return <p>파일 이름: {img.name}</p>;
+		    if (images) {
+		      return <p>파일 이름: {images.name}</p>;
 		    } else {
 		      return <p>선택된 파일이 없습니다.</p>;
 		    }
@@ -59,9 +59,10 @@ const TextArea = styled.textarea`
 		const Write = async () => {
 			const formData = new FormData(); // FormData 객체 생성
 		    formData.append('content', content); // 글 내용 추가
-			if (img) {
-				formData.append('img', img); // 이미지 파일 추가
-			}
+			images.forEach((image) => {
+			    formData.append('img', image); 
+			});
+			console.log(images);
 		  	
 		  	try {
 		    	const response = await api.post('/boardWrite', formData, {

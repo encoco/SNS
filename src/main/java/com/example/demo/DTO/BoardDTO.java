@@ -25,7 +25,7 @@ import lombok.Setter;
 public class BoardDTO {
 	private int board_id;
 	private int id;
-	private MultipartFile img;
+	private List<MultipartFile> img;
 	private String imgpath;
     private String video;
     private String content;
