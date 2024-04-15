@@ -4,7 +4,7 @@ import { useAuth } from 'contexts/AuthContext'; // 경로는 실제 구조에 �
 
 
 
-const api = axios.create({
+const api = axios.create({ //기본 요청 주소
   baseURL: 'http://localhost:8080/api',
   headers: {
     "Content-Type": "application/json", 
@@ -12,7 +12,7 @@ const api = axios.create({
   }
 });
 
-api.interceptors.request.use(config => {
+api.interceptors.request.use(config => {   //맨처음 요청 보내는얘
   const token = localStorage.getItem('userInfo');
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
@@ -20,7 +20,7 @@ api.interceptors.request.use(config => {
   return config;
 }, error => Promise.reject(error));
 
-api.interceptors.response.use(
+api.interceptors.response.use( //맨처음 요청에서 오류나면 실행되는 얘
   response => response,
   async (error) => {
     const originalRequest = error.config;
