@@ -167,6 +167,7 @@ function Mypage() {
                   src="/placeholder.svg"
                   width="400"
                 />
+                sadiphsaoidbsaofbasofabsboi
               </CardContent>
               <CardFooter>
                 <div className="flex items-center space-x-4">
