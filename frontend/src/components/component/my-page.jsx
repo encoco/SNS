@@ -117,14 +117,14 @@ function Mypage() {
                       <AvatarImage alt="@shadcn" src="/placeholder-user.jpg" />
                       <AvatarFallback>U</AvatarFallback>
                     </Avatar>
-                    <div className="text-sm font-medium">글쓴애이름 </div>
+                    <div className="text-sm font-medium">작성자 </div>
                   </div>
                 </div>
               </CardHeader>
               <CardContent>
                 <div className="prose dark:prose-dark">
                   <p>
-                    내용내용냉ㅇ내용📸🏞️🍲
+                    내용~~📸🏞️🍲
                   </p>
                 </div>
               </CardContent>
@@ -156,7 +156,7 @@ function Mypage() {
                     <AvatarImage alt="@shadcn" src="/placeholder-user.jpg" />
                     <AvatarFallback>U</AvatarFallback>
                   </Avatar>
-                  <div className="text-sm font-medium">Olivia Davis</div>
+                  <div className="text-sm font-medium">작성자</div>
                 </div>
               </CardHeader>
               <CardContent>
@@ -167,7 +167,7 @@ function Mypage() {
                   src="/placeholder.svg"
                   width="400"
                 />
-                sadiphsaoidbsaofbasofabsboi
+                내용~~
               </CardContent>
               <CardFooter>
                 <div className="flex items-center space-x-4">

@@ -120,7 +120,7 @@ export default function Component() {
         <div className="grid gap-2">
 			{/* 글은 여기부터*/}
 			    {Array.isArray(posts) && posts.map((post) => (
-					  <div key={post.board_id} className="rounded-xl bg-white p-4 grid gap-4 border border-gray-100 dark:border-gray-800">
+					  <div key={post.board_} className="rounded-xl bg-white p-4 grid gap-4 border border-gray-100 dark:border-gray-800">
 					    <div className="flex items-center space-x-2">
 					      <img
 					        alt="Avatar"
