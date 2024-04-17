@@ -96,6 +96,7 @@ export default function Component() {
         <div className="grid gap-2">
 			{/* 글은 여기부터*/}
 			    {Array.isArray(posts) && posts.map((post) => (
+<<<<<<< HEAD
 				  <div key={post.board_id} className="rounded-xl bg-white p-4 grid gap-4 border border-gray-100 dark:border-gray-800 relative">
 				    <div className="flex justify-between items-start">
 				      <div className="flex items-center space-x-2">
@@ -128,6 +129,37 @@ export default function Component() {
 				    </div>
 				  </div>
 				))}
+=======
+					  <div key={post.board_} className="rounded-xl bg-white p-4 grid gap-4 border border-gray-100 dark:border-gray-800">
+					    <div className="flex items-center space-x-2">
+					      <img
+					        alt="Avatar"
+					        className="rounded-full"
+					        src="/placeholder.svg"
+					        style={{
+					          aspectRatio: "40/40",
+					          objectFit: "cover",
+					        }}
+					        width="40"
+					      />
+					      <div className="grid gap-1">
+					        <div className="font-semibold">{post.id}</div>
+					        <div className="text-xs text-gray-500 dark:text-gray-400">{post.date}</div>
+					      </div>
+					    </div>
+					    {post.imgpath && <ImageSlider imgpath={post.imgpath} />}
+					    {post.video && <video src={post.video} controls />}
+					    <div className="line-clamp-3">
+					      <p>{post.content}</p>
+					    </div>
+					    <div className="flex space-x-4 flex-wrap">
+					      <button className="w-10 h-8">Like</button> 
+					      <button className="w-16 h-8">Comment</button>
+					      <button className="w-16 h-8">Share</button> 
+					    </div>
+					  </div>
+					))}
+>>>>>>> origin/sy
 		{/*여기까지*/}
             </div>
           </div>
