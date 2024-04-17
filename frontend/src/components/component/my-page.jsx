@@ -50,7 +50,6 @@ function Mypage() {
 	                onDelete={() => console.log('Delete clicked')}
 	              />
               </div>
-<<<<<<< HEAD
             </CardHeader>
             <CardContent>
               <img
@@ -165,96 +164,6 @@ function Mypage() {
             </CardFooter>
           </Card>
         </div>
-=======
-            </div>
-          </div>
-        </header>
-        <main className="flex-1 overflow-y-auto">
-          <div className="grid gap-4 p-4">
-            <Card>
-              <CardHeader>
-                <div className="flex items-center space-x-4">
-                  <div className="flex items-center space-x-2">
-                    <Avatar className="w-10 h-10 border">
-                      <AvatarImage alt="@shadcn" src="/placeholder-user.jpg" />
-                      <AvatarFallback>U</AvatarFallback>
-                    </Avatar>
-                    <div className="text-sm font-medium">작성자 </div>
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="prose dark:prose-dark">
-                  <p>
-                    내용~~📸🏞️🍲
-                  </p>
-                </div>
-              </CardContent>
-              <CardFooter>
-                <div className="flex items-center space-x-4">
-                  <Button size="xs" variant="ghost">
-                    <HeartIcon className="w-3 h-3 mr-1.5" />
-                    Like
-                  </Button>
-                  <Button size="xs" variant="ghost">
-                    <MessageCircleIcon className="w-3 h-3 mr-1.5" />
-                    Comment
-                  </Button>
-                  <Button size="xs" variant="ghost">
-                    <ShareIcon className="w-3 h-3 mr-1.5" />
-                    Share
-                  </Button>
-                  <div className="ml-auto flex items-center space-x-2 text-xs">
-                    <ClockIcon className="w-3 h-3 opacity-70" />
-                    <time>2m</time>
-                  </div>
-                </div>
-              </CardFooter>
-            </Card>
-            <Card>
-              <CardHeader>
-                <div className="flex items-center space-x-2">
-                  <Avatar className="border">
-                    <AvatarImage alt="@shadcn" src="/placeholder-user.jpg" />
-                    <AvatarFallback>U</AvatarFallback>
-                  </Avatar>
-                  <div className="text-sm font-medium">작성자</div>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <img
-                  alt="Image"
-                  className="aspect-video overflow-hidden rounded-lg object-cover"
-                  height="225"
-                  src="/placeholder.svg"
-                  width="400"
-                />
-                내용~~
-              </CardContent>
-              <CardFooter>
-                <div className="flex items-center space-x-4">
-                  <Button size="xs" variant="ghost">
-                    <HeartIcon className="w-3 h-3 mr-1.5" />
-                    Like
-                  </Button>
-                  <Button size="xs" variant="ghost">
-                    <MessageCircleIcon className="w-3 h-3 mr-1.5" />
-                    Comment
-                  </Button>
-                  <Button size="xs" variant="ghost">
-                    <ShareIcon className="w-3 h-3 mr-1.5" />
-                    Share
-                  </Button>
-                  <div className="ml-auto flex items-center space-x-2 text-xs">
-                    <ClockIcon className="w-3 h-3 opacity-70" />
-                    <time>2m</time>
-                  </div>
-                </div>
-              </CardFooter>
-            </Card>
-          </div>
-        </main>
->>>>>>> origin/sy
       </div>
       
       {showTopBtn && (
