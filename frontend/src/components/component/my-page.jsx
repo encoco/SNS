@@ -1,28 +1,15 @@
-import { AvatarImage, AvatarFallback, Avatar } from "./ui/avatar"
 import React, { useState , useEffect} from 'react';
 import { Link ,useNavigate} from "react-router-dom";
 import { Button } from "./ui/button"
-import { CardHeader, CardContent, CardFooter, Card } from "./ui/card"
+import { CardTitle,CardHeader, CardContent, CardFooter, Card } from "./ui/card"
 import axios from 'axios';
 import { useAuth } from '../../contexts/AuthContext'; // 경로는 실제 구조에 맞게 조정해야 함
-
+import  Sidebar from "./ui/Sidebar";
+import DropdownMenu from './ui/DropdownMenu';
 
 function Mypage() {
 	const [isNavExpanded, setIsNavExpanded] = useState(false);
-	const { logout } = useAuth();
 	const [showTopBtn, setShowTopBtn] = useState(false);
-	const navigate = useNavigate();
-	const handleLogout = async () => {
-	  try {
-	    const response = await axios.get('http://localhost:8080/api/Logout');
-	   	logout();
-	   	navigate('/');
-	   	
-	  } catch (error) {
-		  console.log(error);
-	    alert('다시 시도해주세요.');
-	  }
-   };
    useEffect(() => {
     const handleScroll = () => {
       if (window.scrollY > 300) {
@@ -47,151 +34,136 @@ function Mypage() {
   };
    
   return (
-    <div className="grid md:grid-cols-[300px_1fr] w-full max-w-6xl gap-0 md:gap-0.5 xl:gap-1 rounded-lg border overflow-hidden">
-      <div className="flex min-h-screen border-r border-gray-200 dark:border-gray-800">
-  		<div className="fixed top-0 bottom-0 z-10" onMouseEnter={() => setIsNavExpanded(true)} onMouseLeave={() => setIsNavExpanded(false)}>
-		        {/* 마우스를 올렸을 때 너비가 확장되는 효과를 위한 div */}
-		       	<div className={`w-19 h-full bg-black border-r border-gray-200 dark:border-gray-800 transition-width duration-300 ease-in-out ${isNavExpanded ? "w-60" : "w-12"}`}>
-		        {/* 네비게이션 바 내용, 마우스 오버 시 가시성 조정 및 세로 중앙 정렬 */}
-		        <div className={`flex flex-col justify-center h-full opacity-0 ${isNavExpanded ? "opacity-100" : ""} transition-opacity duration-300 ease-in-out`}>
-		        	<div className="w-full flex justify-center mt-5 flex-col items-center">
-					  <img src="/placeholder-user.jpg" alt="Profile" className="w-13 h-13 rounded-full border-2 border-white" />
-					  <span className="mt-2 dark:hover:text-gray-50 text-white">유저 Nickname</span>
-					</div>
-		          <nav className="mt-20">
-		              <Link className="block h-10 pl-16 pr-4 py-2 font-medium rounded-md hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-gray-50 text-white" to="/index">홈</Link>
-		              <Link className="block h-10 pl-16 pr-4 py-2 font-medium rounded-md hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-gray-50 text-white" to="/BoardWrite">글쓰기</Link>
-		              <Link className="block h-10 pl-16 pr-4 py-2 font-medium rounded-md hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-gray-50 text-white" to="/mypage">마이페이지</Link>
-		              <Link className="block h-10 pl-16 pr-4 py-2 font-medium rounded-md hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-gray-50 text-white" to="#">메세지</Link>
-		              <Link className="block h-10 pl-16 pr-4 py-2 font-medium rounded-md hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-gray-50 text-white" to="#">환경 설정</Link>
-		              <button className="block h-10 pl-16 pr-4 py-2 font-medium 
-		              						rounded-md  hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-gray-50
-		                text-white" onClick={handleLogout}>로그아웃</button>
-		          </nav>
-		        </div>
-			</div>
-	      </div>
-	      
+      <div className="flex min-h-screen bg-gray-100">
+
+	  <Sidebar />
       
-      
-      </div>
-      <div className={`flex flex-col w-full mt-16 transition-margin duration-300 ease-in-out`}>
-        <header className="flex items-center p-4 border-b border-gray-200 dark:border-gray-800 ">
-          <Button className="md:hidden w-10 h-10" variant="icon">
-            <MenuIcon className="w-6 h-6" />
-            <span className="sr-only">Toggle sidebar</span>
-          </Button>
-          	<div className="flex-grow">
-			  <h1 className="text-right mr-11 text-lg font-semibold">마이 페이지</h1>
-			</div>
-          <div className="ml-auto flex items-center gap-4">
-            <Button className="w-8 h-8" variant="icon">
-              <SearchIcon className="w-4 h-4" />
-              <span className="sr-only">Search</span>
-            </Button>
-            <Button className="w-8 h-8" variant="icon">
-              <BellIcon className="w-4 h-4" />
-              <span className="sr-only">Notifications</span>
-            </Button>
-            <Button className="w-8 h-8" variant="icon">
-              <LogOutIcon className="w-4 h-4" />
-              <span className="sr-only">Log out</span>
-            </Button>
-            <div>
-              <div className="mt-1 w-48 py-1 text-sm">
-                <div />
-                <div />
-                <div />
-                <div />
+      <div className="flex-1 p-5">
+        <h1 className="text-3xl font-bold mb-5">My Feed</h1>
+        <div className="grid grid-cols-2 gap-4">
+          <Card className="w-full">
+            <CardHeader>
+              <div className="flex justify-between items-center">
+	              <CardTitle>Olivia Zabis</CardTitle>
+	              <DropdownMenu 
+	                onEdit={() => console.log('Edit clicked')}
+	                onDelete={() => console.log('Delete clicked')}
+	              />
               </div>
-            </div>
-          </div>
-        </header>
-        <main className="flex-1 overflow-y-auto">
-          <div className="grid gap-4 p-4">
-            <Card>
-              <CardHeader>
-                <div className="flex items-center space-x-4">
-                  <div className="flex items-center space-x-2">
-                    <Avatar className="w-10 h-10 border">
-                      <AvatarImage alt="@shadcn" src="/placeholder-user.jpg" />
-                      <AvatarFallback>U</AvatarFallback>
-                    </Avatar>
-                    <div className="text-sm font-medium">글쓴애이름 </div>
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="prose dark:prose-dark">
-                  <p>
-                    내용내용냉ㅇ내용📸🏞️🍲
-                  </p>
-                </div>
-              </CardContent>
-              <CardFooter>
-                <div className="flex items-center space-x-4">
-                  <Button size="xs" variant="ghost">
-                    <HeartIcon className="w-3 h-3 mr-1.5" />
-                    Like
-                  </Button>
-                  <Button size="xs" variant="ghost">
-                    <MessageCircleIcon className="w-3 h-3 mr-1.5" />
-                    Comment
-                  </Button>
-                  <Button size="xs" variant="ghost">
-                    <ShareIcon className="w-3 h-3 mr-1.5" />
-                    Share
-                  </Button>
-                  <div className="ml-auto flex items-center space-x-2 text-xs">
-                    <ClockIcon className="w-3 h-3 opacity-70" />
-                    <time>2m</time>
-                  </div>
-                </div>
-              </CardFooter>
-            </Card>
-            <Card>
-              <CardHeader>
-                <div className="flex items-center space-x-2">
-                  <Avatar className="border">
-                    <AvatarImage alt="@shadcn" src="/placeholder-user.jpg" />
-                    <AvatarFallback>U</AvatarFallback>
-                  </Avatar>
-                  <div className="text-sm font-medium">Olivia Davis</div>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <img
-                  alt="Image"
-                  className="aspect-video overflow-hidden rounded-lg object-cover"
-                  height="225"
-                  src="/placeholder.svg"
-                  width="400"
-                />
-                sadiphsaoidbsaofbasofabsboi
-              </CardContent>
-              <CardFooter>
-                <div className="flex items-center space-x-4">
-                  <Button size="xs" variant="ghost">
-                    <HeartIcon className="w-3 h-3 mr-1.5" />
-                    Like
-                  </Button>
-                  <Button size="xs" variant="ghost">
-                    <MessageCircleIcon className="w-3 h-3 mr-1.5" />
-                    Comment
-                  </Button>
-                  <Button size="xs" variant="ghost">
-                    <ShareIcon className="w-3 h-3 mr-1.5" />
-                    Share
-                  </Button>
-                  <div className="ml-auto flex items-center space-x-2 text-xs">
-                    <ClockIcon className="w-3 h-3 opacity-70" />
-                    <time>2m</time>
-                  </div>
-                </div>
-              </CardFooter>
-            </Card>
-          </div>
-        </main>
+            </CardHeader>
+            <CardContent>
+              <img
+                alt="Content Image"
+                className="w-full h-auto bg-gray-300"
+                height="200"
+                src="/placeholder.svg"
+                style={{
+                  aspectRatio: "300/200",
+                  objectFit: "cover",
+                }}
+                width="300"
+              />
+              <p className="mt-2">sdjapio2j3iodsjio</p>
+            </CardContent>
+            <CardFooter className="flex justify-between text-sm">
+              <span>Like</span>
+              <span>Comment</span>
+              <span>Share</span>
+            </CardFooter>
+          </Card>
+          
+          
+          <Card className="w-full">
+            <CardHeader>
+              <div className="flex justify-between items-center">
+	              <CardTitle>Olivia Zabis</CardTitle>
+	              <DropdownMenu 
+	                onEdit={() => console.log('Edit clicked')}
+	                onDelete={() => console.log('Delete clicked')}
+	              />
+              </div>
+            </CardHeader>
+            <CardContent>
+              <img
+                alt="Content Image"
+                className="w-full h-auto bg-gray-300"
+                height="200"
+                src="/placeholder.svg"
+                style={{
+                  aspectRatio: "300/200",
+                  objectFit: "cover",
+                }}
+                width="300"
+              />
+              <p className="mt-2">sdjapio2j3iodsjio</p>
+            </CardContent>
+            <CardFooter className="flex justify-between text-sm">
+              <span>Like</span>
+              <span>Comment</span>
+              <span>Share</span>
+            </CardFooter>
+          </Card>
+          <Card className="w-full">
+            <CardHeader>
+              <div className="flex justify-between items-center">
+	              <CardTitle>Olivia Zabis</CardTitle>
+	              <DropdownMenu 
+	                onEdit={() => console.log('Edit clicked')}
+	                onDelete={() => console.log('Delete clicked')}
+	              />
+              </div>
+            </CardHeader>
+            <CardContent>
+              <img
+                alt="Content Image"
+                className="w-full h-auto bg-gray-300"
+                height="200"
+                src="/placeholder.svg"
+                style={{
+                  aspectRatio: "300/200",
+                  objectFit: "cover",
+                }}
+                width="300"
+              />
+              <p className="mt-2">sdjapio2j3iodsjio</p>
+            </CardContent>
+            <CardFooter className="flex justify-between text-sm">
+              <span>Like</span>
+              <span>Comment</span>
+              <span>Share</span>
+            </CardFooter>
+          </Card>
+          <Card className="w-full">
+            <CardHeader>
+              <div className="flex justify-between items-center">
+	              <CardTitle>Olivia Zabis</CardTitle>
+	              <DropdownMenu 
+	                onEdit={() => console.log('Edit clicked')}
+	                onDelete={() => console.log('Delete clicked')}
+	              />
+              </div>
+            </CardHeader>
+            <CardContent>
+              <img
+                alt="Content Image"
+                className="w-full h-auto bg-gray-300"
+                height="200"
+                src="/placeholder.svg"
+                style={{
+                  aspectRatio: "300/200",
+                  objectFit: "cover",
+                }}
+                width="300"
+              />
+              <p className="mt-2">sdjapio2j3iodsjio</p>
+            </CardContent>
+            <CardFooter className="flex justify-between text-sm">
+              <span>Like</span>
+              <span>Comment</span>
+              <span>Share</span>
+            </CardFooter>
+          </Card>
+        </div>
       </div>
       
       {showTopBtn && (

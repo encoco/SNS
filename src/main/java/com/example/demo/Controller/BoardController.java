@@ -48,15 +48,18 @@ public class BoardController {
 
     @PostMapping("/boardWrite")
     public ResponseEntity<?> writeBoard(@RequestParam("content") String content, 
-    		 							@RequestParam("img") List<MultipartFile> imgs,
+    									@RequestParam(value = "img", required = false) List<MultipartFile> imgs,
 									    HttpServletRequest request){
         try {
         	int userId= tokenAtId(request.getHeader("Authorization"));
         	BoardDTO boardDTO = new BoardDTO();
             boardDTO.setId(userId);
             boardDTO.setContent(content);
-            boardDTO.setImg(imgs); // 여러 이미지 파일 설정
-            
+            if (imgs != null && !imgs.isEmpty()) {
+                for (MultipartFile img : imgs) {
+                	boardDTO.setImg(imgs); // 여러 이미지 파일 설정
+                }
+            } 
             boardService.writeBoard(boardDTO);
             return ResponseEntity.ok("글이 성공적으로 작성되었습니다.");
         } catch (Exception e) {

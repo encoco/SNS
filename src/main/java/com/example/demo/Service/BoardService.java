@@ -59,13 +59,14 @@ public class BoardService {
 
 	public void writeBoard(BoardDTO boardDTO) {
 		String imgPath = "";
-		for(MultipartFile img : boardDTO.getImg()) {
-			imgPath += uploadFile(img, "image") + "|";
+		if(boardDTO.getImg() != null) {
+			for(MultipartFile img : boardDTO.getImg()) {
+				imgPath += uploadFile(img, "image") + "|";
+			}
 		}
 		if(imgPath.length() > 0) {
 			imgPath = imgPath.substring(0,imgPath.length()-1);
 		}
-		System.out.println(imgPath);
 		boardDTO.setImgpath(imgPath);
 		BoardEntity board = BoardEntity.toEntity(boardDTO);
 		boardRepository.save(board);

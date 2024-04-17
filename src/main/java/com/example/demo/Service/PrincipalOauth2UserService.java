@@ -29,7 +29,6 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService{
 		// -> 회원 프로필 받아야함 (loadUser 메서드) -> 구글로부터 회원 프로필을 받아줌.
 		//System.out.println("userattribute  : " + super.loadUser(userRequest).getAttributes());
 		//System.out.println("userclient  : " + userRequest.getClientRegistration());
-		System.out.println("우헤헤헿렣레헬헤");
 		String username = "";
 		UsersDTO user = new UsersDTO();
 		String authPW = "oauthsecuritypasswor";
@@ -64,6 +63,7 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService{
 		            .password(user.getPassword())
 		            .email(user.getEmail())
 		            .phone(user.getPhone())
+		            .nickname(user.getUsername())
 		            .role(user.getRole()+"_SNS")
 		            .build();
 		    // 새로운 사용자를 저장

@@ -6,9 +6,10 @@ import axios from 'axios';
 import { useAuth } from '../../contexts/AuthContext'; // 경로는 실제 구조에 맞게 조정해야 함
 import api from "../../api";
 import ImageSlider from './ImageSlider'; // ImageSlider 컴포넌트를 import
+import { AvatarImage, AvatarFallback, Avatar } from "./ui/avatar"
+import  Sidebar from "./ui/Sidebar";
 
 export default function Component() {
-  const [isNavExpanded, setIsNavExpanded] = useState(false);
   const [showTopBtn, setShowTopBtn] = useState(false);
   const navigate = useNavigate();
   const { logout } = useAuth();
@@ -67,38 +68,13 @@ export default function Component() {
    
   return (
 	  <div className="flex min-h-screen bg-gray-100">
-	      <div className="fixed top-0 bottom-0 z-10" onMouseEnter={() => setIsNavExpanded(true)} onMouseLeave={() => setIsNavExpanded(false)}>
-		        {/* 마우스를 올렸을 때 너비가 확장되는 효과를 위한 div */}
-		        <div className={`w-12 h-full bg-black transition-width duration-300 ease-in-out ${isNavExpanded ? "w-60" : "w-12"}`}>
-		        {/* 네비게이션 바 내용, 마우스 오버 시 가시성 조정 및 세로 중앙 정렬 */}
-		        <div className={`flex flex-col justify-center h-full opacity-0 ${isNavExpanded ? "opacity-100" : ""} transition-opacity duration-300 ease-in-out`}>
-		        	<div className="w-full flex justify-center mt-5 flex-col items-center">
-					  <img src="/placeholder-user.jpg" alt="Profile" className="w-13 h-13 rounded-full border-2 border-white" />
-					  <span className="mt-2 dark:hover:text-gray-50 text-white">유저 Nickname</span>
-					</div>
-		          <nav className="mt-20">
-		              <Link className="block h-10 pl-16 pr-4 py-2 font-medium rounded-md hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-gray-50 text-white" to="/index">홈</Link>
-		              <Link className="block h-10 pl-16 pr-4 py-2 font-medium rounded-md hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-gray-50 text-white" to="/BoardWrite">글쓰기</Link>
-		              <Link className="block h-10 pl-16 pr-4 py-2 font-medium rounded-md hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-gray-50 text-white" to="/mypage">마이페이지</Link>
-		              <Link className="block h-10 pl-16 pr-4 py-2 font-medium rounded-md hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-gray-50 text-white" to="#">메세지</Link>
-		              <Link className="block h-10 pl-16 pr-4 py-2 font-medium rounded-md hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-gray-50 text-white" to="#">환경 설정</Link>
-		              
-		              <Link className="block h-10 pl-16 pr-4 py-2 font-medium rounded-md hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-gray-50 text-white" to="/test">test</Link>
-		              
-		              <button className="block h-10 pl-16 pr-4 py-2 font-medium 
-		              						rounded-md  hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-gray-50
-		                text-white" onClick={handleLogout}>로그아웃</button>
-		          </nav>
-		        </div>
-			</div>
-	      </div>
-       
-      
+	  
+	  <Sidebar />
+
 		{/* 상단 검색, 알람표시 */}
-       <div className="flex flex-col w-full ml-60 mt-16">
+       <div className="flex flex-col w-full ml-10">
 	    <div className="flex justify-center items-center flex-col w-full">
-          <form className="flex items-center gap-2 w-full max-w-md">
-	      
+          <form className="flex items-center gap-2 w-full max-w-md mt-5">
 	      <SearchIcon className="h-5 w-5" />
 	      <Input
 	        className="w-full h-10 font-normal rounded-none dark:placeholder-gray-400"
@@ -120,35 +96,38 @@ export default function Component() {
         <div className="grid gap-2">
 			{/* 글은 여기부터*/}
 			    {Array.isArray(posts) && posts.map((post) => (
-					  <div key={post.board_id} className="rounded-xl bg-white p-4 grid gap-4 border border-gray-100 dark:border-gray-800">
-					    <div className="flex items-center space-x-2">
-					      <img
-					        alt="Avatar"
-					        className="rounded-full"
-					        src="/placeholder.svg"
-					        style={{
-					          aspectRatio: "40/40",
-					          objectFit: "cover",
-					        }}
-					        width="40"
-					      />
-					      <div className="grid gap-1">
-					        <div className="font-semibold">{post.id}</div>
-					        <div className="text-xs text-gray-500 dark:text-gray-400">{post.date}</div>
-					      </div>
-					    </div>
-					    {post.imgpath && <ImageSlider imgpath={post.imgpath} />}
-					    {post.video && <video src={post.video} controls />}
-					    <div className="line-clamp-3">
-					      <p>{post.content}</p>
-					    </div>
-					    <div className="flex space-x-4 flex-wrap">
-					      <button className="w-10 h-8">Like</button> 
-					      <button className="w-16 h-8">Comment</button>
-					      <button className="w-16 h-8">Share</button> 
-					    </div>
-					  </div>
-					))}
+				  <div key={post.board_id} className="rounded-xl bg-white p-4 grid gap-4 border border-gray-100 dark:border-gray-800 relative">
+				    <div className="flex justify-between items-start">
+				      <div className="flex items-center space-x-2">
+				        <img
+				          alt="Avatar"
+				          className="rounded-full"
+				          src="/placeholder.svg"
+				          style={{
+				            aspectRatio: "1 / 1",
+				            objectFit: "cover",
+				          }}
+				          width="40"
+				        />
+				        <div className="grid gap-1">
+				          <div className="font-semibold">{post.id}</div>
+				          <div className="text-xs text-gray-500 dark:text-gray-400">{post.date}</div>
+				        </div>
+				      </div>
+				      <DropdownMenu post={post} />
+				    </div>
+				    {post.imgpath && <ImageSlider imgpath={post.imgpath} />}
+				    {post.video && <video src={post.video} controls />}
+				    <div className="line-clamp-3">
+				      <p>{post.content}</p>
+				    </div>
+				    <div className="flex space-x-4 flex-wrap">
+				      <button className="w-10 h-8">Like</button>
+				      <button className="w-16 h-8">Comment</button>
+				      <button className="w-16 h-8">Share</button>
+				    </div>
+				  </div>
+				))}
 		{/*여기까지*/}
             </div>
           </div>
@@ -296,6 +275,27 @@ function MoreHorizontalIcon(props) {
 }
 
 
+function DropdownMenu({ post }) {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const toggleDropdown = () => setIsOpen(!isOpen);
+
+  return (
+    <div className="relative">
+      <button onClick={toggleDropdown} className="p-2">
+        <MoreHorizontalIcon className="h-5 w-5 text-gray-700" />
+      </button>
+      {isOpen && (
+        <div className="absolute right-0 mt-2 py-2 w-48 bg-white rounded-md shadow-xl z-20">
+          <button onClick={() => console.log('Edit:', post.id)}
+                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left">수정</button>
+          <button onClick={() => console.log('Delete:', post.id)}
+                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left">삭제</button>
+        </div>
+      )}
+    </div>
+  );
+}
 
 
 

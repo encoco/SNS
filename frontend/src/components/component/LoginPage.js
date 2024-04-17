@@ -110,10 +110,6 @@ function LoginPage() {
         <br/>
         
         <div className="space-y-4">
-        <Button className="w-full" style={{ backgroundColor: '#03C75A'}} variant="outline"
-          						onClick={gocookie} >
-            cookie
-          </Button>
           <Button className="w-full" style={{ backgroundColor: '#03C75A'}} variant="outline"
           						onClick={() => window.location.href='http://localhost:8080/oauth2/authorization/naver'} >
             NAVER
