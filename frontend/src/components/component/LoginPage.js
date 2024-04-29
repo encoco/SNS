@@ -89,43 +89,48 @@ function LoginPage() {
           </div>
                   
         <form onSubmit={handleSubmit}>
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="username">아이디</Label>
-              <Input id="username" placeholder="r___k18" value={username} onChange={(e) => setUsername(e.target.value)} />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="password">비밀번호</Label>
-              <Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)}/>
-            </div>
-            <div className="mt-4 space-y-2 text-center">
-              <Link className="text-sm underline" to="#">
-                비밀번호를 잊으셨나요?
-              </Link>
-            </div>
-            <Button type="submit" className="w-full mb-2">로그인</Button>
-            <Button className="w-full mb-2" onClick={goToSignUp}>회원가입</Button>
-          </div>
-        </form>
-        <br/>
-        
-        <div className="space-y-4">
-          <Button className="w-full" style={{ backgroundColor: '#03C75A'}} variant="outline"
-          						onClick={() => window.location.href='http://localhost:8080/oauth2/authorization/naver'} >
-            NAVER
-          </Button>
-          <Button className="w-full" variant="outline"
-          							onClick={() => window.location.href='http://localhost:8080/oauth2/authorization/google'} >
-            GOOGLE
-          </Button>
-          <Button className="w-full" style={{ backgroundColor: '#FEE500'}} variant="outline"
-          							 onClick={() => window.location.href='http://localhost:8080/oauth2/authorization/kakao'} >
-            KAKAO
-          </Button>
-        </div>
-      </div>
-    </div>
-  );
+					<div className="space-y-4">
+						<div className="space-y-2">
+							<Label htmlFor="username">아이디</Label>
+							<Input id="username" placeholder="r___k18" value={username} onChange={(e) => setUsername(e.target.value)} />
+						</div>
+						<div className="space-y-2">
+							<Label htmlFor="password">비밀번호</Label>
+							<Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+						</div>
+						<div className="mt-4 space-y-2 text-center">
+						</div>
+						<div style={{ textAlign: 'center' }} >
+							<Link className="text-sm underline" to="#">
+								비밀번호 찾기
+							</Link>
+							<span style={{ margin: '0 10px' }}>|</span>{" "}
+							<Link className="text-sm underline" to="/Signup">회원가입</Link>
+						</div>
+						<Button type="submit" className="w-full mb-2" variant="outline" style={{ backgroundColor: 'black', borderColor: 'black', borderWidth: '2px', color: 'white' }}>로그인</Button>
+
+					</div>
+				</form>
+				<br />
+
+				<div className="space-y-4">
+					<Button className="w-full" style={{ backgroundColor: '#03C75A' }} variant="outline"
+						onClick={() => window.location.href = 'http://localhost:8080/oauth2/authorization/naver'} >
+						NAVER
+					</Button>
+					<Button className="w-full" variant="outline"
+						onClick={() => window.location.href = 'http://localhost:8080/oauth2/authorization/google'} >
+						GOOGLE
+					</Button>
+
+					<Button className="w-full" style={{ backgroundColor: '#FEE500' }} variant="outline"
+						onClick={() => window.location.href = 'http://localhost:8080/oauth2/authorization/kakao'} >
+						KAKAO
+					</Button>
+				</div>
+			</div>
+		</div> 
+	 );
 }
 
 export default LoginPage;

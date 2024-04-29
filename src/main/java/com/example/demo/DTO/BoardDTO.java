@@ -25,11 +25,12 @@ import lombok.Setter;
 public class BoardDTO {
 	private int board_id;
 	private int id;
+	private String nickname;
 	private List<MultipartFile> img;
 	private String imgpath;
     private String video;
     private String content;
-
+    
     @Builder.Default
     private String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm"));
 
@@ -40,6 +41,7 @@ public class BoardDTO {
 	            "board_id=" + board_id +
 	            ", id=" + id +
 	            ", img='" + img + '\'' +
+	            ", nickname='" + nickname + '\'' +
 	            ", video='" + video + '\'' +
 	            ", content='" + content + '\'' +
 	            ", date=" + date +
@@ -50,6 +52,7 @@ public class BoardDTO {
         return BoardDTO.builder()
                 .board_id(dto.getBoard_id())
                 .id(dto.getId())
+                .nickname(dto.getNickname())
                 .imgpath(dto.getImg())
                 .video(dto.getVideo())
                 .content(dto.getContent())
@@ -64,6 +67,7 @@ public class BoardDTO {
 	        BoardDTO dto = new BoardDTO();
 	        dto.setBoard_id(entity.getBoard_id());
 	        dto.setId(entity.getId());
+	        dto.setNickname(entity.getNickname());
 	        dto.setImgpath(entity.getImg());
 	        dto.setVideo(entity.getVideo());
 	        dto.setDate(entity.getDate());

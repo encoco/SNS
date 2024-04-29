@@ -8,6 +8,7 @@ import api from "../../api";
 import ImageSlider from './ImageSlider'; // ImageSlider 컴포넌트를 import
 import { AvatarImage, AvatarFallback, Avatar } from "./ui/avatar"
 import  Sidebar from "./ui/Sidebar";
+import DropdownMenu from './ui/DropdownMenu';
 
 export default function Component() {
   const [showTopBtn, setShowTopBtn] = useState(false);
@@ -96,7 +97,6 @@ export default function Component() {
         <div className="grid gap-2">
 			{/* 글은 여기부터*/}
 			    {Array.isArray(posts) && posts.map((post) => (
-<<<<<<< HEAD
 				  <div key={post.board_id} className="rounded-xl bg-white p-4 grid gap-4 border border-gray-100 dark:border-gray-800 relative">
 				    <div className="flex justify-between items-start">
 				      <div className="flex items-center space-x-2">
@@ -111,7 +111,7 @@ export default function Component() {
 				          width="40"
 				        />
 				        <div className="grid gap-1">
-				          <div className="font-semibold">{post.id}</div>
+				          <div className="font-semibold">{post.nickname}</div>
 				          <div className="text-xs text-gray-500 dark:text-gray-400">{post.date}</div>
 				        </div>
 				      </div>
@@ -129,37 +129,6 @@ export default function Component() {
 				    </div>
 				  </div>
 				))}
-=======
-					  <div key={post.board_} className="rounded-xl bg-white p-4 grid gap-4 border border-gray-100 dark:border-gray-800">
-					    <div className="flex items-center space-x-2">
-					      <img
-					        alt="Avatar"
-					        className="rounded-full"
-					        src="/placeholder.svg"
-					        style={{
-					          aspectRatio: "40/40",
-					          objectFit: "cover",
-					        }}
-					        width="40"
-					      />
-					      <div className="grid gap-1">
-					        <div className="font-semibold">{post.id}</div>
-					        <div className="text-xs text-gray-500 dark:text-gray-400">{post.date}</div>
-					      </div>
-					    </div>
-					    {post.imgpath && <ImageSlider imgpath={post.imgpath} />}
-					    {post.video && <video src={post.video} controls />}
-					    <div className="line-clamp-3">
-					      <p>{post.content}</p>
-					    </div>
-					    <div className="flex space-x-4 flex-wrap">
-					      <button className="w-10 h-8">Like</button> 
-					      <button className="w-16 h-8">Comment</button>
-					      <button className="w-16 h-8">Share</button> 
-					    </div>
-					  </div>
-					))}
->>>>>>> origin/sy
 		{/*여기까지*/}
             </div>
           </div>
@@ -220,134 +189,6 @@ function SearchIcon(props) {
     >
       <circle cx="11" cy="11" r="8" />
       <path d="m21 21-4.3-4.3" />
-    </svg>
-  )
-}
-
-function FlagIcon(props) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z" />
-      <line x1="4" x2="4" y1="22" y2="15" />
-    </svg>
-  )
-}
-
-
-function HeartIcon(props) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
-    </svg>
-  )
-}
-
-
-function MessageCircleIcon(props) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="m3 21 1.9-5.7a8.5 8.5 0 1 1 3.8 3.8z" />
-    </svg>
-  )
-}
-
-
-function MoreHorizontalIcon(props) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <circle cx="12" cy="12" r="1" />
-      <circle cx="19" cy="12" r="1" />
-      <circle cx="5" cy="12" r="1" />
-    </svg>
-  )
-}
-
-
-function DropdownMenu({ post }) {
-  const [isOpen, setIsOpen] = useState(false);
-
-  const toggleDropdown = () => setIsOpen(!isOpen);
-
-  return (
-    <div className="relative">
-      <button onClick={toggleDropdown} className="p-2">
-        <MoreHorizontalIcon className="h-5 w-5 text-gray-700" />
-      </button>
-      {isOpen && (
-        <div className="absolute right-0 mt-2 py-2 w-48 bg-white rounded-md shadow-xl z-20">
-          <button onClick={() => console.log('Edit:', post.id)}
-                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left">수정</button>
-          <button onClick={() => console.log('Delete:', post.id)}
-                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left">삭제</button>
-        </div>
-      )}
-    </div>
-  );
-}
-
-
-
-function ShareIcon(props) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
-      <polyline points="16 6 12 2 8 6" />
-      <line x1="12" x2="12" y1="2" y2="15" />
     </svg>
   )
 }

@@ -1,7 +1,7 @@
 /*BoardWrite*/
 
 import React, { useState } from 'react';
-import { useNavigate,Link } from 'react-router-dom'; // useNavigate 훅 임포트
+import { useNavigate,Link,useLocation } from 'react-router-dom'; // useNavigate 훅 임포트
 import styled from 'styled-components'; // styled-components import 추가
 import { Label } from "./ui/label"
 import { Input } from "./ui/input"
@@ -38,19 +38,24 @@ const StyledTextarea = styled.textarea`
 
 	function BoardWrite() {
 		const navigate = useNavigate();
+		const location = useLocation();
 		const [content, setContent] = useState('');
-		 const [images, setImages] = useState([]);
-
+		const [images, setImages] = useState([]);
+		const fileInputRef = React.useRef(null);
+		const fromPath = location.state?.from || '/';  // 이전 경로가 없다면 홈으로 설정
 		  // 파일이 선택되었을 때 호출되는 함수
 		  const handleFileChange = (event) => {
-		    // 사용자가 선택한 첫 번째 파일을 상태로 설정
 		    setImages([...event.target.files]);
 		  };
 		
 		  // 선택된 파일 정보를 출력하는 함수 (예시)
 		  const displayFileInfo = () => {
-		    if (images) {
-		      return <p>파일 이름: {images.name}</p>;
+		    if (images.length > 0) {
+		      return images.map((file, index) => (
+		        <div key={index}>
+		          <p>파일 이름: {file.name}</p>
+		        </div>
+		      ));
 		    } else {
 		      return <p>선택된 파일이 없습니다.</p>;
 		    }
@@ -68,8 +73,6 @@ const StyledTextarea = styled.textarea`
 			images.forEach((image) => {
 			    formData.append('img', image); 
 			});
-			console.log(images);
-		  	
 		  	try {
 		    	const response = await api.post('/boardWrite', formData, {
 			      headers: {
@@ -77,14 +80,16 @@ const StyledTextarea = styled.textarea`
 			      },
 			      withCredentials: true,
 			    });
-				console.log(response);
 				alert('게시물이 업로드 되었습니다.');
-				navigate("/");
+				navigate(fromPath);  
 			  	} catch (error) {
 			    console.log(error);
 			    alert('글쓰기에 실패했습니다. 다시 시도해주세요.');
 			}
 	   };
+	   const handleButtonClick = () => {
+	    	fileInputRef.current.click();
+	  	};
 	  return (
 	     <Card className="w-[75vw] max-w-sm mx-auto">
       <CardHeader>
@@ -93,14 +98,16 @@ const StyledTextarea = styled.textarea`
       <CardContent className="grid gap-4">
         <StyledTextarea className="flex-1" placeholder="게시물 내용을 작성해주세요." value={content} onChange={handleContentChange}/>
         <div className="flex flex-col gap-2">
-          <Button size="sm">
-            <UploadIcon className="h-4 w-4 mr-2" />
-            Add images
-          </Button>
+           <input type="file" name="img" id="img" ref={fileInputRef} onChange={handleFileChange} multiple style={{ display: 'none' }} /> 
+		  <Button size="sm" onClick={handleButtonClick}>
+		    <UploadIcon className="h-4 w-4 mr-2"  />
+		    Add images
+		  </Button>
           <Button size="sm">
             <UploadIcon className="h-4 w-4 mr-2" />
             Add videos
           </Button>
+           {displayFileInfo()} 
         </div>
         <div className="grid gap-4">
           <Card className="rounded-none shadow-none border-0">

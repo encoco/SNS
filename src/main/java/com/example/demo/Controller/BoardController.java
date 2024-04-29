@@ -28,16 +28,16 @@ public class BoardController {
 
 	private final BoardService boardService;
 	private final JwtUtil jwtUtil;
-	public int tokenAtId(String request) {
+	public String token(String request) {
     	String token = request.substring(7,request.length());
-    	int userId = jwtUtil.getUserIdFromToken(token);
-    	return userId;
+    	return token;
     }
 
 	@GetMapping("/boardList")
 	public ResponseEntity<?> readList(HttpServletRequest request) {
 	    try {
-	    	int userId = tokenAtId(request.getHeader("Authorization"));
+	    	String token = token(request.getHeader("Authorization"));
+	    	int userId = jwtUtil.getUserIdFromToken(token);
 	        List<BoardDTO> posts = boardService.getPost(userId);
 	        return ResponseEntity.ok(posts);
 	    } catch (Exception e) {
@@ -48,29 +48,22 @@ public class BoardController {
 
     @PostMapping("/boardWrite")
     public ResponseEntity<?> writeBoard(@RequestParam("content") String content, 
-<<<<<<< HEAD
-    									@RequestParam(value = "img", required = false) List<MultipartFile> imgs,
-=======
     		 							@RequestParam(value= "img" , required = false) List<MultipartFile> imgs,
->>>>>>> origin/sy
 									    HttpServletRequest request){
         try {
-        	int userId= tokenAtId(request.getHeader("Authorization"));
+        	String token= token(request.getHeader("Authorization"));
+        	int userId = jwtUtil.getUserIdFromToken(token);
+        	String nickname = jwtUtil.getNickFromToken(token);
         	BoardDTO boardDTO = new BoardDTO();
             boardDTO.setId(userId);
+            boardDTO.setNickname(nickname);
             boardDTO.setContent(content);
-<<<<<<< HEAD
             if (imgs != null && !imgs.isEmpty()) {
                 for (MultipartFile img : imgs) {
                 	boardDTO.setImg(imgs); // 여러 이미지 파일 설정
                 }
             } 
-=======
-            if(imgs != null && imgs.isEmpty()) {
-            	boardDTO.setImg(imgs); // 여러 이미지 파일 설정
-            }
-            System.out.println(boardDTO.toString());
->>>>>>> origin/sy
+
             boardService.writeBoard(boardDTO);
             return ResponseEntity.ok("글이 성공적으로 작성되었습니다.");
         } catch (Exception e) {

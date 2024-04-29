@@ -25,6 +25,7 @@ public class BoardEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int board_id; //DB가서 pk id로 바꾸기
 	private int id;
+	private String nickname;
 	private String img;
     private String video;
     private String content;
@@ -34,6 +35,7 @@ public class BoardEntity {
         return BoardEntity.builder()
         		.board_id(dto.getBoard_id())
                 .id(dto.getId())
+                .nickname(dto.getNickname())
                 .img(dto.getImgpath())
                 .video(dto.getVideo())
                 .content(dto.getContent())
@@ -43,7 +45,7 @@ public class BoardEntity {
 
 	@Override
 	public String toString() {
-		return "BoardEntity [board_id=" + board_id + ", id=" + id + ", img=" + img  + ", video="
+		return "BoardEntity [board_id=" + board_id + ", id=" + id + ",nickname=" +nickname+ ", img=" + img  + ", video="
 				+ video + ", content=" + content + ", date=" + date + "]";
 	}
 
