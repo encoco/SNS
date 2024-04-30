@@ -67,6 +67,7 @@ public class BoardController {
             return ResponseEntity.ok("글이 성공적으로 작성되었습니다.");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("글 작성 중 오류가 발생했습니다.");
+            
         }
     }
 }
