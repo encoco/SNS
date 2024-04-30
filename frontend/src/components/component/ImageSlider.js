@@ -27,11 +27,12 @@ export default function ImageSlider({ imgpath }) {
           &#x276E; {/* Left Arrow */}
         </button>
       )}
-      <div className="w-120 h-120 flex justify-center items-center">
+      <div className="w-full h-auto flex justify-center items-center">
         <img
           src={images[currentIndex]}
           alt={`Slide ${currentIndex + 1}`}
-          className="max-w-full max-h-full object-contain"
+          className="w-full h-auto bg-gray-300"
+          style={{ height: '500px', aspectRatio: '300/200', objectFit: 'cover' }}
         />
       </div>
       {images.length > 1 && (
