@@ -1,9 +1,8 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState ,useEffect} from 'react';
 import { useNavigate} from "react-router-dom";
 import axios from 'axios';
 
 const AuthContext = createContext({
-  users: null, 
   login: () => {},
   logout: () => {},
 });
@@ -17,7 +16,6 @@ export const AuthProvider = ({ children }) => {
   const [users, setUser] = useState(null);
   const navigate = useNavigate();
   const login = (userData) => {
-	  
     setUser(userData);
   };
 

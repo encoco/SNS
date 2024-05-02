@@ -43,6 +43,8 @@ const StyledTextarea = styled.textarea`
 		const [images, setImages] = useState([]);
 		const fileInputRef = React.useRef(null);
 		const fromPath = location.state?.from || '/';  // 이전 경로가 없다면 홈으로 설정
+  		const post = location.state.post;
+  		console.log(post);
 		  // 파일이 선택되었을 때 호출되는 함수
 		  const handleFileChange = (event) => {
 		    setImages([...event.target.files]);

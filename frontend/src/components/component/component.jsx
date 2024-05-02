@@ -22,16 +22,13 @@ export default function Component() {
 	    const response = await api.get(`/boardList`,{
 		  withCredentials: true,
 		});
-	    setPosts(response.data);
+	    setPosts(response.data.posts);
 	  } catch (error) {
 	    console.log(error);
 	  }
 	};
     fetchPosts();
   }, [logout, navigate]);
-
-
-  
   
   // 스크롤 이벤트 리스너 설정 및 정리
   useEffect(() => {
@@ -49,6 +46,20 @@ export default function Component() {
   }, []);
 
 
+   const LikeHandler = async (boardId) => {
+		  	try {
+				const formData = new FormData();
+        		formData.append('boardId', boardId);
+		    	const response = await api.get(`/boardLike?boardId=${boardId}`,{
+				  withCredentials: true,
+				});
+				alert('좋아요');
+			  	} catch (error) {
+			    console.log(error);
+			    alert('글쓰기에 실패했습니다. 다시 시도해주세요.');
+			}
+	   };
+	
   // 맨 위로 스크롤하는 함수
   const scrollToTop = () => {
     window.scrollTo({
@@ -56,16 +67,6 @@ export default function Component() {
       behavior: 'smooth' // 부드러운 스크롤
     });
   };
-  
-  const handleLogout = async () => {
-	  try {
-	   	logout();
-	   	navigate('/');
-	  } catch (error) {
-		  console.log(error);
-	    alert('다시 시도해주세요.');
-	  }
-   };
    
   return (
 	  <div className="flex min-h-screen bg-gray-100">
@@ -123,7 +124,7 @@ export default function Component() {
 				      <p>{post.content}</p>
 				    </div>
 				    <div className="flex space-x-4 flex-wrap">
-				      <button className="w-10 h-8">Like</button>
+				      <button className="w-10 h-8"  onClick={() => LikeHandler(post.board_id)}>Like</button>
 				      <button className="w-16 h-8">Comment</button>
 				      <button className="w-16 h-8">Share</button>
 				    </div>

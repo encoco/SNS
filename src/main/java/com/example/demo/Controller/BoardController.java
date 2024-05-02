@@ -1,6 +1,8 @@
 package com.example.demo.Controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.example.demo.Config.JwtUtil;
 import com.example.demo.DTO.BoardDTO;
+import com.example.demo.DTO.BoardLikeDTO;
 import com.example.demo.Service.BoardService;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -39,7 +42,12 @@ public class BoardController {
 	    	String token = token(request.getHeader("Authorization"));
 	    	int userId = jwtUtil.getUserIdFromToken(token);
 	        List<BoardDTO> posts = boardService.getPost(userId);
-	        return ResponseEntity.ok(posts);
+	        List<BoardLikeDTO> like = boardService.getLike(userId);
+	        
+	        Map<String, Object> response = new HashMap<>();
+	        response.put("posts", posts);
+	        response.put("likes", like);
+	        return ResponseEntity.ok(response);
 	    } catch (Exception e) {
 	        System.out.println("서버 오류");
 	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 오류");
@@ -69,5 +77,22 @@ public class BoardController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("글 작성 중 오류가 발생했습니다.");
         }
+    }
+    
+    @GetMapping("/boardLike")
+    public ResponseEntity<?> boardLike(@RequestParam(value = "boardId") int boardId,HttpServletRequest request){
+    	try {
+    		String token = token(request.getHeader("Authorization"));
+    		int userId = jwtUtil.getUserIdFromToken(token);
+    		BoardLikeDTO dto = new BoardLikeDTO();
+    		dto.setBoard_id(boardId);
+    		dto.setId(userId);
+    		boardService.boardLike(dto);
+    		
+    	}catch(Exception e){
+    		System.out.println("error : " + e);
+    	}
+    	
+    	return ResponseEntity.ok(null);
     }
 }

@@ -12,8 +12,11 @@ import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.example.demo.Config.S3Config;
 import com.example.demo.DTO.BoardDTO;
+import com.example.demo.DTO.BoardLikeDTO;
+import com.example.demo.Repository.BoardLikeRepository;
 import com.example.demo.Repository.BoardRepository;
 import com.example.demo.entity.BoardEntity;
+import com.example.demo.entity.BoardLikeEntity;
 
 import io.jsonwebtoken.io.IOException;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +26,7 @@ import lombok.RequiredArgsConstructor;
 public class BoardService {
 
 	public final BoardRepository boardRepository;
+	public final BoardLikeRepository boardlike;
 	private final S3Config s3Config;
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
@@ -56,7 +60,14 @@ public class BoardService {
 		}
 		return null;
 	}
-
+	public List<BoardLikeDTO> getLike(int id) {
+		if(boardRepository.findByid(id) != null) {
+			List<BoardLikeEntity> entity = boardlike.findByid(id);
+			List<BoardLikeDTO> dto = BoardLikeDTO.ToDtoList(entity);
+			return dto;
+		}
+		return null;
+	}
 	public void writeBoard(BoardDTO boardDTO) {
 		String imgPath = "";
 		if(boardDTO.getImg() != null) {
@@ -71,5 +82,15 @@ public class BoardService {
 		BoardEntity board = BoardEntity.toEntity(boardDTO);
 		boardRepository.save(board);
 	}
+
+
+	public void boardLike(BoardLikeDTO dto) {
+		BoardLikeEntity entity = BoardLikeEntity.toEntity(dto);
+		System.out.println(entity.toString());
+		boardlike.save(entity);
+	}
+
+
+	
 
 }

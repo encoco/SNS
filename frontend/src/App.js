@@ -32,7 +32,7 @@ function App() {
         <Route path="/index" element={<PrivateRoute><Component /></PrivateRoute>} />
         <Route path="/BoardWrite" element={<PrivateRoute><BoardWrite /></PrivateRoute>} />
         <Route path="/mypage" element={<PrivateRoute><Mypage/></PrivateRoute>} />
-        <Route path="/Message" element={<PublicRoute><Message/></PublicRoute>} />
+        <Route path="/Message" element={<PrivateRoute><Message/></PrivateRoute>} />
         <Route path="/Participate" element={<PublicRoute><Participate/></PublicRoute>} />
         <Route path="/Setting" element={<PublicRoute><Setting/></PublicRoute>} />
         <Route path="/Together" element={<PublicRoute><Together/></PublicRoute>} />

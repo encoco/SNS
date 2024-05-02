@@ -9,17 +9,18 @@ import axios from 'axios';
 function LoginPage() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const { login } = useAuth();
-  const { logout } = useAuth();
+  const { login,logout  } = useAuth();
   const navigate = useNavigate();
-	 
+    
 	
 	useEffect(() => {
 	  const queryParams = new URLSearchParams(window.location.search);
 	  const accesstoken = queryParams.get('accesstoken');
+	  const nickname = queryParams.get('nickname');
 	  
 	  if (accesstoken) {
 		localStorage.setItem('userInfo', accesstoken);
+		localStorage.setItem('nickname', nickname);
 	    navigate('/index');
 	  }
 	}, []);
@@ -27,17 +28,6 @@ function LoginPage() {
   const goToSignUp = () => {
     navigate('/Signup'); 
   };
-   
-  const gocookie = async () => {
-	  try {
-	    const response = await axios.post('http://localhost:8080/api/test', {}, {
-             withCredentials: true
-        });
-	  }
-	  catch{
-		console.log("error");
-	  }
-	};
 	
   const handleLogin = async () => {
 	  try {
@@ -51,13 +41,13 @@ function LoginPage() {
 	      },
 	      withCredentials: true
 	    });
-	    const accessToken = response.data.accessToken; // 서버 응답 형식에 따라 조정 필요
+	    const { accessToken, nickname } = response.data; 
 	    localStorage.setItem('userInfo', response.data.accessToken);
-	    await login({ username, password }); // 예시 로그인 함수
+	    localStorage.setItem('nickname', response.data.nickname);
+	    await login(username,password); // 예시 로그인 함수	    
 	    alert('로그인 성공');
 	    navigate('/index');
 	  } catch (error) {
-		  
 	    if (error.response) {
 	      const status = error.response.status;
 	      if (status === 401 || status === 403) {

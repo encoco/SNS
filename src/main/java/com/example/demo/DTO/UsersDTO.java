@@ -10,7 +10,6 @@ import lombok.Setter;
 
 
 @Data
-@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor

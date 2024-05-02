@@ -48,12 +48,14 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
             // Access Token만 JSON 응답으로 반환
             Map<String, String> tokenMap = new HashMap<>();
             tokenMap.put("accessToken", accessToken);
-            System.out.println(tokenMap);
+            tokenMap.put("nickname", userDTO.getNickname()); // 닉네임 추가
+            
             String tokensJson = new ObjectMapper().writeValueAsString(tokenMap);
+            
             response.setContentType("application/json;charset=UTF-8");
             response.getWriter().write(tokensJson); // 클라이언트로 응답 전송
             if(userDTO.getRole().equals("ROLE_USER_SNS")) {
-            	response.sendRedirect("http://localhost:3000/?accesstoken="+accessToken);
+            	response.sendRedirect("http://localhost:3000/?accesstoken=" + accessToken+ "&nickname=" + userDTO.getNickname());
             }
         }
     }

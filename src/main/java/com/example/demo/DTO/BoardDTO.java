@@ -15,11 +15,13 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 
 @Getter
 @Setter
 @Builder
+@ToString
 @AllArgsConstructor
 @NoArgsConstructor
 public class BoardDTO {
@@ -30,33 +32,20 @@ public class BoardDTO {
 	private String imgpath;
     private String video;
     private String content;
+    private int like;
     
     @Builder.Default
     private String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm"));
 
-
-	@Override
-	public String toString() {
-	    return "BoardDTO{" +
-	            "board_id=" + board_id +
-	            ", id=" + id +
-	            ", img='" + img + '\'' +
-	            ", nickname='" + nickname + '\'' +
-	            ", video='" + video + '\'' +
-	            ", content='" + content + '\'' +
-	            ", date=" + date +
-	            '}';
-	}
-
-	public static BoardDTO toDTO(BoardEntity dto) {
+	public static BoardDTO toDTO(BoardEntity entity) {
         return BoardDTO.builder()
-                .board_id(dto.getBoard_id())
-                .id(dto.getId())
-                .nickname(dto.getNickname())
-                .imgpath(dto.getImg())
-                .video(dto.getVideo())
-                .content(dto.getContent())
-                .date(dto.getDate())
+                .board_id(entity.getBoard_id())
+                .id(entity.getId())
+                .nickname(entity.getNickname())
+                .imgpath(entity.getImg())
+                .video(entity.getVideo())
+                .content(entity.getContent())
+                .date(entity.getDate())
                 .build();
     }
 

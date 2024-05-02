@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 function DropdownMenu({ post }) {
   const [isOpen, setIsOpen] = useState(false);
-
+  const navigate = useNavigate();
   const toggleDropdown = () => setIsOpen(!isOpen);
-
+  const editPost = (post) => {
+    navigate('/boardWrite', { state: { post } });
+  };
   return (
     <div className="relative">
       <button onClick={toggleDropdown} className="p-2">
@@ -12,8 +15,8 @@ function DropdownMenu({ post }) {
       </button>
       {isOpen && (
         <div className="absolute right-0 mt-2 py-2 w-48 bg-white rounded-md shadow-xl z-20">
-          <button onClick={() => console.log('Edit:', post.id)}
-                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left">수정</button>
+          <button onClick={() => editPost(post)}
+              className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left">수정</button>
           <button onClick={() => console.log('Delete:', post.id)}
                   className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left">삭제</button>
         </div>

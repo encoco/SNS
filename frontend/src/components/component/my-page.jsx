@@ -14,13 +14,14 @@ function Mypage() {
 	const [posts, setPosts] = useState([]);
 	const navigate = useNavigate();
   	const { logout } = useAuth();
+  	
 	useEffect(() => {
 	 const fetchPosts = async () => {
 	  try {
 	    const response = await api.get(`/boardList`,{
 		  withCredentials: true,
 		});
-	    setPosts(response.data);
+	    setPosts(response.data.posts);
 	    
 	  } catch (error) {
 	    console.log(error);
@@ -57,8 +58,8 @@ function Mypage() {
 
 	  <Sidebar />
       
-      <div className="flex-1 p-5">
-        <h1 className="text-3xl font-bold mb-5">My Feed</h1>
+      <div className="flex flex-col w-full ml-10">
+        <h1 className="text-3xl font-bold mb-5">마이페이지</h1>
         <div className="grid grid-cols-2 gap-4">
           
           {Array.isArray(posts) && posts.map((post) => (
