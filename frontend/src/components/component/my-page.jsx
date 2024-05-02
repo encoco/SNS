@@ -14,6 +14,7 @@ function Mypage() {
 	const [posts, setPosts] = useState([]);
 	const navigate = useNavigate();
   	const { logout } = useAuth();
+  	
 	useEffect(() => {
 	 const fetchPosts = async () => {
 	  try {
@@ -21,6 +22,7 @@ function Mypage() {
 		  withCredentials: true,
 		});
 	    setPosts(response.data);
+	    console.log(response.data);
 	    
 	  } catch (error) {
 	    console.log(error);

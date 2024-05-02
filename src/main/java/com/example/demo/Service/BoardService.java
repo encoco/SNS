@@ -16,6 +16,7 @@ import com.example.demo.Repository.BoardRepository;
 import com.example.demo.entity.BoardEntity;
 
 import io.jsonwebtoken.io.IOException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -59,17 +60,33 @@ public class BoardService {
 
 	public void writeBoard(BoardDTO boardDTO) {
 		String imgPath = "";
+		
 		if(boardDTO.getImg() != null) {
 			for(MultipartFile img : boardDTO.getImg()) {
-				imgPath += uploadFile(img, "image") + "|";
+				imgPath += "|" + uploadFile(img, "image");
 			}
-		}
-		if(imgPath.length() > 0) {
-			imgPath = imgPath.substring(0,imgPath.length()-1);
+			
 		}
 		boardDTO.setImgpath(imgPath);
 		BoardEntity board = BoardEntity.toEntity(boardDTO);
 		boardRepository.save(board);
 	}
 
+
+	@Transactional // 트랜잭션을 사용하여 업데이트를 보장
+    public void updatePost(BoardDTO dto) { //findById == select * from board where board_id = dto.getBoard_id(); 
+        BoardEntity post = boardRepository.findById(dto.getBoard_id()).orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없습니다."));
+        String imgpath = dto.getImgpath();
+        if( dto.getImg() != null) {
+			for(MultipartFile img : dto.getImg()) {
+				imgpath += "|" + uploadFile(img, "image");
+			}
+		}
+        post.setUpdateContent(dto.getContent(),imgpath);
+    }
+
+	@Transactional
+	public void DeleteBoard(int board_id) {
+		boardRepository.deleteById(board_id);
+	}
 }

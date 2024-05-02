@@ -59,9 +59,7 @@ public class BoardController {
             boardDTO.setNickname(nickname);
             boardDTO.setContent(content);
             if (imgs != null && !imgs.isEmpty()) {
-                for (MultipartFile img : imgs) {
-                	boardDTO.setImg(imgs); // 여러 이미지 파일 설정
-                }
+                boardDTO.setImg(imgs); // 여러 이미지 파일 설정
             } 
 
             boardService.writeBoard(boardDTO);
@@ -69,5 +67,37 @@ public class BoardController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("글 작성 중 오류가 발생했습니다.");
         }
+    }
+    
+    @PostMapping("/boardUpdate")
+    public ResponseEntity<?> UpdateBoard(@RequestParam("content") String content, 
+				@RequestParam(value= "img" , required = false) List<MultipartFile> imgs,
+				@RequestParam(value= "imgpath" , required = false) String imgpath,
+				@RequestParam("board_id") int board_id,
+		    HttpServletRequest request){
+    	try {
+        	BoardDTO boardDTO = new BoardDTO();
+        	boardDTO.setBoard_id(board_id);
+            boardDTO.setContent(content);
+            boardDTO.setImgpath(imgpath);
+            if (imgs != null && !imgs.isEmpty()) {
+                boardDTO.setImg(imgs); // 여러 이미지 파일 설정
+            } 
+            boardService.updatePost(boardDTO);
+            return ResponseEntity.ok("수정 완료");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("글 작성 중 오류가 발생했습니다.");
+        }
+    }
+    
+    @PostMapping("/boardDelete")
+    public ResponseEntity<?> DeleteBoard(@RequestBody int board_id){
+    	try{
+    		boardService.DeleteBoard(board_id);
+    		return ResponseEntity.ok(null);
+    	}
+    	catch(Exception e) {
+    		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("글 삭제 중 오류가 발생했습니다.");
+    	}
     }
 }
