@@ -1,28 +1,30 @@
 package com.example.demo.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.example.demo.DTO.BoardDTO;
+import com.example.demo.DTO.SearchDTO;
 import com.example.demo.DTO.UsersDTO;
 import com.example.demo.Repository.UsersRepository;
+import com.example.demo.entity.BoardEntity;
 import com.example.demo.entity.UsersEntity;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 public class UsersService {
 	 private final UsersRepository usersRepository;
 	 private final PasswordEncoder passwordEncoder;
 
- 	@Autowired
-    public UsersService(UsersRepository usersRepository, PasswordEncoder passwordEncoder) {
-        this.usersRepository = usersRepository;
-        this.passwordEncoder = passwordEncoder;
-    }
-
     public boolean isUserIdDuplicate(String username) {
         return usersRepository.existsByUsername(username);
     }
-
 
     public String registerUser(UsersDTO user) {
         // 비밀번호 암호화
@@ -51,4 +53,14 @@ public class UsersService {
 			return null;//계정 없음
 		}
     }
+    
+    public List<SearchDTO> searchUsers(String searchTerm){
+    	List<UsersEntity> entity = usersRepository.findBynicknameContaining(searchTerm);
+    	List<SearchDTO> dto = SearchDTO.toSearchDTO(entity);
+    	for(SearchDTO dt : dto) {
+    		System.out.println(dt.toString());
+    	}
+    	return dto;
+    }
+    
 }

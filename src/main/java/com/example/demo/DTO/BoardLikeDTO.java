@@ -33,8 +33,8 @@ public class BoardLikeDTO {
 	public static BoardLikeDTO toDTO(BoardLikeEntity entity) {
         return BoardLikeDTO.builder()
                 .boardlike_id(entity.getBoardlike_id())
-        		.board_id(entity.getBoard_id())
-                .id(entity.getId())
+        		.board_id(entity.getBoardId())
+                .id(entity.getUserId())
                 .date(entity.getDate())
                 .build();
     }
@@ -42,8 +42,8 @@ public class BoardLikeDTO {
 	    List<BoardLikeDTO> dtos = new ArrayList<>();
 	    for (BoardLikeEntity entity : entities) {
 	        BoardLikeDTO dto = new BoardLikeDTO();
-	        dto.setBoard_id(entity.getBoard_id());
-	        dto.setId(entity.getId());
+	        dto.setBoard_id(entity.getBoardId());
+	        dto.setId(entity.getUserId());
 	        dto.setDate(entity.getDate());
 	        dtos.add(dto);
 	    }

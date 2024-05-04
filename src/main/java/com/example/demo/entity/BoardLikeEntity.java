@@ -5,6 +5,7 @@ import java.time.format.DateTimeFormatter;
 
 import com.example.demo.DTO.BoardLikeDTO;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -29,17 +30,17 @@ public class BoardLikeEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int boardlike_id;
-	private int id;
-	private int board_id;
-	@Builder.Default
-    private String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm"));
+	@Column(name = "id")
+	private int userId;
+
+	@Column(name = "board_id")
+	private int boardId;
 	
+	@Builder.Default
+	private String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm"));
+
 	public static BoardLikeEntity toEntity(BoardLikeDTO dto) {
-        return BoardLikeEntity.builder()
-                .boardlike_id(dto.getBoardlike_id())
-        		.board_id(dto.getBoard_id())
-                .id(dto.getId())
-                .date(dto.getDate())
-                .build();
-    }
+		return BoardLikeEntity.builder().boardlike_id(dto.getBoardlike_id()).boardId(dto.getBoard_id()).userId(dto.getId())
+				.date(dto.getDate()).build();
+	}
 }

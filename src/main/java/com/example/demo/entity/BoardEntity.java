@@ -49,4 +49,9 @@ public class BoardEntity {
 				+ video + ", content=" + content + ", date=" + date + "]";
 	}
 
+	public void setUpdateContent(String content2, String imgpath) {
+		this.content = content2;
+		this.img = imgpath;
+	}
+
 }

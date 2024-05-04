@@ -10,11 +10,15 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Entity
 @Table(name = "Users")
 @Builder
+@Getter
+@ToString
 @AllArgsConstructor
 @NoArgsConstructor
 public class UsersEntity {
@@ -24,33 +28,12 @@ public class UsersEntity {
 	private String username;
 	private String nickname;
     private String password;
+    private String img;
     private String phone;
 	private String email;
 
 	@Builder.Default
 	private String role = "ROLE_USER";
-
-	public int getId() {
-		return id;
-	}
-	public String getUsername() {
-		return username;
-	}
-	public String getPassword() {
-		return password;
-	}
-	public String getPhone() {
-		return phone;
-	}
-	public String getEmail() {
-		return email;
-	}
-	public String getRole() {
-		return role;
-	}
-	public String getNickname() {
-		return nickname;
-	}
 
 	public static UsersEntity toEntity(UsersDTO dto) {
         return UsersEntity.builder()
@@ -58,6 +41,7 @@ public class UsersEntity {
                 .username(dto.getUsername())
                 .nickname(dto.getNickname())
                 .password(dto.getPassword())
+                .img(dto.getImg())
                 .phone(dto.getPhone())
                 .email(dto.getEmail())
                 .role(dto.getRole())

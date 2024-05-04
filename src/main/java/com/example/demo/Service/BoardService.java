@@ -1,6 +1,7 @@
 package com.example.demo.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -19,6 +20,7 @@ import com.example.demo.entity.BoardEntity;
 import com.example.demo.entity.BoardLikeEntity;
 
 import io.jsonwebtoken.io.IOException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -62,7 +64,7 @@ public class BoardService {
 	}
 	public List<BoardLikeDTO> getLike(int id) {
 		if(boardRepository.findByid(id) != null) {
-			List<BoardLikeEntity> entity = boardlike.findByid(id);
+			List<BoardLikeEntity> entity = boardlike.findByUserId(id);
 			List<BoardLikeDTO> dto = BoardLikeDTO.ToDtoList(entity);
 			return dto;
 		}
@@ -70,27 +72,54 @@ public class BoardService {
 	}
 	public void writeBoard(BoardDTO boardDTO) {
 		String imgPath = "";
+		
 		if(boardDTO.getImg() != null) {
 			for(MultipartFile img : boardDTO.getImg()) {
-				imgPath += uploadFile(img, "image") + "|";
+				imgPath += "|" + uploadFile(img, "image");
 			}
-		}
-		if(imgPath.length() > 0) {
-			imgPath = imgPath.substring(0,imgPath.length()-1);
+			
 		}
 		boardDTO.setImgpath(imgPath);
 		BoardEntity board = BoardEntity.toEntity(boardDTO);
 		boardRepository.save(board);
 	}
 
-
-	public void boardLike(BoardLikeDTO dto) {
+	public int boardLike(BoardLikeDTO dto) {
 		BoardLikeEntity entity = BoardLikeEntity.toEntity(dto);
-		System.out.println(entity.toString());
-		boardlike.save(entity);
+		Optional<BoardLikeEntity> existingLike = boardlike.findByBoardIdAndUserId(dto.getBoard_id(), dto.getId());
+		
+		if (existingLike.isPresent()) {
+	        // 이미 "좋아요"가 존재한다면 삭제
+			boardlike.delete(existingLike.get());
+	        System.out.println("Like removed for board_id=" + dto.getBoard_id() + ", user_id=" + dto.getId());
+	        return 0;
+	    } else {
+	        // "좋아요"가 없다면 새로 저장
+	    	boardlike.save(entity);
+	        System.out.println("Like added for board_id=" + dto.getBoard_id() + ", user_id=" + dto.getId());
+	        return 1;
+	    }
 	}
 
+	@Transactional // 트랜잭션을 사용하여 업데이트를 보장
+    public void updatePost(BoardDTO dto) { //findById == select * from board where board_id = dto.getBoard_id(); 
+        BoardEntity post = boardRepository.findById(dto.getBoard_id()).orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없습니다."));
+        String imgpath = dto.getImgpath();
+        if( dto.getImg() != null) {
+			for(MultipartFile img : dto.getImg()) {
+				if(imgpath.isEmpty()|| imgpath=="") {
+					imgpath += uploadFile(img, "image");
+				}
+				else {
+					imgpath += "|" + uploadFile(img, "image");
+				}
+			}
+		}
+        post.setUpdateContent(dto.getContent(),imgpath);
+    }
 
-	
-
+	@Transactional
+	public void DeleteBoard(int board_id) {
+		boardRepository.deleteById(board_id);
+	}
 }

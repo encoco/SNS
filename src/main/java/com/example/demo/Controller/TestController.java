@@ -1,5 +1,6 @@
 package com.example.demo.Controller;
 
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.http.HttpStatus;
@@ -11,8 +12,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.example.demo.Config.JwtUtil;
+import com.example.demo.DTO.SearchDTO;
 import com.example.demo.DTO.UsersDTO;
 import com.example.demo.Repository.UsersRepository;
 import com.example.demo.Service.UsersService;
@@ -60,12 +61,7 @@ public class TestController {
 
         return new ResponseEntity<>("You've been logged out successfully.", HttpStatus.OK);
     }
-
-	@PostMapping("/test")
-	public ResponseEntity<?> test(@RequestParam(name="code") String code) {
-		return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body("완");
-	}
-
+	
 	@PostMapping("/refresh")
     public ResponseEntity<?> refreshToken(HttpServletRequest request) {
         // 리프레시 토큰 검증 로직
@@ -77,6 +73,13 @@ public class TestController {
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid Refresh Token");
         }
+    }
+	
+
+    @GetMapping("/search")
+    public ResponseEntity<?> searchUser(@RequestParam("searchTerm") String searchTerm){
+    	List<SearchDTO> searchResults = Uservice.searchUsers(searchTerm);    	
+    	return ResponseEntity.ok(searchResults);
     }
 }
 
