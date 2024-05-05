@@ -11,6 +11,7 @@ import Message from './components/component/Message';
 import Participate from './components/component/Participate';
 import Setting from './components/component/Setting';
 import Together from './components/component/Together';
+import UserPage from './components/component/UserPage';
 
 // 로그인 상태에 따라 접근 권한을 조절하는 컴포넌트
 const PrivateRoute = ({ children }) => {
@@ -32,6 +33,7 @@ function App() {
         <Route path="/index" element={<PrivateRoute><Component /></PrivateRoute>} />
         <Route path="/BoardWrite" element={<PrivateRoute><BoardWrite /></PrivateRoute>} />
         <Route path="/mypage" element={<PrivateRoute><Mypage/></PrivateRoute>} />
+        <Route path="/UserPage/:userId" element={<PrivateRoute><UserPage/></PrivateRoute>} />
         <Route path="/Message" element={<PrivateRoute><Message/></PrivateRoute>} />
         <Route path="/Participate" element={<PublicRoute><Participate/></PublicRoute>} />
         <Route path="/Setting" element={<PublicRoute><Setting/></PublicRoute>} />

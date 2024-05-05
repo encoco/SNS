@@ -33,7 +33,7 @@ function Sidebar() {
 			<div className="mt-10 flex flex-col">
 				<Link className="text-gray-600 hover:bg-gray-200 p-2 rounded" to="/index">홈</Link>
 				<Link className="text-gray-600 hover:bg-gray-200 p-2 rounded" state={{ from: location.pathname }} to="/BoardWrite">글쓰기</Link>
-				<Link className="text-gray-600 hover:bg-gray-200 p-2 rounded" to="/mypage">마이페이지</Link>
+				<Link className="text-gray-600 hover:bg-gray-200 p-2 rounded" to="/mypage" >마이페이지</Link>
 				<Link className="text-gray-600 hover:bg-gray-200 p-2 rounded" to="/Message">메세지</Link>
 				<Link className="text-gray-600 hover:bg-gray-200 p-2 rounded">환경 설정</Link>
 				<button className="text-gray-600 hover:bg-gray-200 p-2 rounded" onClick={handleLogout}>로그아웃</button>

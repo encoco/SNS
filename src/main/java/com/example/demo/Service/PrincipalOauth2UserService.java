@@ -1,6 +1,7 @@
 package com.example.demo.Service;
 
 import java.util.Map;
+import java.util.UUID;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -56,14 +57,25 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService{
 			user.setPhone((String)resp.get("mobile"));
 		}
 		UsersEntity findMember = usersrepository.findByUsername(username);
+	    String nickname;
+	    boolean isUnique = false;
 		if (findMember == null) { // 찾은 멤버가 없다면
-		    // DTO를 엔티티로 변환
+			do {
+				 nickname= UUID.randomUUID().toString();
+			     nickname = nickname.replace("-", "").substring(0, 12);
+			     System.out.println("asd");
+		        if (!usersrepository.existsByNickname(nickname)) {
+		            isUnique = true;
+		        }
+		    } while (!isUnique);
+			
+			// DTO를 엔티티로 변환
 		    findMember = UsersEntity.builder()
 		            .username(user.getUsername())
 		            .password(user.getPassword())
 		            .email(user.getEmail())
 		            .phone(user.getPhone())
-		            .nickname(user.getUsername())
+		            .nickname(nickname)
 		            .role(user.getRole()+"_SNS")
 		            .build();
 		    // 새로운 사용자를 저장

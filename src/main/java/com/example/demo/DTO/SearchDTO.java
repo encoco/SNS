@@ -2,6 +2,7 @@ package com.example.demo.DTO;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import com.example.demo.entity.UsersEntity;
 
@@ -28,4 +29,12 @@ public class SearchDTO {
 		}
 		return dtos;
     }
+
+	public static SearchDTO toDTO(UsersEntity entity) {
+		SearchDTO dto = new SearchDTO();
+		dto.setId(entity.getId());
+		dto.setNickname(entity.getNickname());
+		dto.setImg(entity.getImg());
+		return dto;
+	}
 }

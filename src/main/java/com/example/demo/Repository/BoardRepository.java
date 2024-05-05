@@ -9,6 +9,7 @@ import com.example.demo.entity.BoardEntity;
 
 public interface BoardRepository extends JpaRepository<BoardEntity, Integer> {
 	public List<BoardEntity> findByid(int id);
+	
 }
 
 

@@ -1,5 +1,6 @@
 package com.example.demo.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -14,10 +15,12 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.example.demo.Config.S3Config;
 import com.example.demo.DTO.BoardDTO;
 import com.example.demo.DTO.BoardLikeDTO;
+import com.example.demo.DTO.SearchDTO;
 import com.example.demo.Repository.BoardLikeRepository;
 import com.example.demo.Repository.BoardRepository;
 import com.example.demo.entity.BoardEntity;
 import com.example.demo.entity.BoardLikeEntity;
+import com.example.demo.entity.UsersEntity;
 
 import io.jsonwebtoken.io.IOException;
 import jakarta.transaction.Transactional;
@@ -62,14 +65,22 @@ public class BoardService {
 		}
 		return null;
 	}
-	public List<BoardLikeDTO> getLike(int id) {
-		if(boardRepository.findByid(id) != null) {
-			List<BoardLikeEntity> entity = boardlike.findByUserId(id);
-			List<BoardLikeDTO> dto = BoardLikeDTO.ToDtoList(entity);
-			return dto;
-		}
-		return null;
+	public List<BoardLikeDTO> getLike(int userId) {
+		// 해당 userId에 해당하는 글을 찾습니다.
+	    List<BoardEntity> userPosts = boardRepository.findByid(userId);
+	    if (!userPosts.isEmpty()) {
+	        List<BoardLikeDTO> dtos = new ArrayList<>();
+	        for (BoardEntity post : userPosts) {
+	            List<BoardLikeEntity> likesForPost = boardlike.findByboardId(post.getBoard_id());
+	            dtos.addAll(BoardLikeDTO.ToDtoList(likesForPost));
+	        }
+	        System.out.println(dtos.toString());
+	        return dtos;
+	    }
+	    return null;
 	}
+	
+	
 	public void writeBoard(BoardDTO boardDTO) {
 		String imgPath = "";
 		
@@ -122,4 +133,5 @@ public class BoardService {
 	public void DeleteBoard(int board_id) {
 		boardRepository.deleteById(board_id);
 	}
+
 }

@@ -26,6 +26,7 @@ export const AuthProvider = ({ children }) => {
 	    });
 	    // 여기서 응답 처리
 	    localStorage.removeItem('userInfo'); // 세션 스토리지에서 사용자 정보 제거
+	    localStorage.removeItem('nickname'); // 세션 스토리지에서 사용자 정보 제거
 	    alert("로그아웃 하셨습니다.");
 	    navigate('/');
 	  } catch (error) {

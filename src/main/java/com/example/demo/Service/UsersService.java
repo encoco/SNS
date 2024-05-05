@@ -2,6 +2,7 @@ package com.example.demo.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -57,10 +58,15 @@ public class UsersService {
     public List<SearchDTO> searchUsers(String searchTerm){
     	List<UsersEntity> entity = usersRepository.findBynicknameContaining(searchTerm);
     	List<SearchDTO> dto = SearchDTO.toSearchDTO(entity);
-    	for(SearchDTO dt : dto) {
-    		System.out.println(dt.toString());
-    	}
+    	
     	return dto;
     }
     
+	public SearchDTO userInfo(int userId) {
+		UsersEntity entity = usersRepository.findById(userId)
+											.orElseThrow(() -> new RuntimeException("User not found with ID: " + userId));
+    	SearchDTO dto = SearchDTO.toDTO(entity);
+    	
+    	return dto;
+	}
 }

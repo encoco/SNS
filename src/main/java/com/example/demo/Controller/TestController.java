@@ -68,7 +68,7 @@ public class TestController {
 		String refreshToken = (String) request.getAttribute("refreshToken");
         if (refreshToken != null && jwtutil.validateToken(refreshToken)) {
             String newAccessToken = jwtutil.newAccessToken(refreshToken);
-            System.out.println("~@~#~#NewToken : " + newAccessToken);
+            
             return ResponseEntity.ok().body(newAccessToken);
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid Refresh Token");

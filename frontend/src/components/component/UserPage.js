@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import ImageSlider from './ImageSlider'; // ImageSlider 컴포넌트를 import
 import api from "../../api";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { Button } from "./ui/button"
 import { CardTitle, CardHeader, CardContent, CardFooter, Card } from "./ui/card"
 import axios from 'axios';
@@ -9,30 +9,38 @@ import { useAuth } from '../../contexts/AuthContext'; // 경로는 실제 구조
 import Sidebar from "./ui/Sidebar";
 import DropdownMenu from './ui/DropdownMenu';
 
-function Mypage() {
+function UserPage() {
 	const [showTopBtn, setShowTopBtn] = useState(false);
 	const [posts, setPosts] = useState([]);
-	const navigate = useNavigate();
 	const [likesCount, setLikesCount] = useState([]);
+	const navigate = useNavigate();
+	const { userId } = useParams(); // URL에서 userId 추출
+	const { logout } = useAuth();
+	const [userInfo, setUserInfo] = useState(null);
+
 
 	useEffect(() => {
 		const fetchPosts = async () => {
 			try {
-				const response = await api.get(`/boardList`, {
+				// userId를 사용하여 사용자의 게시물을 가져옴
+				const response = await api.get(`/userPosts?userId=${userId}`, {
 					withCredentials: true,
 				});
+				setUserInfo(response.data.userInfo);
 				setPosts(response.data.posts);
+
 				const likesCount = response.data.likes.reduce((acc, like) => {
 					acc[like.board_id] = (acc[like.board_id] || 0) + 1;
 					return acc;
 				}, {});
+
 				setLikesCount(likesCount);
 			} catch (error) {
 				console.log(error);
 			}
 		};
 		fetchPosts();
-	}, [navigate]);
+	}, [userId]);
 
 	useEffect(() => {
 		const handleScroll = () => {
@@ -48,6 +56,19 @@ function Mypage() {
 		return () => window.removeEventListener("scroll", handleScroll);
 	}, []);
 
+	const handleFollow = () => {
+		window.scrollTo({
+			top: 0,
+			behavior: 'smooth' // 부드러운 스크롤
+		});
+	};
+	// 맨 위로 스크롤하는 함수
+	const scrollToTop = () => {
+		window.scrollTo({
+			top: 0,
+			behavior: 'smooth' // 부드러운 스크롤
+		});
+	};
 	const LikeHandler = async (boardId) => {
 		try {
 			const formData = new FormData();
@@ -74,59 +95,68 @@ function Mypage() {
 			alert('다시 시도해주세요');
 		}
 	};
-	
-	// 맨 위로 스크롤하는 함수
-	const scrollToTop = () => {
-		window.scrollTo({
-			top: 0,
-			behavior: 'smooth' // 부드러운 스크롤
-		});
-	};
 
 	return (
 		<div className="flex min-h-screen bg-gray-100">
-
 			<Sidebar />
-
 			<div className="flex flex-col w-full ml-10">
-				<h1 className="text-3xl font-bold mb-5">마이페이지</h1>
-				<div className="grid grid-cols-2 gap-4">
+				{userInfo && (
+					<div className="flex items-center mb-5">
+						<img
+							alt="Profile"
+							className="w-8 h-8 rounded-full mr-2"
+							src={userInfo.img || "/placeholder.svg"}
+						/>
+						<h2 className="text-2xl">{userInfo.nickname}</h2>
+						{localStorage.getItem('nickname') !== userInfo.nickname && (
+							<button
+								onClick={handleFollow}
+								className="ml-5 px-3 py-1 bg-black text-white text-sm font-medium rounded hover:bg-green-600 transition duration-150 ease-in-out"
+							>
+								팔로우
+							</button>
+						)}
+					</div>
+				)}
 
-					{Array.isArray(posts) && posts.map((post) => (
-						<Card key={post.board_id} className="w-full">
-							<CardHeader>
-								<div className="flex items-center">
+				{posts.length === 0 ? ( // 글이 없는 경우 메시지를 표시합니다
+					<div className="col-span-2 flex justify-center items-center h-full">
+						<p className="text-xl">작성한 글이 없습니다.</p>
+					</div>
+				) : ( // 글이 있는 경우 카드를 표시합니다
+					<div className="grid grid-cols-2 gap-4">
+						{posts.map((post) => (
+							<Card key={post.board_id} className="w-full">
+								<CardHeader>
+									<div className="flex items-center">
 										<img
 											alt="Profile"
 											className="w-8 h-8 rounded-full mr-2"
-											src={"/placeholder.svg"}
+											src={userInfo.img || "/placeholder.svg"}
 										/>
 										<div className="flex-grow"> {/* 이 부분이 추가됨 */}
 											<CardTitle>{post.nickname}</CardTitle>
 										</div>
 										<DropdownMenu post={post} />
 									</div>
-							</CardHeader>
-							<CardContent>
-								{post.imgpath && <ImageSlider imgpath={post.imgpath} />}
-								{post.video && <video src={post.video} controls />}
-
-								<p className="mt-2">{post.content}</p>
-							</CardContent>
-							<CardFooter className="flex justify-between text-sm">
-								<div className="flex space-x-4 flex-wrap">
-									<button className="w-10 h-8" onClick={() => LikeHandler(post.board_id)}> {likesCount[post.board_id]} Like</button>
-									<button className="w-16 h-8">Comment</button>
-									<button className="w-16 h-8">Share</button>
-								</div>
-							</CardFooter>
-						</Card>
-					))}
-
-				</div>
-
+								</CardHeader>
+								<CardContent>
+									{post.imgpath && <ImageSlider imgpath={post.imgpath} />}
+									{post.video && <video src={post.video} controls />}
+									<p className="mt-2">{post.content}</p>
+								</CardContent>
+								<CardFooter className="flex justify-between text-sm">
+									<div className="flex space-x-4 flex-wrap">
+										<button className="w-10 h-8" onClick={() => LikeHandler(post.board_id)}> {likesCount[post.board_id]} Like</button>
+										<button className="w-16 h-8">Comment</button>
+										<button className="w-16 h-8">Share</button>
+									</div>
+								</CardFooter>
+							</Card>
+						))}
+					</div>
+				)}
 			</div>
-
 			{showTopBtn && (
 				<button
 					className="fixed bottom-10 right-10 bg-white hover:bg-gray-100 text-gray-900 font-bold rounded-full h-12 w-12 flex justify-center items-center border-4 border-gray-900 cursor-pointer"
@@ -140,4 +170,4 @@ function Mypage() {
 	)
 }
 
-export default Mypage;
+export default UserPage;

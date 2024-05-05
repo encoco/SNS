@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,7 +19,9 @@ import org.springframework.web.multipart.MultipartFile;
 import com.example.demo.Config.JwtUtil;
 import com.example.demo.DTO.BoardDTO;
 import com.example.demo.DTO.BoardLikeDTO;
+import com.example.demo.DTO.SearchDTO;
 import com.example.demo.Service.BoardService;
+import com.example.demo.Service.UsersService;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -31,13 +34,14 @@ public class BoardController {
 
 	private final BoardService boardService;
 	private final JwtUtil jwtUtil;
+	private final UsersService userService;
 	public String token(String request) {
     	String token = request.substring(7,request.length());
     	return token;
     }
 
 	@GetMapping("/boardList")
-	public ResponseEntity<?> readList(HttpServletRequest request) {
+	public ResponseEntity<?> boardList(HttpServletRequest request) {
 	    try {
 	    	String token = token(request.getHeader("Authorization"));
 	    	int userId = jwtUtil.getUserIdFromToken(token);
@@ -50,7 +54,24 @@ public class BoardController {
 	        return ResponseEntity.ok(response);
 	    } catch (Exception e) {
 	        System.out.println("서버 오류");
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 오류");
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("/boardList");
+	    }
+	}
+	
+	@GetMapping("/userPosts")
+    public ResponseEntity<?> userPosts(@RequestParam("userId") int userId) {
+	    try {
+	        List<BoardDTO> posts = boardService.getPost(userId);
+	        List<BoardLikeDTO> like = boardService.getLike(userId);
+	        SearchDTO user = userService.userInfo(userId);
+	        Map<String, Object> response = new HashMap<>();
+	        response.put("posts", posts);
+	        response.put("likes", like);
+	        response.put("userInfo", user);
+	        return ResponseEntity.ok(response);
+	    } catch (Exception e) {
+	        System.out.println("서버 오류");
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("/userPosts");
 	    }
 	}
 
@@ -96,7 +117,7 @@ public class BoardController {
             }
     	}catch(Exception e){
     		System.out.println("error : " + e);
-    		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("error");
+    		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("boardLIke");
     	}
     }
 
@@ -117,7 +138,7 @@ public class BoardController {
             boardService.updatePost(boardDTO);
             return ResponseEntity.ok("수정 완료");
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("글 작성 중 오류가 발생했습니다.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("글 update.");
         }
     }
     

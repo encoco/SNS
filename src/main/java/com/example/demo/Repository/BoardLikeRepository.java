@@ -11,6 +11,7 @@ import com.example.demo.entity.BoardLikeEntity;
 
 
 public interface BoardLikeRepository extends JpaRepository<BoardLikeEntity, Integer> {
-	public List<BoardLikeEntity> findByUserId(int userId);
+	public List<BoardLikeEntity> findByboardId(int userId);
 	Optional<BoardLikeEntity> findByBoardIdAndUserId(int boardId, int userId);
+	
 }

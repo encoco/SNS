@@ -92,7 +92,7 @@ export default function Component() {
 			}
 		} catch (error) {
 			console.log(error);
-			alert('글쓰기에 실패했습니다. 다시 시도해주세요.');
+			alert('다시 시도해주세요');
 		}
 	};
 
@@ -127,12 +127,12 @@ export default function Component() {
 					{searchResults.length > 0 && (
 						<div className="absolute top-full left-1/2 w-full max-w-md bg-white shadow-md rounded-md z-10 transform -translate-x-1/2">
 							{searchResults.map(user => (
-								<Link to={`/mypage/${user.id}`} key={user.id} className="block">
+								<Link to={`/UserPage/${user.id}`} key={user.id} className="block">
 									<div className="flex items-center space-x-4 p-2 hover:bg-gray-200 cursor-pointer">
 										<img
-											alt="사용자 아바타"
+											alt="s"
 											className="w-8 h-8 rounded-full"
-											src={user.img || "/default-avatar.png"}
+											src={user.img || "/placeholder.svg"}
 										/>
 										<span>{user.nickname}</span>
 									</div>
@@ -175,7 +175,7 @@ export default function Component() {
 										<p>{post.content}</p>
 									</div>
 									<div className="flex space-x-4 flex-wrap">
-										<button className="w-10 h-8">Like</button>
+										<button className="w-10 h-8" onClick={() => LikeHandler(post.board_id)}>Like</button>
 										<button className="w-16 h-8">Comment</button>
 										<button className="w-16 h-8">Share</button>
 									</div>
