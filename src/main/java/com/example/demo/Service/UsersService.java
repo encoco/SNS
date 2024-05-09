@@ -11,9 +11,12 @@ import org.springframework.stereotype.Service;
 import com.example.demo.DTO.BoardDTO;
 import com.example.demo.DTO.SearchDTO;
 import com.example.demo.DTO.UsersDTO;
+import com.example.demo.DTO.followDTO;
 import com.example.demo.Repository.UsersRepository;
+import com.example.demo.Repository.followRepository;
 import com.example.demo.entity.BoardEntity;
 import com.example.demo.entity.UsersEntity;
+import com.example.demo.entity.followEntity;
 
 import lombok.RequiredArgsConstructor;
 
@@ -21,8 +24,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class UsersService {
 	 private final UsersRepository usersRepository;
+	 private final followRepository fRepository;
 	 private final PasswordEncoder passwordEncoder;
-
+	 
     public boolean isUserIdDuplicate(String username) {
         return usersRepository.existsByUsername(username);
     }
@@ -68,5 +72,23 @@ public class UsersService {
     	SearchDTO dto = SearchDTO.toDTO(entity);
     	
     	return dto;
+	}
+
+	public String followUser(int userId, int myId) {
+		followEntity entity = fRepository.findByFollowerIdAndFollowingId(myId,userId);
+		if(entity != null) {
+			fRepository.delete(entity);
+			System.out.println("followDel");
+			return "del";
+		}
+		else {
+			followDTO dto = new followDTO();
+			dto.setFollowerId(myId);
+			dto.setFollowingId(userId);
+			entity = followEntity.toEntity(dto);
+			fRepository.save(entity);
+			System.out.println("follow success");
+			return "add";
+		}
 	}
 }

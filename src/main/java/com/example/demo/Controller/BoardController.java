@@ -35,15 +35,30 @@ public class BoardController {
 	private final BoardService boardService;
 	private final JwtUtil jwtUtil;
 	private final UsersService userService;
-	public String token(String request) {
-    	String token = request.substring(7,request.length());
-    	return token;
-    }
-
+	
+	@GetMapping("/mainboardList")
+	public ResponseEntity<?> mainboardList(HttpServletRequest request) {
+	    try {
+	    	String token = jwtUtil.token(request.getHeader("Authorization"));
+	    	int userId = jwtUtil.getUserIdFromToken(token);
+	    	
+	    	List<BoardDTO> posts = boardService.getfollowPost(userId);   
+	    	List<BoardLikeDTO> like = boardService.getfollowLike(posts);
+	        
+	        Map<String, Object> response = new HashMap<>();
+	        response.put("posts", posts);
+	        response.put("likes", like);
+	        return ResponseEntity.ok(response);
+	    } catch (Exception e) {
+	        System.out.println("서버 오류");
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("/boardList");
+	    }
+	}
+	
 	@GetMapping("/boardList")
 	public ResponseEntity<?> boardList(HttpServletRequest request) {
 	    try {
-	    	String token = token(request.getHeader("Authorization"));
+	    	String token = jwtUtil.token(request.getHeader("Authorization"));
 	    	int userId = jwtUtil.getUserIdFromToken(token);
 	        List<BoardDTO> posts = boardService.getPost(userId);
 	        List<BoardLikeDTO> like = boardService.getLike(userId);
@@ -80,7 +95,7 @@ public class BoardController {
     		 							@RequestParam(value= "img" , required = false) List<MultipartFile> imgs,
 									    HttpServletRequest request){
         try {
-        	String token= token(request.getHeader("Authorization"));
+        	String token= jwtUtil.token(request.getHeader("Authorization"));
         	int userId = jwtUtil.getUserIdFromToken(token);
         	String nickname = jwtUtil.getNickFromToken(token);
         	BoardDTO boardDTO = new BoardDTO();
@@ -101,7 +116,7 @@ public class BoardController {
     @GetMapping("/boardLike")
     public ResponseEntity<?> boardLike(@RequestParam(value = "boardId") int boardId,HttpServletRequest request){
     	try {
-    		String token = token(request.getHeader("Authorization"));
+    		String token = jwtUtil.token(request.getHeader("Authorization"));
     		int userId = jwtUtil.getUserIdFromToken(token);
     		BoardLikeDTO dto = new BoardLikeDTO();
     		dto.setBoard_id(boardId);

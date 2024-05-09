@@ -81,5 +81,19 @@ public class TestController {
     	List<SearchDTO> searchResults = Uservice.searchUsers(searchTerm);    	
     	return ResponseEntity.ok(searchResults);
     }
+    
+    @GetMapping("/userFollow")
+    public ResponseEntity<?> followUser(@RequestParam("userId") int userId, HttpServletRequest request){
+    	try {
+    		String token = jwtutil.token(request.getHeader("Authorization"));
+        	int myId = jwtutil.getUserIdFromToken(token);
+        	if(Uservice.followUser(userId,myId).equals("del")) {
+        		return ResponseEntity.ok("삭제");
+        	}
+        	else return ResponseEntity.ok("추가");	
+    	}catch(Exception e) {
+    		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("error");
+    	}
+    }
 }
 

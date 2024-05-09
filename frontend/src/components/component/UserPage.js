@@ -17,6 +17,7 @@ function UserPage() {
 	const { userId } = useParams(); // URL에서 userId 추출
 	const { logout } = useAuth();
 	const [userInfo, setUserInfo] = useState(null);
+	const [isFollowing, setIsFollowing] = useState(false);
 
 
 	useEffect(() => {
@@ -56,12 +57,22 @@ function UserPage() {
 		return () => window.removeEventListener("scroll", handleScroll);
 	}, []);
 
-	const handleFollow = () => {
-		window.scrollTo({
-			top: 0,
-			behavior: 'smooth' // 부드러운 스크롤
-		});
-	};
+	const handleFollow = async () => {
+        try {
+            const method = isFollowing ? 'delete' : 'post';
+			const response = await api.get(`/userFollow?userId=${userId}`, {
+				withCredentials: true,
+			});
+            if (response.status === 200) {
+                setIsFollowing(!isFollowing); // 상태 토글
+            } else {
+                console.error('Follow action failed:', response);
+            }
+        } catch (error) {
+            console.error('Follow action error:', error);
+        }
+    };
+    
 	// 맨 위로 스크롤하는 함수
 	const scrollToTop = () => {
 		window.scrollTo({
@@ -109,13 +120,15 @@ function UserPage() {
 						/>
 						<h2 className="text-2xl">{userInfo.nickname}</h2>
 						{localStorage.getItem('nickname') !== userInfo.nickname && (
-							<button
-								onClick={handleFollow}
-								className="ml-5 px-3 py-1 bg-black text-white text-sm font-medium rounded hover:bg-green-600 transition duration-150 ease-in-out"
-							>
-								팔로우
-							</button>
-						)}
+                            <button
+                                onClick={handleFollow}
+                                className={`ml-5 px-3 py-1 text-sm font-medium rounded transition duration-150 ease-in-out ${
+                                    isFollowing ? 'bg-red-500 hover:bg-red-700 text-white' : 'bg-black hover:bg-green-600 text-white'
+                                }`}
+                            >
+                                {isFollowing ? '언팔로우' : '팔로우'}
+                            </button>
+                        )}
 					</div>
 				)}
 
@@ -147,7 +160,13 @@ function UserPage() {
 								</CardContent>
 								<CardFooter className="flex justify-between text-sm">
 									<div className="flex space-x-4 flex-wrap">
-										<button className="w-10 h-8" onClick={() => LikeHandler(post.board_id)}> {likesCount[post.board_id]} Like</button>
+										<button
+											className="w-10 h-8"
+											style={{ color: likesCount[post.board_id] > 0 ? "red" : "inherit" }}
+											onClick={() => LikeHandler(post.board_id)}
+										>
+											{likesCount[post.board_id] > 0 ? `${likesCount[post.board_id]} ❤` : '0 ❤'}
+										</button>
 										<button className="w-16 h-8">Comment</button>
 										<button className="w-16 h-8">Share</button>
 									</div>
