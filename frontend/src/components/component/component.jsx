@@ -17,14 +17,23 @@ export default function Component() {
 	const [posts, setPosts] = useState([]);
 	const [searchTerm, setSearchTerm] = useState('');
 	const [searchResults, setSearchResults] = useState([]);
+	const [likesCount, setLikesCount] = useState([]);
+
 	// 글 목록 받아오기
 	useEffect(() => {
 		const fetchPosts = async () => {
 			try {
-				const response = await api.get(`/boardList`, {
+				const response = await api.get(`/mainboardList`, {
 					withCredentials: true,
 				});
 				setPosts(response.data.posts);
+
+				const likesCount = response.data.likes.reduce((acc, like) => {
+					acc[like.board_id] = (acc[like.board_id] || 0) + 1;
+					return acc;
+				}, {});
+
+				setLikesCount(likesCount);
 			} catch (error) {
 				console.log(error);
 			}
@@ -76,7 +85,7 @@ export default function Component() {
 	const handleSubmit = (event) => {
 		event.preventDefault(); // 폼 제출을 방지하여 엔터키로 검색이 실행되지 않도록 합니다.
 	};
-	
+
 	const LikeHandler = async (boardId) => {
 		try {
 			const formData = new FormData();
@@ -86,9 +95,17 @@ export default function Component() {
 			});
 			if (response.data === "success") {
 				alert('좋아요 추가');
+				setLikesCount(prevLikesCount => ({
+					...prevLikesCount,
+					[boardId]: Math.max((prevLikesCount[boardId] || 0) + 1, 0)
+				}));
 			}
 			else if (response.data === "fail") {
 				alert('좋아요 삭제');
+				setLikesCount(prevLikesCount => ({
+					...prevLikesCount,
+					[boardId]: Math.max((prevLikesCount[boardId] || 0) - 1, 0)
+				}));
 			}
 		} catch (error) {
 			console.log(error);
@@ -113,16 +130,16 @@ export default function Component() {
 					<form className="flex items-center gap-2 w-full max-w-md mt-5 relative" onSubmit={handleSubmit}>
 						<SearchIcon className="h-5 w-5" />
 						<input
-							className="w-full h-10 px-1 font-normal rounded-none dark:placeholder-gray-400"
+							className="w-full h-10 px-1 font-normal rounded-none dark:placeholder-gray-400 "
 							type="search"
 							value={searchTerm}
 							onChange={handleChange}
 							placeholder="검색어를 입력하세요..."
 						/>
-						<Button className="square-8" size="icon" variant="ghost">
+						{/*<Button className="square-8" size="icon" variant="ghost">
 							<BellIcon className="h-4 w-4" />
 							<span className="sr-only">알림 토글</span>
-						</Button>
+						</Button>*/}
 					</form>
 					{searchResults.length > 0 && (
 						<div className="absolute top-full left-1/2 w-full max-w-md bg-white shadow-md rounded-md z-10 transform -translate-x-1/2">
@@ -175,7 +192,13 @@ export default function Component() {
 										<p>{post.content}</p>
 									</div>
 									<div className="flex space-x-4 flex-wrap">
-										<button className="w-10 h-8" onClick={() => LikeHandler(post.board_id)}>Like</button>
+										<button
+											className="w-10 h-8"
+											style={{ color: likesCount[post.board_id] > 0 ? "red" : "inherit" }}
+											onClick={() => LikeHandler(post.board_id)}
+										>
+											{likesCount[post.board_id] > 0 ? `${likesCount[post.board_id]} ❤` : '0 ❤'}
+										</button>
 										<button className="w-16 h-8">Comment</button>
 										<button className="w-16 h-8">Share</button>
 									</div>

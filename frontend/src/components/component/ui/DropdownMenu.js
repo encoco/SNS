@@ -5,8 +5,9 @@ import api from "../../../api";
 function DropdownMenu({ post }) {
 	const [isOpen, setIsOpen] = useState(false);
 	const navigate = useNavigate();
-
+	const userNickname = localStorage.getItem("nickname");
 	const toggleDropdown = () => setIsOpen(!isOpen);
+	const [showModal, setShowModal] = useState(false);
 
 	const editPost = (post) => {
 		navigate('/boardWrite', { state: { post } });
@@ -31,10 +32,12 @@ function DropdownMenu({ post }) {
 			window.location.reload();
 		}
 	};
-
-	const [showModal, setShowModal] = useState(false);
-
+	
+	if (post.nickname !== userNickname) {
+		return null;
+	}
 	return (
+		
 		<div className="relative">
 			<button onClick={toggleDropdown} className="p-2">
 				<MoreHorizontalIcon className="h-5 w-5 text-gray-700" />

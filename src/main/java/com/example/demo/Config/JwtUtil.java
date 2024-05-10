@@ -91,4 +91,8 @@ public class JwtUtil {
         PrincipalDetails userDetails = new PrincipalDetails(userDTO);
         return generateToken(userDetails, accessExpirationTime);
 	}
+	public String token(String request) {
+    	String token = request.substring(7,request.length());
+    	return token;
+    }
 }

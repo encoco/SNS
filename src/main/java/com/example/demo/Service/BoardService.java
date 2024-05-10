@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,7 @@ import com.example.demo.DTO.BoardLikeDTO;
 import com.example.demo.DTO.SearchDTO;
 import com.example.demo.Repository.BoardLikeRepository;
 import com.example.demo.Repository.BoardRepository;
+import com.example.demo.Repository.followRepository;
 import com.example.demo.entity.BoardEntity;
 import com.example.demo.entity.BoardLikeEntity;
 import com.example.demo.entity.UsersEntity;
@@ -32,6 +34,7 @@ public class BoardService {
 
 	public final BoardRepository boardRepository;
 	public final BoardLikeRepository boardlike;
+	public final followRepository fRepository;
 	private final S3Config s3Config;
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
@@ -74,7 +77,7 @@ public class BoardService {
 	            List<BoardLikeEntity> likesForPost = boardlike.findByboardId(post.getBoard_id());
 	            dtos.addAll(BoardLikeDTO.ToDtoList(likesForPost));
 	        }
-	        System.out.println(dtos.toString());
+	        
 	        return dtos;
 	    }
 	    return null;
@@ -82,19 +85,19 @@ public class BoardService {
 	
 	
 	public void writeBoard(BoardDTO boardDTO) {
-		String imgpath = "";
+		String imgPath = "";
 		
 		if( boardDTO.getImg() != null) {
 			for(MultipartFile img : boardDTO.getImg()) {
-				if(imgpath.isEmpty()|| imgpath=="") {
-					imgpath += uploadFile(img, "image");
+				if(imgPath.isEmpty()|| imgPath =="") {
+					imgPath += uploadFile(img, "image");
 				}
 				else {
-					imgpath += "|" + uploadFile(img, "image");
+					imgPath += "|" + uploadFile(img, "image");
 				}
 			}
 		}
-		boardDTO.setImgpath(imgpath);
+		boardDTO.setImgpath(imgPath);
 		BoardEntity board = BoardEntity.toEntity(boardDTO);
 		boardRepository.save(board);
 	}
@@ -106,12 +109,10 @@ public class BoardService {
 		if (existingLike.isPresent()) {
 	        // 이미 "좋아요"가 존재한다면 삭제
 			boardlike.delete(existingLike.get());
-	        System.out.println("Like removed for board_id=" + dto.getBoard_id() + ", user_id=" + dto.getId());
 	        return 0;
 	    } else {
 	        // "좋아요"가 없다면 새로 저장
 	    	boardlike.save(entity);
-	        System.out.println("Like added for board_id=" + dto.getBoard_id() + ", user_id=" + dto.getId());
 	        return 1;
 	    }
 	}
@@ -136,6 +137,29 @@ public class BoardService {
 	@Transactional
 	public void DeleteBoard(int board_id) {
 		boardRepository.deleteById(board_id);
+	}
+
+	public List<BoardDTO> getfollowPost(int userId) {
+		List<Integer> followIds = fRepository.findFollowingIdByFollowerId(userId);
+		List<BoardEntity> entity = boardRepository.findByIds(followIds);
+		List<BoardDTO> dto = BoardDTO.ToDtoList(entity);
+		
+		return dto; 
+	}
+
+	public List<BoardLikeDTO> getfollowLike(List<BoardDTO> posts) {
+	    // posts에 있는 게시글들의 ID 목록 가져오기
+	    List<Integer> postIds = posts.stream()
+	            .map(BoardDTO::getBoard_id)
+	            .collect(Collectors.toList());
+
+	    // 가져온 게시글들에 대한 좋아요 정보 조회
+	    List<BoardLikeEntity> likeEntities = boardlike.findByBoardIds(postIds);
+	    
+	    // DTO로 변환
+	    List<BoardLikeDTO> likeDTOs = BoardLikeDTO.ToDtoList(likeEntities);
+
+	    return likeDTOs;
 	}
 
 }
