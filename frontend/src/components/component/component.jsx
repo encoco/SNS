@@ -113,7 +113,7 @@ export default function Component() {
 					<form className="flex items-center gap-2 w-full max-w-md mt-5 relative" onSubmit={handleSubmit}>
 						<SearchIcon className="h-5 w-5" />
 						<input
-							className="w-full h-10 font-normal rounded-none dark:placeholder-gray-400"
+							className="w-full h-10 px-1 font-normal rounded-none dark:placeholder-gray-400"
 							type="search"
 							value={searchTerm}
 							onChange={handleChange}
