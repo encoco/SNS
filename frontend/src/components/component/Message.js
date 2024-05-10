@@ -1,13 +1,17 @@
 import { Link } from "react-router-dom";
 import Sidebar from "./ui/Sidebar";
+import Together from "./Together";
 import { Button } from "./ui/button"
 import { CardTitle, CardDescription, CardHeader, CardContent, Card } from "./ui/card"
 import { Input } from "./ui/input"
 import { DropdownMenuTrigger, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuItem, DropdownMenuContent, DropdownMenu } from "./ui/dropdown-menu"
 import { AvatarImage, AvatarFallback, Avatar } from "./ui/avatar"
 import { Badge } from "./ui/badge"
+import React, { useState } from 'react';
 
 function Meesage() {
+	const [activeView, setActiveView] = useState('chat');
+
 	const handleClick = () => {
 		console.log("123 click");
 	}
@@ -25,6 +29,7 @@ function Meesage() {
 							type="search"
 						/>
 					</div>
+
 					<div className="flex h-[60px] items-center border-b px-6">
 						<Link className="flex items-center gap-2 font-semibold" href="#">
 							<MessageCircleIcon className="h-6 w-6" />
@@ -34,105 +39,89 @@ function Meesage() {
 				</header>
 				<main className="flex-1 flex flex-col">
 					<div className="flex-1 flex">
-						<div className="flex-1 flex flex-col">
-							<div className="flex-1 overflow-auto p-6">
-								<div className="grid gap-4">
-									<div className="flex items-start gap-4">
-										<Avatar>
-											<AvatarImage alt="John Doe" src="/placeholder-user.jpg"
-												style={{
-													width: '50px',    // 너비 설정
-													height: '50px',   // 높이 설정
-													objectFit: 'cover'  // 이미지 비율 유지
-												}}
-											/>
-											<AvatarFallback>JD</AvatarFallback>
-										</Avatar>
-										<div className="flex-1 space-y-2">
-											<div className="rounded-lg bg-gray-100 p-4 text-sm dark:bg-gray-800">
-												<p>ㅎㅇ</p>
+						{activeView === 'chat' ? (
+							// 채팅 화면 컨텐츠
+							<div className="flex-1 flex flex-col">
+								<div className="flex-1 overflow-auto p-6">
+									<div className="grid gap-4">
+										{/* 채팅 메시지 출력 영역 */}
+										{/* 채팅 예제 */}
+										<div className="flex items-start gap-4">
+											<Avatar>
+												<AvatarImage alt="John Doe" src="/placeholder-user.jpg"
+													style={{
+														width: '50px',    // 너비 설정
+														height: '50px',   // 높이 설정
+														objectFit: 'cover'  // 이미지 비율 유지
+													}}
+												/>
+												<AvatarFallback>JD</AvatarFallback>
+											</Avatar>
+											<div className="flex-1 space-y-2">
+												<div className="rounded-lg bg-gray-100 p-4 text-sm dark:bg-gray-800">
+													<p>오늘 저녁 마라탕 ㄱㄱ</p>
+												</div>
+												<div className="text-xs text-gray-500 dark:text-gray-400">3:49 PM</div>
 											</div>
-											<div className="text-xs text-gray-500 dark:text-gray-400">3:45 PM</div>
 										</div>
+										<div className="flex items-start gap-4 justify-end">
+											<div className="flex-1 space-y-2">
+												<div className="rounded-lg bg-blue-500 p-4 text-sm text-white">
+													<p>오 ㄱㄱ</p>
+												</div>
+												<div className="text-xs text-gray-500 dark:text-gray-400">3:51 PM</div>
+											</div>
+											<Avatar>
+												<AvatarImage alt="John Doe" src="/placeholder-user.jpg"
+													style={{
+														width: '50px',    // 너비 설정
+														height: '50px',   // 높이 설정
+														objectFit: 'cover'  // 이미지 비율 유지
+													}}
+												/>
+												<AvatarFallback>JD</AvatarFallback>
+											</Avatar>
+										</div>
+
+
 									</div>
-									<div className="flex items-start gap-4 justify-end">
-										<div className="flex-1 space-y-2">
-											<div className="rounded-lg bg-blue-500 p-4 text-sm text-white">
-												<p>ㅎㅇㅎㅇ~</p>
-											</div>
-											<div className="text-xs text-gray-500 dark:text-gray-400">3:47 PM</div>
+								</div>
+								<div className="border-t px-6 py-4">
+									<form className="flex items-center gap-2">
+										<Input className="flex-1" placeholder="메세지를 입력하세요..." type="text" />
+										<Button size="icon" type="submit" variant="ghost">
+											<SendIcon className="h-5 w-5" />
+										</Button>
+									</form>
+								</div>
+							</div>
+						) : (
+							// 함께해요 화면 컨텐츠
+							<div className="flex-1 flex flex-col">
+								<div className="flex-1 overflow-auto p-6">
+									<div className="grid gap-4">
+										{/* 함께해요 활동 목록 */}
+										<div className="flex flex-col border-r bg-gray-100/40 dark:bg-gray-800/40">
+											<Together />
 										</div>
-										<Avatar>
-											<AvatarImage alt="John Doe" src="/placeholder-user.jpg"
-												style={{
-													width: '50px',    // 너비 설정
-													height: '50px',   // 높이 설정
-													objectFit: 'cover'  // 이미지 비율 유지
-												}}
-											/>
-											<AvatarFallback>JD</AvatarFallback>
-										</Avatar>
-									</div>
-									<div className="flex items-start gap-4">
-										<Avatar>
-											<AvatarImage alt="John Doe" src="/placeholder-user.jpg"
-												style={{
-													width: '50px',    // 너비 설정
-													height: '50px',   // 높이 설정
-													objectFit: 'cover'  // 이미지 비율 유지
-												}}
-											/>
-											<AvatarFallback>JD</AvatarFallback>
-										</Avatar>
-										<div className="flex-1 space-y-2">
-											<div className="rounded-lg bg-gray-100 p-4 text-sm dark:bg-gray-800">
-												<p>오늘 저녁 마라탕 ㄱㄱ</p>
-											</div>
-											<div className="text-xs text-gray-500 dark:text-gray-400">3:49 PM</div>
-										</div>
-									</div>
-									<div className="flex items-start gap-4 justify-end">
-										<div className="flex-1 space-y-2">
-											<div className="rounded-lg bg-blue-500 p-4 text-sm text-white">
-												<p>오 ㄱㄱ</p>
-											</div>
-											<div className="text-xs text-gray-500 dark:text-gray-400">3:51 PM</div>
-										</div>
-										<Avatar>
-											<AvatarImage alt="John Doe" src="/placeholder-user.jpg"
-												style={{
-													width: '50px',    // 너비 설정
-													height: '50px',   // 높이 설정
-													objectFit: 'cover'  // 이미지 비율 유지
-												}}
-											/>
-											<AvatarFallback>JD</AvatarFallback>
-										</Avatar>
 									</div>
 								</div>
 							</div>
-							<div className="border-t px-6 py-4">
-								<form className="flex items-center gap-2">
-									<Input className="flex-1" placeholder="메세지를 입력하세요..." type="text" />
-									<Button size="icon" type="submit" variant="ghost">
-										<SendIcon className="h-5 w-5" />
-									</Button>
-								</form>
-							</div>
-						</div>
+						)}
+
 						<div className="w-[300px] border-l bg-gray-100/40 p-6 dark:bg-gray-800/40">
 							<div className="flex-1 overflow-auto py-2">
 								<nav className="grid items-start px-4 text-sm font-medium">
 									<Link
 										className="flex items-center gap-3 rounded-lg bg-gray-100 px-3 py-2 text-gray-900 transition-all hover:text-gray-900 dark:bg-gray-800 dark:text-gray-50 dark:hover:text-gray-50"
-										href="#"
+										href="#" onClick={() => setActiveView('chat')}
 									>
 										<MessageCircleIcon className="h-4 w-4" />
 										개인채팅방
 									</Link>
 									<Link
 										className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
-										href="#"
+										href="#" onClick={() => setActiveView('group')}
 									>
 										<GroupIcon className="h-4 w-4" />
 										함께해요
@@ -181,6 +170,7 @@ function Meesage() {
 	)
 }
 export default Meesage;
+
 function BellIcon(props) {
 	return (
 		<svg
