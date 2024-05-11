@@ -45,18 +45,19 @@ function LoginPage() {
 	    localStorage.setItem('userInfo', response.data.accessToken);
 	    localStorage.setItem('nickname', response.data.nickname);
 	    await login(username,password); // 예시 로그인 함수	    
-	    alert('로그인 성공');
+	    alert('로그인되었습니다.');
 	    navigate('/index');
 	  } catch (error) {
 	    if (error.response) {
 	      const status = error.response.status;
 	      if (status === 401 || status === 403) {
 	        alert('계정 정보를 확인해주세요.');
+	        
 	      } else {
 	        alert('로그인 중 문제가 발생했습니다. 다시 시도해주세요.');
 	      }
 	    } else {
-	      alert('서버와의 연결에 문제가 발생했습니다.');
+		  alert('아이디 또는 비밀번호를 잘못 입력했습니다. 입력하신 내용을 다시 확인해주세요.');
 	    }
 	  }
 	};  

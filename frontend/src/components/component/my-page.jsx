@@ -8,12 +8,15 @@ import axios from 'axios';
 import { useAuth } from '../../contexts/AuthContext'; // 경로는 실제 구조에 맞게 조정해야 함
 import Sidebar from "./ui/Sidebar";
 import DropdownMenu from './ui/DropdownMenu';
+import Comment from './ui/Comment';
 
 function Mypage() {
 	const [showTopBtn, setShowTopBtn] = useState(false);
 	const [posts, setPosts] = useState([]);
 	const navigate = useNavigate();
 	const [likesCount, setLikesCount] = useState([]);
+	const [showModal, setShowModal] = useState(false);
+	const [currentComments, setCurrentComments] = useState([]);
 
 	useEffect(() => {
 		const fetchPosts = async () => {
@@ -74,7 +77,7 @@ function Mypage() {
 			alert('다시 시도해주세요');
 		}
 	};
-	
+
 	// 맨 위로 스크롤하는 함수
 	const scrollToTop = () => {
 		window.scrollTo({
@@ -83,6 +86,25 @@ function Mypage() {
 		});
 	};
 
+	const dummyComments = [
+		{ nickname : "aaa", img : "/placeholder.svg" , comment: "Great post!" },
+		{ nickname : "bbb" , img : "/placeholder.svg", comment: "Thanks for sharing!" },
+		{ nickname : "bbb" , img : "/placeholder.svg", comment: "Thanks for sharing!" },
+		{ nickname : "bbb" , img : "/placeholder.svg", comment: "Thanks for sharing!" },
+		{ nickname : "bbb" , img : "/placeholder.svg", comment: "Thanks for sharing!" },
+		{ nickname : "bbb" , img : "/placeholder.svg", comment: "Thanks for sharing!" },
+		{ nickname : "bbb" , img : "/placeholder.svg", comment: "Thanks for sharing!" },
+		{ nickname : "bbb" , img : "/placeholder.svg", comment: "Thanks for sharing!" },
+		{ nickname : "bbb" , img : "/placeholder.svg", comment: "Thanks for sharing!" },
+		{ nickname : "bbb" , img : "/placeholder.svg", comment: "Thanks for sharing!" },
+		{ nickname : "bbb" , img : "/placeholder.svg", comment: "Thanks for sharing!" },
+		{ nickname : "bbb" , img : "/placeholder.svg", comment: "Thanks for sharing!" },
+		{ nickname : "bbb" , img : "/placeholder.svg", comment: "Thanks for sharing!" },
+		{ nickname : "bbb" , img : "/placeholder.svg", comment: "Thanks for sharing!" },
+		{ nickname : "bbb" , img : "/placeholder.svg", comment: "Thanks for sharing!" },
+		{ nickname : "bbb" , img : "/placeholder.svg", comment: "Thanks for sharing!" },
+		{ nickname : "bbb" , img : "/placeholder.svg", comment: "Thanks for sharing!" }
+	];
 	return (
 		<div className="flex min-h-screen bg-gray-100">
 
@@ -96,37 +118,51 @@ function Mypage() {
 						<Card key={post.board_id} className="w-full">
 							<CardHeader>
 								<div className="flex items-center">
-										<img
-											alt="Profile"
-											className="w-8 h-8 rounded-full mr-2"
-											src={"/placeholder.svg"}
-										/>
-										<div className="flex-grow"> {/* 이 부분이 추가됨 */}
-											<CardTitle>{post.nickname}</CardTitle>
-										</div>
-										<DropdownMenu post={post} />
+									<img
+										alt="Profile"
+										className="w-8 h-8 rounded-full mr-2"
+										src={"/placeholder.svg"}
+									/>
+									<div className="flex-grow"> {/* 이 부분이 추가됨 */}
+										<CardTitle>{post.nickname}</CardTitle>
 									</div>
+									<DropdownMenu post={post} />
+								</div>
 							</CardHeader>
 							<CardContent>
 								{post.imgpath && <ImageSlider imgpath={post.imgpath} />}
 								{post.video && <video src={post.video} controls />}
-
 								<p className="mt-2">{post.content}</p>
 							</CardContent>
+
 							<CardFooter className="flex justify-between text-sm">
 								<div className="flex space-x-4 flex-wrap">
-									<button className="w-10 h-8" onClick={() => LikeHandler(post.board_id)}> {likesCount[post.board_id]} Like</button>
-									<button className="w-16 h-8">Comment</button>
-									<button className="w-16 h-8">Share</button>
+									<button
+										className="w-10 h-8"
+										style={{ color: likesCount[post.board_id] > 0 ? "red" : "inherit" }}
+										onClick={() => LikeHandler(post.board_id)}
+									>
+										{likesCount[post.board_id] > 0 ? `${likesCount[post.board_id]} ❤` : '0 ❤'}
+									</button>
+									<button
+										className="w-16 h-8"
+										onClick={() => {
+											setCurrentComments(dummyComments); // 현재 댓글 설정
+											setShowModal(true); // 모달 보이기
+										}}
+									>
+										댓글
+									</button>
+									<button className="w-16 h-8">공유하기</button>
 								</div>
 							</CardFooter>
 						</Card>
 					))}
-
 				</div>
-
 			</div>
 
+			<Comment isOpen={showModal} onClose={() => setShowModal(false)} comments={currentComments} />
+			
 			{showTopBtn && (
 				<button
 					className="fixed bottom-10 right-10 bg-white hover:bg-gray-100 text-gray-900 font-bold rounded-full h-12 w-12 flex justify-center items-center border-4 border-gray-900 cursor-pointer"
