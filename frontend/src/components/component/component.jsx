@@ -20,27 +20,17 @@ export default function Component() {
 	const [likesCount, setLikesCount] = useState([]);
 	const [showModal, setShowModal] = useState(false);
 	const [currentComments, setCurrentComments] = useState([]);
+	const [selectedPostId, setSelectedPostId] = useState(null);
 	const dummyComments = [
-		{ nickname: "aaa", img: "/placeholder.svg", comment: "Great post!" },
-		{ nickname: "bbb", img: "/placeholder.svg", comment: "Thanks for sharing!" },
-		{ nickname: "bbb", img: "/placeholder.svg", comment: "Thanks for sharing!" },
-		{ nickname: "bbb", img: "/placeholder.svg", comment: "Thanks for sharing!" },
-		{ nickname: "bbb", img: "/placeholder.svg", comment: "Thanks for sharing!" },
-		{ nickname: "bbb", img: "/placeholder.svg", comment: "Thanks for sharing!" },
-		{ nickname: "bbb", img: "/placeholder.svg", comment: "Thanks for sharing!" },
-		{ nickname: "bbb", img: "/placeholder.svg", comment: "Thanks for sharing!" },
-		{ nickname: "bbb", img: "/placeholder.svg", comment: "Thanks for sharing!" },
-		{ nickname: "bbb", img: "/placeholder.svg", comment: "Thanks for sharing!" },
-		{ nickname: "bbb", img: "/placeholder.svg", comment: "Thanks for sharing!" },
-		{ nickname: "bbb", img: "/placeholder.svg", comment: "Thanks for sharing!" },
-		{ nickname: "bbb", img: "/placeholder.svg", comment: "Thanks for sharing!" },
-		{ nickname: "bbb", img: "/placeholder.svg", comment: "Thanks for sharing!" },
-		{ nickname: "bbb", img: "/placeholder.svg", comment: "Thanks for sharing!" },
-		{ nickname: "bbb", img: "/placeholder.svg", comment: "Thanks for sharing!" },
-		{ nickname: "bbb", img: "/placeholder.svg", comment: "Thanks for sharing!" }
+		{ nickname: "aaa", img: "/placeholder.svg", comment: "좋은 글이에요!", id: 1 },
+		{ nickname: "bbb", img: "/placeholder.svg", comment: "Thanks for sharing!", id: 2 }
 	];
 
-
+	// 댓글 버튼 클릭 시 해당 게시물의 board_id 설정
+	const handleCommentButtonClick = (postId) => {
+		setSelectedPostId(postId);
+	};
+	
 	// 글 목록 받아오기
 	useEffect(() => {
 		const fetchPosts = async () => {
@@ -222,8 +212,8 @@ export default function Component() {
 											onClick={() => {
 												setCurrentComments(dummyComments); // 현재 댓글 설정
 												setShowModal(true); // 모달 보이기
-											}}
-										>
+												handleCommentButtonClick(post.board_id);
+											}}>
 											댓글
 										</button>
 										<button className="w-16 h-8">공유하기</button>
@@ -234,7 +224,7 @@ export default function Component() {
 					</div>
 				</div>
 
-				<Comment isOpen={showModal} onClose={() => setShowModal(false)} comments={currentComments} />
+				<Comment isOpen={showModal} onClose={() => setShowModal(false)} comments={currentComments} boardId={selectedPostId}/>
 				{showTopBtn && (
 					<button
 						className="fixed bottom-10 right-10 bg-white hover:bg-gray-100 text-gray-900 font-bold rounded-full h-12 w-12 flex justify-center items-center border-4 border-gray-900 cursor-pointer"
