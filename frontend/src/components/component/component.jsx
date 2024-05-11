@@ -9,7 +9,7 @@ import ImageSlider from './ImageSlider'; // ImageSlider 컴포넌트를 import
 import { AvatarImage, AvatarFallback, Avatar } from "./ui/avatar"
 import Sidebar from "./ui/Sidebar";
 import DropdownMenu from './ui/DropdownMenu';
-
+import Comment from './ui/Comment';
 export default function Component() {
 	const [showTopBtn, setShowTopBtn] = useState(false);
 	const navigate = useNavigate();
@@ -18,7 +18,29 @@ export default function Component() {
 	const [searchTerm, setSearchTerm] = useState('');
 	const [searchResults, setSearchResults] = useState([]);
 	const [likesCount, setLikesCount] = useState([]);
-	
+	const [showModal, setShowModal] = useState(false);
+	const [currentComments, setCurrentComments] = useState([]);
+	const dummyComments = [
+		{ nickname: "aaa", img: "/placeholder.svg", comment: "Great post!" },
+		{ nickname: "bbb", img: "/placeholder.svg", comment: "Thanks for sharing!" },
+		{ nickname: "bbb", img: "/placeholder.svg", comment: "Thanks for sharing!" },
+		{ nickname: "bbb", img: "/placeholder.svg", comment: "Thanks for sharing!" },
+		{ nickname: "bbb", img: "/placeholder.svg", comment: "Thanks for sharing!" },
+		{ nickname: "bbb", img: "/placeholder.svg", comment: "Thanks for sharing!" },
+		{ nickname: "bbb", img: "/placeholder.svg", comment: "Thanks for sharing!" },
+		{ nickname: "bbb", img: "/placeholder.svg", comment: "Thanks for sharing!" },
+		{ nickname: "bbb", img: "/placeholder.svg", comment: "Thanks for sharing!" },
+		{ nickname: "bbb", img: "/placeholder.svg", comment: "Thanks for sharing!" },
+		{ nickname: "bbb", img: "/placeholder.svg", comment: "Thanks for sharing!" },
+		{ nickname: "bbb", img: "/placeholder.svg", comment: "Thanks for sharing!" },
+		{ nickname: "bbb", img: "/placeholder.svg", comment: "Thanks for sharing!" },
+		{ nickname: "bbb", img: "/placeholder.svg", comment: "Thanks for sharing!" },
+		{ nickname: "bbb", img: "/placeholder.svg", comment: "Thanks for sharing!" },
+		{ nickname: "bbb", img: "/placeholder.svg", comment: "Thanks for sharing!" },
+		{ nickname: "bbb", img: "/placeholder.svg", comment: "Thanks for sharing!" }
+	];
+
+
 	// 글 목록 받아오기
 	useEffect(() => {
 		const fetchPosts = async () => {
@@ -27,7 +49,7 @@ export default function Component() {
 					withCredentials: true,
 				});
 				setPosts(response.data.posts);
-				
+
 				const likesCount = response.data.likes.reduce((acc, like) => {
 					acc[like.board_id] = (acc[like.board_id] || 0) + 1;
 					return acc;
@@ -85,7 +107,7 @@ export default function Component() {
 	const handleSubmit = (event) => {
 		event.preventDefault(); // 폼 제출을 방지하여 엔터키로 검색이 실행되지 않도록 합니다.
 	};
-	
+
 	const LikeHandler = async (boardId) => {
 		try {
 			const formData = new FormData();
@@ -136,10 +158,6 @@ export default function Component() {
 							onChange={handleChange}
 							placeholder="검색어를 입력하세요..."
 						/>
-						{/*<Button className="square-8" size="icon" variant="ghost">
-							<BellIcon className="h-4 w-4" />
-							<span className="sr-only">알림 토글</span>
-						</Button>*/}
 					</form>
 					{searchResults.length > 0 && (
 						<div className="absolute top-full left-1/2 w-full max-w-md bg-white shadow-md rounded-md z-10 transform -translate-x-1/2">
@@ -199,8 +217,16 @@ export default function Component() {
 										>
 											{likesCount[post.board_id] > 0 ? `${likesCount[post.board_id]} ❤` : '0 ❤'}
 										</button>
-										<button className="w-16 h-8">Comment</button>
-										<button className="w-16 h-8">Share</button>
+										<button
+											className="w-16 h-8"
+											onClick={() => {
+												setCurrentComments(dummyComments); // 현재 댓글 설정
+												setShowModal(true); // 모달 보이기
+											}}
+										>
+											댓글
+										</button>
+										<button className="w-16 h-8">공유하기</button>
 									</div>
 								</div>
 							))}
@@ -208,6 +234,7 @@ export default function Component() {
 					</div>
 				</div>
 
+				<Comment isOpen={showModal} onClose={() => setShowModal(false)} comments={currentComments} />
 				{showTopBtn && (
 					<button
 						className="fixed bottom-10 right-10 bg-white hover:bg-gray-100 text-gray-900 font-bold rounded-full h-12 w-12 flex justify-center items-center border-4 border-gray-900 cursor-pointer"

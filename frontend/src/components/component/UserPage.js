@@ -8,7 +8,7 @@ import axios from 'axios';
 import { useAuth } from '../../contexts/AuthContext'; // 경로는 실제 구조에 맞게 조정해야 함
 import Sidebar from "./ui/Sidebar";
 import DropdownMenu from './ui/DropdownMenu';
-
+import Comment from './ui/Comment';
 function UserPage() {
 	const [showTopBtn, setShowTopBtn] = useState(false);
 	const [posts, setPosts] = useState([]);
@@ -18,7 +18,27 @@ function UserPage() {
 	const { logout } = useAuth();
 	const [userInfo, setUserInfo] = useState(null);
 	const [isFollowing, setIsFollowing] = useState(false);
-
+	const [showModal, setShowModal] = useState(false);
+	const [currentComments, setCurrentComments] = useState([]);
+	const dummyComments = [
+		{ nickname: "aaa", img: "/placeholder.svg", comment: "Great post!" },
+		{ nickname: "bbb", img: "/placeholder.svg", comment: "Thanks for sharing!" },
+		{ nickname: "bbb", img: "/placeholder.svg", comment: "Thanks for sharing!" },
+		{ nickname: "bbb", img: "/placeholder.svg", comment: "Thanks for sharing!" },
+		{ nickname: "bbb", img: "/placeholder.svg", comment: "Thanks for sharing!" },
+		{ nickname: "bbb", img: "/placeholder.svg", comment: "Thanks for sharing!" },
+		{ nickname: "bbb", img: "/placeholder.svg", comment: "Thanks for sharing!" },
+		{ nickname: "bbb", img: "/placeholder.svg", comment: "Thanks for sharing!" },
+		{ nickname: "bbb", img: "/placeholder.svg", comment: "Thanks for sharing!" },
+		{ nickname: "bbb", img: "/placeholder.svg", comment: "Thanks for sharing!" },
+		{ nickname: "bbb", img: "/placeholder.svg", comment: "Thanks for sharing!" },
+		{ nickname: "bbb", img: "/placeholder.svg", comment: "Thanks for sharing!" },
+		{ nickname: "bbb", img: "/placeholder.svg", comment: "Thanks for sharing!" },
+		{ nickname: "bbb", img: "/placeholder.svg", comment: "Thanks for sharing!" },
+		{ nickname: "bbb", img: "/placeholder.svg", comment: "Thanks for sharing!" },
+		{ nickname: "bbb", img: "/placeholder.svg", comment: "Thanks for sharing!" },
+		{ nickname: "bbb", img: "/placeholder.svg", comment: "Thanks for sharing!" }
+	];
 
 	useEffect(() => {
 		const fetchPosts = async () => {
@@ -58,21 +78,21 @@ function UserPage() {
 	}, []);
 
 	const handleFollow = async () => {
-        try {
-            const method = isFollowing ? 'delete' : 'post';
+		try {
+			const method = isFollowing ? 'delete' : 'post';
 			const response = await api.get(`/userFollow?userId=${userId}`, {
 				withCredentials: true,
 			});
-            if (response.status === 200) {
-                setIsFollowing(!isFollowing); // 상태 토글
-            } else {
-                console.error('Follow action failed:', response);
-            }
-        } catch (error) {
-            console.error('Follow action error:', error);
-        }
-    };
-    
+			if (response.status === 200) {
+				setIsFollowing(!isFollowing); // 상태 토글
+			} else {
+				console.error('Follow action failed:', response);
+			}
+		} catch (error) {
+			console.error('Follow action error:', error);
+		}
+	};
+
 	// 맨 위로 스크롤하는 함수
 	const scrollToTop = () => {
 		window.scrollTo({
@@ -120,15 +140,14 @@ function UserPage() {
 						/>
 						<h2 className="text-2xl">{userInfo.nickname}</h2>
 						{localStorage.getItem('nickname') !== userInfo.nickname && (
-                            <button
-                                onClick={handleFollow}
-                                className={`ml-5 px-3 py-1 text-sm font-medium rounded transition duration-150 ease-in-out ${
-                                    isFollowing ? 'bg-red-500 hover:bg-red-700 text-white' : 'bg-black hover:bg-green-600 text-white'
-                                }`}
-                            >
-                                {isFollowing ? '언팔로우' : '팔로우'}
-                            </button>
-                        )}
+							<button
+								onClick={handleFollow}
+								className={`ml-5 px-3 py-1 text-sm font-medium rounded transition duration-150 ease-in-out ${isFollowing ? 'bg-red-500 hover:bg-red-700 text-white' : 'bg-black hover:bg-green-600 text-white'
+									}`}
+							>
+								{isFollowing ? '언팔로우' : '팔로우'}
+							</button>
+						)}
 					</div>
 				)}
 
@@ -167,8 +186,16 @@ function UserPage() {
 										>
 											{likesCount[post.board_id] > 0 ? `${likesCount[post.board_id]} ❤` : '0 ❤'}
 										</button>
-										<button className="w-16 h-8">Comment</button>
-										<button className="w-16 h-8">Share</button>
+										<button
+											className="w-16 h-8"
+											onClick={() => {
+												setCurrentComments(dummyComments); // 현재 댓글 설정
+												setShowModal(true); // 모달 보이기
+											}}
+										>
+											댓글
+										</button>
+										<button className="w-16 h-8">공유</button>
 									</div>
 								</CardFooter>
 							</Card>
@@ -176,6 +203,8 @@ function UserPage() {
 					</div>
 				)}
 			</div>
+			
+			<Comment isOpen={showModal} onClose={() => setShowModal(false)} comments={currentComments} />
 			{showTopBtn && (
 				<button
 					className="fixed bottom-10 right-10 bg-white hover:bg-gray-100 text-gray-900 font-bold rounded-full h-12 w-12 flex justify-center items-center border-4 border-gray-900 cursor-pointer"
