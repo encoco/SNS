@@ -17,12 +17,15 @@ import com.example.demo.Config.S3Config;
 import com.example.demo.DTO.BoardDTO;
 import com.example.demo.DTO.BoardLikeDTO;
 import com.example.demo.DTO.SearchDTO;
+import com.example.demo.DTO.CommentDTO;
+import com.example.demo.Repository.BoardCommentRepository;
 import com.example.demo.Repository.BoardLikeRepository;
 import com.example.demo.Repository.BoardRepository;
 import com.example.demo.Repository.followRepository;
 import com.example.demo.entity.BoardEntity;
 import com.example.demo.entity.BoardLikeEntity;
 import com.example.demo.entity.UsersEntity;
+import com.example.demo.entity.CommentEntity;
 
 import io.jsonwebtoken.io.IOException;
 import jakarta.transaction.Transactional;
@@ -33,6 +36,7 @@ import lombok.RequiredArgsConstructor;
 public class BoardService {
 
 	public final BoardRepository boardRepository;
+	public final BoardCommentRepository boardCommentRepository;
 	public final BoardLikeRepository boardlike;
 	public final followRepository fRepository;
 	private final S3Config s3Config;
@@ -100,6 +104,11 @@ public class BoardService {
 		boardDTO.setImgpath(imgPath);
 		BoardEntity board = BoardEntity.toEntity(boardDTO);
 		boardRepository.save(board);
+	}
+	
+	public void writeComment(CommentDTO commentDTO) {
+		CommentEntity commentEntity = CommentEntity.toEntity(commentDTO);
+		boardCommentRepository.save(commentEntity);
 	}
 
 	public int boardLike(BoardLikeDTO dto) {

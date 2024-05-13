@@ -83,7 +83,7 @@ import axios from 'axios';
 	        email: email,
 	        phone: phone,
 	      });
-	      alert('완');
+	      alert('회원가입 성공하셨습니다!');
 	      navigate('/'); // 회원가입 성공 후 로그인 페이지로 이동
 	    } catch (error) {
 	      console.error('회원가입 실패', error);

@@ -24,6 +24,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CommentDTO {
+
    private int comment_id;
    private int board_id;
    private int id;
