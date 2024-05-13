@@ -91,7 +91,6 @@ function BoardWrite() {
 			if (post) {
 				// 수정 요청
 				formData.append('board_id', post.board_id);
-				console.log(post);
 				formData.append('imgpath', post.imgpath);
 				await api.post(`/boardUpdate`, formData, {
 					headers: {

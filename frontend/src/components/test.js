@@ -100,6 +100,8 @@ export default function Component() {
 
    const LikeHandler = async (boardId) => {
       try {
+         const formData = new FormData();
+         formData.append('boardId', boardId);
          const response = await api.get(`/boardLike?boardId=${boardId}`, {
             withCredentials: true,
          });
@@ -213,6 +215,7 @@ export default function Component() {
                                     handleCommentButtonClick(post.board_id);
                                  }}>
                                  댓글
+                                 <Comment isOpen={showModal} onClose={() => setShowModal(false)} comments={currentComments} boardId={selectedPostId} />
                               </button>
                               <button className="w-16 h-8">공유하기</button>
                            </div>
@@ -222,7 +225,7 @@ export default function Component() {
                </div>
             </div>
 
-            <Comment isOpen={showModal} onClose={() => setShowModal(false)} comments={currentComments} boardId={selectedPostId}/>
+            <Comment isOpen={showModal} onClose={() => setShowModal(false)} comments={currentComments} />
             {showTopBtn && (
                <button
                   className="fixed bottom-10 right-10 bg-white hover:bg-gray-100 text-gray-900 font-bold rounded-full h-12 w-12 flex justify-center items-center border-4 border-gray-900 cursor-pointer"

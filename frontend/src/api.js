@@ -1,8 +1,4 @@
-import axios from 'axios';
-import { Link , useNavigate} from "react-router-dom";
-import { useAuth } from 'contexts/AuthContext'; // 경로는 실제 구조에 맞게 조정해야 함
-
-
+import axios from 'axios'
 
 const api = axios.create({ //기본 요청 주소
   baseURL: 'http://localhost:8080/api',

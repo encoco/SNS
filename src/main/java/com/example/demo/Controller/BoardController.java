@@ -19,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.example.demo.Config.JwtUtil;
 import com.example.demo.DTO.BoardDTO;
 import com.example.demo.DTO.BoardLikeDTO;
+import com.example.demo.DTO.CommentDTO;
 import com.example.demo.DTO.SearchDTO;
 import com.example.demo.Service.BoardService;
 import com.example.demo.Service.UsersService;
@@ -35,6 +36,21 @@ public class BoardController {
 	private final BoardService boardService;
 	private final JwtUtil jwtUtil;
 	private final UsersService userService;
+	
+	@PostMapping("/CommentWrite")
+	   public ResponseEntity<?> writeComment(@RequestBody CommentDTO dto,HttpServletRequest request) {
+	      try {
+	         System.out.println(dto);
+	         System.out.println("1");
+	         String token = jwtUtil.token(request.getHeader("Authorization"));
+	         int userId = jwtUtil.getUserIdFromToken(token);
+	         dto.setId(userId);
+	           
+	         return ResponseEntity.ok("success");
+	      } catch (Exception e) {
+	         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("댓글 작성 중 오류가 발생했습니다.");
+	      }
+	   }
 	
 	@GetMapping("/mainboardList")
 	public ResponseEntity<?> mainboardList(HttpServletRequest request) {

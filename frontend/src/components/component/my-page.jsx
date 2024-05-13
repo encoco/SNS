@@ -17,6 +17,7 @@ function Mypage() {
 	const [likesCount, setLikesCount] = useState([]);
 	const [showModal, setShowModal] = useState(false);
 	const [currentComments, setCurrentComments] = useState([]);
+	const [boardId, setBoardId] = useState([]);
 
 	useEffect(() => {
 		const fetchPosts = async () => {
@@ -149,6 +150,7 @@ function Mypage() {
 										onClick={() => {
 											setCurrentComments(dummyComments); // 현재 댓글 설정
 											setShowModal(true); // 모달 보이기
+											setBoardId(post.board_id);
 										}}
 									>
 										댓글
@@ -161,7 +163,7 @@ function Mypage() {
 				</div>
 			</div>
 
-			<Comment isOpen={showModal} onClose={() => setShowModal(false)} comments={currentComments} />
+			<Comment isOpen={showModal} onClose={() => setShowModal(false)} comments={currentComments} board_id={boardId} />
 			
 			{showTopBtn && (
 				<button

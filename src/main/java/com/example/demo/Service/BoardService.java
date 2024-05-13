@@ -117,7 +117,7 @@ public class BoardService {
 	    }
 	}
 
-	@Transactional // 트랜잭션을 사용하여 업데이트를 보장
+	@Transactional
     public void updatePost(BoardDTO dto) { //findById == select * from board where board_id = dto.getBoard_id(); 
         BoardEntity post = boardRepository.findById(dto.getBoard_id()).orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없습니다."));
         String imgpath = dto.getImgpath();
