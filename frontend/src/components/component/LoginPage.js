@@ -1,5 +1,5 @@
 import React, { useState,useEffect } from 'react';
-import { useNavigate, Link,useLocation } from 'react-router-dom'; // useNavigate 훅 임포트
+import { useNavigate, Link } from 'react-router-dom'; // useNavigate 훅 임포트
 import { useAuth } from '../../contexts/AuthContext';
 import { Label } from "./ui/label"
 import { Input } from "./ui/input"
@@ -9,7 +9,7 @@ import axios from 'axios';
 function LoginPage() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const { login,logout  } = useAuth();
+  const { login } = useAuth();
   const navigate = useNavigate();
     
 	
@@ -25,10 +25,6 @@ function LoginPage() {
 	  }
 	}, []);
 	
-  const goToSignUp = () => {
-    navigate('/Signup'); 
-  };
-	
   const handleLogin = async () => {
 	  try {
 	    const params = new URLSearchParams();
@@ -41,7 +37,6 @@ function LoginPage() {
 	      },
 	      withCredentials: true
 	    });
-	    const { accessToken, nickname } = response.data; 
 	    localStorage.setItem('userInfo', response.data.accessToken);
 	    localStorage.setItem('nickname', response.data.nickname);
 	    await login(username,password); // 예시 로그인 함수	    

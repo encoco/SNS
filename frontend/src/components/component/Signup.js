@@ -1,7 +1,7 @@
 /*LoginPage*/
 
 import React, { useState } from 'react';
-import { useNavigate,Link } from 'react-router-dom'; // useNavigate 훅 임포트
+import { useNavigate } from 'react-router-dom'; // useNavigate 훅 임포트
 import { Label } from "./ui/label"
 import { Input } from "./ui/input"
 import { Button } from "./ui/button"
@@ -76,7 +76,7 @@ import axios from 'axios';
     	if (isDuplicate) return; // ID가 중복되었으면 여기서 처리 중단
 	    // 비밀번호 확인 로직 추가
 	    try {
-	      const response = await axios.post('http://localhost:8080/api/Signup', {
+	      await axios.post('http://localhost:8080/api/Signup', {
 	        username: username,
 	        password: password,
 	        nickname : Nick,
@@ -86,7 +86,7 @@ import axios from 'axios';
 	      alert('회원가입 성공하셨습니다!');
 	      navigate('/'); // 회원가입 성공 후 로그인 페이지로 이동
 	    } catch (error) {
-	      console.error('회원가입 실패', error);
+	      console.error('다시 시도해주세요', error);
 	    }
 	  };
 	  

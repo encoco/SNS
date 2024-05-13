@@ -1,15 +1,12 @@
-import { Button } from "./ui/button"
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from "react-router-dom";
-import { Input } from "./ui/input"
-import axios from 'axios';
 import { useAuth } from '../../contexts/AuthContext'; // 경로는 실제 구조에 맞게 조정해야 함
 import api from "../../api";
 import ImageSlider from './ImageSlider'; // ImageSlider 컴포넌트를 import
-import { AvatarImage, AvatarFallback, Avatar } from "./ui/avatar"
 import Sidebar from "./ui/Sidebar";
 import DropdownMenu from './ui/DropdownMenu';
 import Comment from './ui/Comment';
+
 export default function Component() {
 	const [showTopBtn, setShowTopBtn] = useState(false);
 	const navigate = useNavigate();
@@ -239,25 +236,6 @@ export default function Component() {
 	);
 }
 
-function BellIcon(props) {
-	return (
-		<svg
-			{...props}
-			xmlns="http://www.w3.org/2000/svg"
-			width="24"
-			height="24"
-			viewBox="0 0 24 24"
-			fill="none"
-			stroke="currentColor"
-			strokeWidth="2"
-			strokeLinecap="round"
-			strokeLinejoin="round"
-		>
-			<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
-			<path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
-		</svg>
-	)
-}
 
 
 function SearchIcon(props) {

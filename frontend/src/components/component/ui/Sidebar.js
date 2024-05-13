@@ -1,13 +1,12 @@
 import { AvatarImage, AvatarFallback, Avatar } from "./avatar"
-import api from "../../../api";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from '../../../contexts/AuthContext'; // 경로는 실제 구조에 맞게 조정해야 함
-import React, { useState,useEffect } from 'react';
+import React  from 'react';
 // Define the Sidebar component
 function Sidebar() {
 	const navigate = useNavigate();
 	const location = useLocation();
-	const { users, logout } = useAuth();
+	const { logout } = useAuth();
 	
 	const handleLogout = async () => {
 		try {

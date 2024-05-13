@@ -16,11 +16,10 @@ function Together() {
       setShowModal(true);
    };
 
-   const handleModalConfirm = () => {
+	const handleModalConfirm = () => {
       console.log(`Joining chat for post with ID: ${selectedPostId}`);
       setShowModal(false);
    };
-
    const handleModalCancel = () => {
       setShowModal(false);
    };

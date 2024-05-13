@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import ImageSlider from './ImageSlider'; // ImageSlider 컴포넌트를 import
 import api from "../../api";
-import { Link, useNavigate, useParams } from "react-router-dom";
-import { Button } from "./ui/button"
+import { useParams } from "react-router-dom";
 import { CardTitle, CardHeader, CardContent, CardFooter, Card } from "./ui/card"
-import axios from 'axios';
+
 import { useAuth } from '../../contexts/AuthContext'; // 경로는 실제 구조에 맞게 조정해야 함
 import Sidebar from "./ui/Sidebar";
 import DropdownMenu from './ui/DropdownMenu';
@@ -13,9 +12,8 @@ function UserPage() {
 	const [showTopBtn, setShowTopBtn] = useState(false);
 	const [posts, setPosts] = useState([]);
 	const [likesCount, setLikesCount] = useState([]);
-	const navigate = useNavigate();
+
 	const { userId } = useParams(); // URL에서 userId 추출
-	const { logout } = useAuth();
 	const [userInfo, setUserInfo] = useState(null);
 	const [isFollowing, setIsFollowing] = useState(false);
 	const [showModal, setShowModal] = useState(false);
@@ -79,7 +77,6 @@ function UserPage() {
 
 	const handleFollow = async () => {
 		try {
-			const method = isFollowing ? 'delete' : 'post';
 			const response = await api.get(`/userFollow?userId=${userId}`, {
 				withCredentials: true,
 			});

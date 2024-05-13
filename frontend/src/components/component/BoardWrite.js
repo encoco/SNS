@@ -1,27 +1,13 @@
 /*BoardWrite*/
 
-//import React, { useState } from 'react';
-
-import { useNavigate, Link, useLocation } from 'react-router-dom'; // useNavigate 훅 임포트
+import { useNavigate, useLocation } from 'react-router-dom'; // useNavigate 훅 임포트
 import styled from 'styled-components'; // styled-components import 추가
-import { Label } from "./ui/label"
-import { Input } from "./ui/input"
 import { Button } from "./ui/button"
 import api from "../../api";
-import { CardTitle, CardDescription, CardHeader, CardContent, CardFooter, Card } from "./ui/card"
-import { AvatarImage, AvatarFallback, Avatar } from "./ui/avatar"
+import { CardTitle, CardHeader, CardContent, CardFooter, Card } from "./ui/card"
 import React, { useState, useEffect } from 'react';
 //npm install styled-components 설치함!
-const Container = styled.div`
-  max-width: 600px;
-  margin: 0 auto;
-  padding: 20px;
-`;
 
-const Title = styled.h2`
-  text-align: center;
-  margin-bottom: 20px;
-`;
 const StyledTextarea = styled.textarea`
   /* 기본 스타일 */
   border: 1px solid #ccc; /* 얇은 테두리 스타일 */
@@ -44,7 +30,7 @@ function BoardWrite() {
 	const fileInputRef = React.useRef(null);
 	const fromPath = location.state?.from || '/';  // 이전 경로가 없다면 홈으로 설정
 	/*const post = location.state.post;*/
-	const [post, setPost] = useState(location.state?.post || null);
+	const [post] = useState(location.state?.post || null);
 
 	useEffect(() => {
 		console.log(post);
@@ -163,86 +149,6 @@ function BoardWrite() {
 		</Card>
 	);
 }
-function BookmarkIcon(props) {
-	return (
-		<svg
-			{...props}
-			xmlns="http://www.w3.org/2000/svg"
-			width="24"
-			height="24"
-			viewBox="0 0 24 24"
-			fill="none"
-			stroke="currentColor"
-			strokeWidth="2"
-			strokeLinecap="round"
-			strokeLinejoin="round"
-		>
-			<path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z" />
-		</svg>
-	)
-}
-
-
-function HeartIcon(props) {
-	return (
-		<svg
-			{...props}
-			xmlns="http://www.w3.org/2000/svg"
-			width="24"
-			height="24"
-			viewBox="0 0 24 24"
-			fill="none"
-			stroke="currentColor"
-			strokeWidth="2"
-			strokeLinecap="round"
-			strokeLinejoin="round"
-		>
-			<path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
-		</svg>
-	)
-}
-
-
-function MessageCircleIcon(props) {
-	return (
-		<svg
-			{...props}
-			xmlns="http://www.w3.org/2000/svg"
-			width="24"
-			height="24"
-			viewBox="0 0 24 24"
-			fill="none"
-			stroke="currentColor"
-			strokeWidth="2"
-			strokeLinecap="round"
-			strokeLinejoin="round"
-		>
-			<path d="m3 21 1.9-5.7a8.5 8.5 0 1 1 3.8 3.8z" />
-		</svg>
-	)
-}
-
-
-function SendIcon(props) {
-	return (
-		<svg
-			{...props}
-			xmlns="http://www.w3.org/2000/svg"
-			width="24"
-			height="24"
-			viewBox="0 0 24 24"
-			fill="none"
-			stroke="currentColor"
-			strokeWidth="2"
-			strokeLinecap="round"
-			strokeLinejoin="round"
-		>
-			<path d="m22 2-7 20-4-9-9-4Z" />
-			<path d="M22 2 11 13" />
-		</svg>
-	)
-}
-
 
 function UploadIcon(props) {
 	return (
