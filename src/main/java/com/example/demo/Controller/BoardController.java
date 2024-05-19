@@ -72,6 +72,7 @@ public class BoardController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("/boardList");
 		}
 	}
+	
 
 	@GetMapping("/userPosts")
 	public ResponseEntity<?> userPosts(@RequestParam("userId") int userId) {

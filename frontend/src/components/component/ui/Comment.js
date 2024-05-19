@@ -33,7 +33,7 @@
 					if (response.data === "success") {
 						// 성공적으로 댓글이 작성되었을 때의 처리
 						alert('댓글 작성 성공');
-						// 추가적으로 필요한 작업 수행 (예: 댓글 목록 갱신 등)
+						setCommentText('');
 					} else {
 						// 실패한 경우에 대한 처리
 						alert('댓글 작성 실패');
