@@ -51,7 +51,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
             tokenMap.put("nickname", userDTO.getNickname()); // 닉네임 추가
             
             String tokensJson = new ObjectMapper().writeValueAsString(tokenMap);
-            
+            System.out.println("로그인 성공" + tokensJson);
             response.setContentType("application/json;charset=UTF-8");
             response.getWriter().write(tokensJson); // 클라이언트로 응답 전송
             if(userDTO.getRole().equals("ROLE_USER_SNS")) {

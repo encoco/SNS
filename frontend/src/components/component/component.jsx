@@ -18,6 +18,7 @@ export default function Component() {
 	const [showModal, setShowModal] = useState(false);
 	const [currentComments, setCurrentComments] = useState([]);
 	const [selectedPostId, setSelectedPostId] = useState(null);
+	
 	const dummyComments = [
 		{ nickname: "aaa", img: "/placeholder.svg", comment: "좋은 글이에요!", id: 1 },
 		{ nickname: "bbb", img: "/placeholder.svg", comment: "Thanks for sharing!", id: 2 }
@@ -88,6 +89,7 @@ export default function Component() {
 			setSearchResults([]);
 		}
 	}, [searchTerm]);
+	
 	const handleChange = (event) => {
 		setSearchTerm(event.target.value);
 	};

@@ -55,6 +55,7 @@ public class JwtFilter extends GenericFilterBean {
 		 if (accessToken != null && jwtUtil.validateToken(accessToken)) {
 		        chain.doFilter(request, response);
 		 } else {
+			 	System.out.println(requestURI);
 		        System.out.println("토큰 만료");
 		        httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED);
 		 }

@@ -31,12 +31,14 @@ function LoginPage() {
 	    params.append('username', username);
 	    params.append('password', password);
 	    
+	    
 	    const response = await axios.post('http://localhost:8080/api/Login', params, {
 	      headers: {
 	        'Content-Type': 'application/x-www-form-urlencoded'
 	      },
 	      withCredentials: true
 	    });
+	    console.log('asd');
 	    localStorage.setItem('userInfo', response.data.accessToken);
 	    localStorage.setItem('nickname', response.data.nickname);
 	    await login(username,password); // 예시 로그인 함수	    
@@ -56,7 +58,38 @@ function LoginPage() {
 	  }
 	};  
 	
-	
+	const test = async () => {
+	  try {
+	    const params = new URLSearchParams();
+	    params.append('username', username);
+	    params.append('password', password);
+	    
+	    
+	    const response = await axios.post('http://13.125.161.122:8080/api/Login', params, {
+	      headers: {
+	        'Content-Type': 'application/x-www-form-urlencoded'
+	      },
+	      withCredentials: true
+	    });
+	    console.log('asd');
+	    localStorage.setItem('userInfo', response.data.accessToken);
+	    localStorage.setItem('nickname', response.data.nickname);
+	    await login(username,password); // 예시 로그인 함수	    
+	    alert('로그인 성공');
+	    navigate('/index');
+	  } catch (error) {
+	    if (error.response) {
+	      const status = error.response.status;
+	      if (status === 401 || status === 403) {
+	        alert('계정 정보를 확인해주세요.');
+	      } else {
+	        alert('로그인 중 문제가 발생했습니다. 다시 시도해주세요.');
+	      }
+	    } else {
+	      alert('서버와의 연결에 문제가 발생했습니다.');
+	    }
+	  }
+	};  
 	
   const handleSubmit = async (e) => {
     e.preventDefault(); // 기본 제출 동작 방지
@@ -93,12 +126,15 @@ function LoginPage() {
 							<Link className="text-sm underline" to="/Signup">회원가입</Link>
 						</div>
 						<Button type="submit" className="w-full mb-2" variant="outline" style={{ backgroundColor: 'black', borderColor: 'black', borderWidth: '2px', color: 'white' }}>로그인</Button>
-
 					</div>
 				</form>
 				<br />
 
 				<div className="space-y-4">
+					<Button className="w-full" style={{ backgroundColor: '#03C75A' }} variant="outline"
+						onClick={test} >
+						ip주소로 로그인
+					</Button>
 					<Button className="w-full" style={{ backgroundColor: '#03C75A' }} variant="outline"
 						onClick={() => window.location.href = 'http://localhost:8080/oauth2/authorization/naver'} >
 						NAVER
