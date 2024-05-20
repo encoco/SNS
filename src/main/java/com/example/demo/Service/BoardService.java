@@ -174,6 +174,7 @@ public class BoardService {
 	
 	//댓글 조회
 	public List<CommentDTO> getComments(int boardId) {
+		System.out.println("서서ㅓ");
         List<CommentEntity> commentEntities = boardCommentRepository.findByboardId(boardId);
         return CommentEntity.ToDtoList(commentEntities);
     }

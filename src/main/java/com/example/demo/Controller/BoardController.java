@@ -136,8 +136,8 @@ public class BoardController {
 	}
 
 	// BoardController.java에 댓글 관련 메소드 추가
-	@GetMapping("/getComments/{board_id}")
-	public ResponseEntity<?> getComments(@PathVariable("board_id") int boardId) {
+	@GetMapping("/getComments")
+	public ResponseEntity<?> getComments(@RequestParam(value = "boardId") int boardId) {
 		try {
 			List<CommentDTO> comments = boardService.getComments(boardId);
 			return ResponseEntity.ok(comments);
@@ -145,6 +145,8 @@ public class BoardController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("댓글 불러오기 중 오류가 발생했습니다.");
 		}
 	}
+
+	
 
 	@PostMapping("/CommentWrite")
 	public ResponseEntity<?> writeComment(@RequestBody CommentDTO dto, HttpServletRequest request) {

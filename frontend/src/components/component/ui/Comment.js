@@ -58,7 +58,7 @@ function Comment({ isOpen, onClose, comments, boardId }) {
 				<div className="overflow-y-auto max-h-96">
 					<ul>
 						{comments && Array.isArray(comments) && comments.map(comment => (
-							<li key={comment.id} className="mt-1 flex items-center">
+							<li key={comment.comment_id} className="mt-1 flex items-center">
 								<img src={comment.img} alt="Profile" className="w-10 h-10 rounded-full mr-3" />
 								<div className="flex flex-col">
 									<strong>{comment.nickname}:</strong>

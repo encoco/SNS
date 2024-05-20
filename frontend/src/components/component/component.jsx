@@ -21,11 +21,8 @@ export default function Component() {
 	const [showModal, setShowModal] = useState(false);
 	const [currentComments, setCurrentComments] = useState([]);
 	const [selectedPostId, setSelectedPostId] = useState(null);
-	const dummyComments = [
-		{ nickname: "aaa", img: "/placeholder.svg", comment: "좋은 글이에요!", id: 1 },
-	];
 
-	//댓글 목록
+	/*//댓글 목록
 	useEffect(() => {
 		const fetchComments = async () => {
 			try {
@@ -41,16 +38,18 @@ export default function Component() {
 		if (selectedPostId !== null) {
 			fetchComments();
 		}
-	}, [selectedPostId]);
+	}, [selectedPostId]);*/
 
 	// 댓글 버튼 클릭 시 해당 게시물의 board_id 설정
-	const handleCommentButtonClick = async (postId) => {
-		setSelectedPostId(postId);
+	const handleCommentButtonClick = async (boardId) => {
+		setSelectedPostId(boardId);
 		try {
-			const response = await api.get(`/getComments/${postId}`, {
+			const response = await api.get(`/getComments`, {
+				params: { boardId },
 				withCredentials: true,
 			});
-			setCurrentComments(response.data.comments);
+			console.log(response.data);
+			setCurrentComments(response.data);
 		} catch (error) {
 			console.error('Error fetching comments:', error);
 		}
@@ -235,9 +234,8 @@ export default function Component() {
 										<button
 											className="w-16 h-8"
 											onClick={() => {
-												setCurrentComments(dummyComments); // 현재 댓글 설정
-												setShowModal(true); // 모달 보이기
 												handleCommentButtonClick(post.board_id);
+												setShowModal(true); // 모달 보이기
 											}}>
 											댓글
 										</button>
