@@ -34,8 +34,11 @@ public class ChatEntity {
 	
 	@Column(name = "id")
     private int userId;
-    
-	private String nickname;
+	
+	@Column(name = "join_id")
+	private String joinId;
+	
+	private String roomname;
     @Builder.Default
     private String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm"));
     
@@ -44,7 +47,8 @@ public class ChatEntity {
                 .userchatId(dto.getUserchatId())
                 .roomNumber(dto.getRoomNumber())
                 .userId(dto.getId())
-                .nickname(dto.getNickname())
+                .roomname(dto.getRoomname())
+                .joinId(dto.getJoinId())
                 .date(dto.getDate())
                 .build();
     }

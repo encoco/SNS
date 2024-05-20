@@ -79,7 +79,6 @@ public class TestController {
     @GetMapping("/search")
     public ResponseEntity<?> searchUser(@RequestParam("searchTerm") String searchTerm){
     	List<SearchDTO> searchResults = Uservice.searchUsers(searchTerm);
-    	System.out.println("hihi");
     	return ResponseEntity.ok(searchResults);
     }
     

@@ -1,58 +1,81 @@
 import { Link } from "react-router-dom";
 import Sidebar from "./ui/Sidebar";
 import Together from "./Together";
-import { Button } from "./ui/button"
-import { Input } from "./ui/input"
-import { AvatarImage, AvatarFallback, Avatar } from "./ui/avatar"
-import React, { useState, useEffect } from 'react';
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
+import { AvatarImage, AvatarFallback, Avatar } from "./ui/avatar";
+import React, { useState, useEffect, useRef } from 'react';
 import api from "../../api";
 import Modal from 'react-modal';
 import Search from './ui/search';
-import webSocketService from '../../services/WebSocketService';
+import { Stomp } from "@stomp/stompjs";
+import webSocketService from '../../services/WebSocketService'; // WebSocketService 경로를 확인하세요
 
 function Message() {
 	const [activeView, setActiveView] = useState('chat');
 	const [chatroom, setChatRoom] = useState([]);
 	const [selectedChat, setSelectedChat] = useState('');
-	//const [message,setMessage] = useState([]);
+	const [messages, setMessages] = useState([]);
+	const [inputMessage, setInputMessage] = useState('');
 	const [showModal, setShowModal] = useState(false);
+	const stompClient = useRef(null);
+
 
 	useEffect(() => {
-		const chatroom = async () => {
+		const connectWebSocket = () => {
+			webSocketService.connect(() => {
+				console.log("Connected to WebSocket server");
+				webSocketService.subscribe(`/api/sub/chat/${selectedChat}`, (message) => {
+					setMessages(prevMessages => [...prevMessages, message]);
+				});
+			});
+		};
+		if (selectedChat) {
+			connectWebSocket();
+			return () => {
+				if (webSocketService.client) {
+					webSocketService.client.deactivate();
+				}
+			};
+		}
+	}, [selectedChat]);
+
+	useEffect(() => {
+		const fetchChatrooms = async () => {
 			try {
 				const response = await api.get(`/selectRoom`, {
 					withCredentials: true,
 				});
 				setChatRoom(response.data === "채팅방 없음" ? [] : response.data);
-
 			} catch (error) {
 				console.log(error);
 			}
 		};
-		chatroom();
+		fetchChatrooms();
 	}, []);
 
-	const message = [
-		{ message_id: 1, name: "채팅1", nickname: "rgr", content: "채팅1.", date: "2024-05-01 17:32:00", roomNumber: "1" },
-		{ message_id: 2, name: "채팅2", nickname: "lll", content: "채팅2ㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱ?", date: "2024-05-01 17:33:00", roomNumber: "1" },
-		{ message_id: 3, name: "채팅3", nickname: "rgr", content: "채팅3ㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱㄱ?", date: "2024-05-01 17:34:00", roomNumber: "1" },
-		{ message_id: 4, name: "채팅4", nickname: "lll", content: "채팅4.", date: "2024-05-01 17:35:00", roomNumber: "1" }
-	];
-	const handleClick = () => {
-		console.log("123 click");
-		console.log(chatroom);
-	}
+	const handleSendMessage = (event) => {
+		event.preventDefault();
+		if (inputMessage.trim()) {
+			const message = { content: inputMessage };
+			const nickname = localStorage.getItem('nickname');
+			webSocketService.send(`/api/pub/chat/${selectedChat}`, message, nickname);
+			setInputMessage('');
+		}
+	};
 
 	const handleChatSelect = (room) => {
-		console.log("Selected:", room.roomNumber);
 		setSelectedChat(room.roomNumber);
-		//여기서 message도 수정 디비에서 해당 채팅방에서 찾아서
+		setMessages([]);  // 채팅방 변경 시 메시지 초기화
+	};
+
+	const handleChange = (room) => {
+		setSelectedChat(room.roomNumber);
 	};
 
 	const handleNewRoomCreated = (newRoom) => {
 		setChatRoom(prevRooms => [...prevRooms, newRoom]); // 새 채팅방 추가
 		setSelectedChat(newRoom.roomNumber); // 새 채팅방 선택
-		console.log(newRoom);
 	};
 
 	return (
@@ -82,11 +105,11 @@ function Message() {
 						{activeView === 'chat' ? (
 							// 채팅 화면 컨텐츠
 							<div className="flex-1 flex flex-col">
-								<div className="flex-1 overflow-auto p-6">
+								<div className="flex-1 overflow-y-auto py-2 max-h-[calc(100vh-135px)] p-6">
 									<div className="grid gap-4">
 										{/* 채팅 메시지 출력 영역 */}
 										{/* 채팅 예제 */}
-										{selectedChat && message.length > 0 ? message.map(message => (
+										{selectedChat && messages.length > 0 ? messages.map(message => (
 											<div key={message.message_id} className={`flex items-start gap-4 ${message.nickname === localStorage.getItem('nickname') ? 'justify-end' : ''}`}>
 												<Avatar>
 													<AvatarImage alt={message.name} src="/placeholder-user.jpg"
@@ -96,7 +119,7 @@ function Message() {
 															objectFit: 'cover'
 														}}
 													/>
-													<AvatarFallback>{message.name[0]}</AvatarFallback>
+													<AvatarFallback>{message.room_number[0]}</AvatarFallback>
 												</Avatar>
 												<div className="max-w-[40%]">
 													<div className={`rounded-lg p-4 text-sm ${message.nickname === localStorage.getItem('nickname') ? 'bg-blue-500 text-white' : 'bg-gray-100 dark:bg-gray-800'}`}>
@@ -111,12 +134,11 @@ function Message() {
 											</div>
 										)}
 
-
 									</div>
 								</div>
 								<div className="border-t px-6 py-4">
-									<form className="flex items-center gap-2">
-										<Input className="flex-1" placeholder="메세지를 입력하세요..." type="text" />
+									<form className="flex items-center gap-2" onSubmit={handleSendMessage}>
+										<Input className="flex-1" placeholder="메세지를 입력하세요..." type="text" value={inputMessage} onChange={e => setInputMessage(e.target.value)} />
 										<Button size="icon" type="submit" variant="ghost">
 											<SendIcon className="h-5 w-5" />
 										</Button>
@@ -142,7 +164,8 @@ function Message() {
 
 
 						<div className="w-[300px] border-l bg-gray-100/40 p-6 dark:bg-gray-800/40">
-							<div className="flex-1 overflow-y-auto py-2 max-h-[calc(100vh-110px)]">
+							<div className="flex-1 overflow-y-auto py-2 max-h-[calc(100vh-135px)] p-6"> //여기
+
 								<nav className="grid items-start px-4 text-sm font-medium">
 									<Link
 										className={`flex items-center gap-3 rounded-lg px-3 py-2 transition-all ${activeView === 'chat'
@@ -186,7 +209,7 @@ function Message() {
 													<div className="w-12 h-12 rounded-full overflow-hidden shrink-0">
 														<img src="/placeholder-user.jpg" alt={room.name} className="w-full h-full object-cover" />
 													</div>
-													<span className="text-sm font-medium text-gray-800 dark:text-white"> {truncateString(room.nickname, 10)} </span>
+													<span className="text-sm font-medium text-gray-800 dark:text-white"> {truncateString(room.roomname, 10)} </span>
 												</button>
 											</div>
 										))
@@ -197,9 +220,8 @@ function Message() {
 					</div>
 				</main>
 			</div>
-			<Search isOpen={showModal} onClose={() => setShowModal(false)} onRoomCreated={handleNewRoomCreated} />
+			<Search isOpen={showModal} onClose={() => setShowModal(false)} onRoomCreated={handleNewRoomCreated} roomList={chatroom} RoomSelectChange={handleChange} />
 		</div>
-
 	)
 }
 export default Message;

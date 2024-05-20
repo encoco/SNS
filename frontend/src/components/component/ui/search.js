@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import api from "../../../api";
 
-function Search({ isOpen, onClose, onRoomCreated }) {
+function Search({ isOpen, onClose, onRoomCreated, roomList , RoomSelectChange}) {
 	const [searchTerm, setSearchTerm] = useState('');
 	const [searchResults, setSearchResults] = useState([]);
 	const [selectedUsers, setSelectedUsers] = useState([]);
@@ -24,11 +24,7 @@ function Search({ isOpen, onClose, onRoomCreated }) {
 			}
 		});
 	};
-	/*const handleSelect = (user) => {
-		console.log("Selected:", user.id);
-		
-		setSelectedUsers(user.id);
-	};*/
+
 	useEffect(() => {
 		const fetchSearchResults = async () => {
 			try {
@@ -72,12 +68,23 @@ function Search({ isOpen, onClose, onRoomCreated }) {
 
 	const handleMake = async () => {
 		try {
+			if (selectedUsers.length === 0) {
+				alert('유저를 선택해주세요');
+				return;
+			}
 			const response = await api.post(`/CreateRoom`, requestData, {
 				withCredentials: true,
 			});
-			onRoomCreated(response.data); // 콜백 함수 호출
-			handleOverlayClick(); // 모달 닫기
-			
+			if (response.data["1"]) {
+				RoomSelectChange(response.data["1"]);
+				handleOverlayClick(); // 모달 닫기 
+			} else if (response.data["0"]) {
+				onRoomCreated(response.data["0"]); 
+				handleOverlayClick(); // 모달 닫기
+			} else {
+				alert('다시 시도해주세요.');
+			}
+
 		} catch (error) {
 			console.log(error);
 		}

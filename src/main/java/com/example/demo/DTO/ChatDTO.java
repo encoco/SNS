@@ -23,7 +23,9 @@ public class ChatDTO {
 	private int  userchatId;
 	private String roomNumber;
     private int id;
-    private String nickname;
+    private String roomname;
+    private String content;
+    private String joinId;
     @Builder.Default
     private String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm"));
     
@@ -32,7 +34,8 @@ public class ChatDTO {
                 .userchatId(entity.getUserchatId())
                 .roomNumber(entity.getRoomNumber())
                 .id(entity.getUserId())
-                .nickname(entity.getNickname())
+                .roomname(entity.getRoomname())
+                .joinId(entity.getJoinId())
                 .date(entity.getDate())
                 .build();
     }
@@ -44,7 +47,8 @@ public class ChatDTO {
 	        dto.setUserchatId(entity.getUserchatId());
 	        dto.setRoomNumber(entity.getRoomNumber());
 	        dto.setId(entity.getUserId());
-	        dto.setNickname(entity.getNickname());
+	        dto.setRoomname(entity.getRoomname());
+	        dto.setJoinId(entity.getJoinId());
 	        dto.setDate(entity.getDate());
 	        dtos.add(dto);
 	    }
