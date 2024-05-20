@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import com.example.demo.DTO.CommentDTO;
 import com.example.demo.entity.CommentEntity;
 
 public interface BoardCommentRepository extends JpaRepository<CommentEntity, Integer>{
@@ -15,5 +16,7 @@ public interface BoardCommentRepository extends JpaRepository<CommentEntity, Int
 	
 	@Query(value = "SELECT * FROM comment WHERE comment_id in :ids", nativeQuery = true)
     public List<CommentEntity> findByBoardIds(@Param("ids") List<Integer> ids);
+	
+
 	
 }

@@ -72,6 +72,7 @@ public class BoardService {
 		}
 		return null;
 	}
+	
 	public List<BoardLikeDTO> getLike(int userId) {
 		// 해당 userId에 해당하는 글을 찾습니다.
 	    List<BoardEntity> userPosts = boardRepository.findByid(userId);
@@ -170,5 +171,11 @@ public class BoardService {
 
 	    return likeDTOs;
 	}
+	
+	//댓글 조회
+	public List<CommentDTO> getComments(int boardId) {
+        List<CommentEntity> commentEntities = boardCommentRepository.findByboardId(boardId);
+        return CommentEntity.ToDtoList(commentEntities);
+    }
 
 }

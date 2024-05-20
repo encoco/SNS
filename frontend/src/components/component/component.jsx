@@ -23,14 +23,39 @@ export default function Component() {
 	const [selectedPostId, setSelectedPostId] = useState(null);
 	const dummyComments = [
 		{ nickname: "aaa", img: "/placeholder.svg", comment: "좋은 글이에요!", id: 1 },
-		{ nickname: "bbb", img: "/placeholder.svg", comment: "Thanks for sharing!", id: 2 }
 	];
 
+	//댓글 목록
+	useEffect(() => {
+		const fetchComments = async () => {
+			try {
+				const response = await api.get(`/getComments/${selectedPostId}`, {
+					withCredentials: true,
+				});
+				setCurrentComments(response.data.comments);
+			} catch (error) {
+				console.error('Error fetching comments:', error);
+			}
+		};
+		// selectedPostId가 변경될 때마다 댓글 새로 불러오기
+		if (selectedPostId !== null) {
+			fetchComments();
+		}
+	}, [selectedPostId]);
+
 	// 댓글 버튼 클릭 시 해당 게시물의 board_id 설정
-	const handleCommentButtonClick = (postId) => {
+	const handleCommentButtonClick = async (postId) => {
 		setSelectedPostId(postId);
+		try {
+			const response = await api.get(`/getComments/${postId}`, {
+				withCredentials: true,
+			});
+			setCurrentComments(response.data.comments);
+		} catch (error) {
+			console.error('Error fetching comments:', error);
+		}
 	};
-	
+
 	// 글 목록 받아오기
 	useEffect(() => {
 		const fetchPosts = async () => {
@@ -224,7 +249,7 @@ export default function Component() {
 					</div>
 				</div>
 
-				<Comment isOpen={showModal} onClose={() => setShowModal(false)} comments={currentComments} boardId={selectedPostId}/>
+				<Comment isOpen={showModal} onClose={() => setShowModal(false)} comments={currentComments} boardId={selectedPostId} />
 				{showTopBtn && (
 					<button
 						className="fixed bottom-10 right-10 bg-white hover:bg-gray-100 text-gray-900 font-bold rounded-full h-12 w-12 flex justify-center items-center border-4 border-gray-900 cursor-pointer"
