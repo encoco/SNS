@@ -1,44 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import api from "../../../api";
 
-function Comment({ isOpen, onClose, boardId }) {
+function Comment({ isOpen, onClose, comments, boardId }) {
 	const [commentText, setCommentText] = useState('');
 	const [commentText2, setCommentText2] = useState('');
 	const [activeDropdown, setActiveDropdown] = useState(null);
 	const [editCommentId, setEditCommentId] = useState(null);
 	const [originalCommentText, setOriginalCommentText] = useState('');
-	const [comments, setComments] = useState([]);
 
-	const formatDate = (dateString) => {
-		const date = new Date(dateString);
-		const year = date.getFullYear();
-		const month = String(date.getMonth() + 1).padStart(2, '0');
-		const day = String(date.getDate()).padStart(2, '0');
-		let hour = date.getHours();
-		const minute = String(date.getMinutes()).padStart(2, '0');
-		const amOrPm = hour >= 12 ? 'PM' : 'AM';
-		hour = hour % 12 || 12; // 0시를 12시로 변경
-		// 초는 포함하지 않음
-		return `${year}-${month}-${day} ${amOrPm} ${hour}:${minute}`;
-	};
+	if (!isOpen) {
+		return null;
+	}
 
-	useEffect(() => {
-		if (isOpen) {
-			fetchComments();
-		}
-	}, [isOpen]);
-
-	const fetchComments = async () => {
-		try {
-			const response = await api.get(`/getComments`, {
-				params: { boardId },
-				withCredentials: true,
-			});
-			setComments(response.data);
-		} catch (error) {
-			console.error('Error fetching comments:', error);
-		}
-	};
 
 	const handleClose = () => {
 		onClose();
@@ -55,6 +28,7 @@ function Comment({ isOpen, onClose, boardId }) {
 
 	const handleCommentWrite = async () => {
 		if (isOpen) {
+			console.log("현재 선택된 게시물 ID:", boardId);
 			const requestData = {
 				comment: commentText,
 				board_id: boardId
@@ -67,7 +41,6 @@ function Comment({ isOpen, onClose, boardId }) {
 				if (response.data === "success") {
 					alert('댓글 작성 성공');
 					setCommentText('');
-					fetchComments();  // 댓글 작성 후 댓글 목록 새로고침
 				} else {
 					alert('댓글 작성 실패');
 				}
@@ -100,7 +73,6 @@ function Comment({ isOpen, onClose, boardId }) {
 			if (response.data === "success") {
 				alert('댓글 수정 성공');
 				setEditCommentId(null);
-				fetchComments();  // 댓글 수정 후 댓글 목록 새로고침
 			} else {
 				alert('댓글 수정 실패');
 			}
@@ -111,18 +83,20 @@ function Comment({ isOpen, onClose, boardId }) {
 	};
 
 	const handleEditCancel = (commentId) => {
+		console.log(`Cancel edit for comment with ID: ${commentId}`);
 		setEditCommentId(null);
 		setCommentText2(originalCommentText); // 이전에 저장한 댓글 내용으로 복구
 	};
 
 	const handleDelete = async (comment) => {
 		try {
+			console.log(comment);
+			
 			const response = await api.post(`/DeleteComment`, comment, {
 				withCredentials: true,
 			});
 			if (response.data === "success") {
 				alert('댓글 삭제 성공');
-				fetchComments();  // 댓글 삭제 후 댓글 목록 새로고침
 			} else {
 				alert('댓글 삭제 실패');
 			}
@@ -133,13 +107,9 @@ function Comment({ isOpen, onClose, boardId }) {
 		setActiveDropdown(null);
 	};
 
-	if (!isOpen) {
-		return null;
-	}
-
 	return (
-		<div className="fixed inset-0 bg-opacity-50 flex justify-center items-center z-50" onClick={handleOverlayClick}>
-			<div className="bg-white p-6 rounded-lg shadow-lg max-w-3xl w-full m-4 z-50 relative overflow-hidden" onClick={handleModalContentClick}>
+		<div className="fixed inset-0  bg-opacity-50 flex justify-center items-center z-50" onClick={handleOverlayClick}>
+			<div className=" bg-white p-6 rounded-lg shadow-lg  max-w-3xl w-full m-4 z-50 relative overflow-hidden" onClick={handleModalContentClick}>
 				<h2 className="text-xl font-bold mb-4">댓글</h2>
 				<div className="mb-4 flex">
 					<input
@@ -168,15 +138,8 @@ function Comment({ isOpen, onClose, boardId }) {
 										/>
 									) : (
 										<>
-											<div className="flex items-center mb-1">
-												<strong>{comment.nickname}</strong>
-
-											</div>
-											<span className="text-gray-600 "><strong>{comment.comment}</strong></span>
-											<div className="flex items-center text-sm text-gray-500 mb-2">
-
-												<span className="text-gray-500">{formatDate(comment.date)}</span>
-											</div>
+											<strong>{comment.nickname}:</strong>
+											<span className="text-gray-600">{comment.comment}</span>
 										</>
 									)}
 								</div>
@@ -209,6 +172,7 @@ function Comment({ isOpen, onClose, boardId }) {
 					</ul>
 				</div>
 				<button onClick={handleClose} className="absolute top-2 right-2 text-2xl font-bold text-gray-800">&times;</button>
+
 			</div>
 		</div>
 	);
