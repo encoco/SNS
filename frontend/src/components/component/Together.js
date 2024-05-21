@@ -27,7 +27,7 @@ function Together() {
    return (
       <div className="Together bg-gray-100/40 dark:bg-gray-800/40 p-4 flex flex-wrap">
          <div className="w-full flex justify-end mb-4 px-2">
-            <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+            <button className="bg-black text-white font-bold py-2 px-4 rounded">
                오픈채팅 만들기
             </button>
          </div>
@@ -55,7 +55,7 @@ function Together() {
                            </svg>
                            <span className="text-gray-600">{post.People}</span>
                         </div>
-                        <button onClick={() => handleJoinChat(post.id)} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                        <button onClick={() => handleJoinChat(post.id)} className="bg-black text-white font-bold py-2 px-4 rounded">
                            참여
                         </button>
                      </div>

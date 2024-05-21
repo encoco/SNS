@@ -26,8 +26,9 @@ public class ChatMessageDTO {
     public static ChatMessageDTO toDTO(ChatMessageEntity entity) {
         return ChatMessageDTO.builder()
         		.message_id(entity.getMessage_id())
-                .room_number(entity.getRoom_number())
+                .room_number(entity.getRoomNumber())
                 .id(entity.getId())
+                .nickname(entity.getNickname())
                 .content(entity.getContent())
         		.date(entity.getDate())
                 .build();
@@ -38,7 +39,8 @@ public class ChatMessageDTO {
 	    for (ChatMessageEntity entity : entities) {
 	        ChatMessageDTO dto = new ChatMessageDTO();
 	        dto.setMessage_id(entity.getMessage_id());
-	        dto.setRoom_number(entity.getRoom_number());
+	        dto.setRoom_number(entity.getRoomNumber());
+	        dto.setNickname(entity.getNickname());
 	        dto.setId(entity.getId());
 	        dto.setContent(entity.getContent());
 	        dto.setDate(entity.getDate());

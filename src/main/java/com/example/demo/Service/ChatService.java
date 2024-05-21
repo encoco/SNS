@@ -6,20 +6,23 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import com.example.demo.DTO.ChatDTO;
+import com.example.demo.DTO.ChatMessageDTO;
+import com.example.demo.Repository.ChatMessageRepository;
 import com.example.demo.Repository.ChatRepository;
 import com.example.demo.Repository.UsersRepository;
 import com.example.demo.entity.ChatEntity;
+import com.example.demo.entity.ChatMessageEntity;
+
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class CharService {
+public class ChatService {
 	private final ChatRepository chatRepository;
+	private final ChatMessageRepository messageRepository;
 	private final UsersRepository uRepository;
 
-	
-	
 	public List<ChatDTO> selectRoom(int userId) {
 		List<ChatEntity> entity = chatRepository.findByUserId(userId);
 		if (entity != null) {
@@ -72,5 +75,16 @@ public class CharService {
 		Collections.sort(userIds);
 		String userIdsString = userIds.stream().map(String::valueOf).collect(Collectors.joining(","));
 		return userIdsString;
+	}
+
+	public void saveChat(ChatMessageDTO message) {
+		ChatMessageEntity entity = ChatMessageEntity.toEntity(message);
+		messageRepository.save(entity);
+	}
+
+	public List<ChatMessageDTO> getMessage(String roomNumber) {
+		List<ChatMessageEntity> entity = messageRepository.findByroomNumber(roomNumber);
+		System.out.println(entity);
+		return ChatMessageDTO.ToDtoList(entity);
 	}
 }

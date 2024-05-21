@@ -15,11 +15,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.example.demo.Config.JwtUtil;
 import com.example.demo.DTO.ChatDTO;
 import com.example.demo.DTO.ChatMessageDTO;
-import com.example.demo.Service.CharService;
+import com.example.demo.Service.ChatService;
 import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
@@ -27,19 +28,29 @@ import jakarta.servlet.http.HttpServletRequest;
 @RequestMapping("/api")
 public class ChatController {
 	private final JwtUtil jwtUtil;
-	private final CharService chatService;
+	private final ChatService chatService;
 	private final SimpMessageSendingOperations template;
 
 	// 채팅 리스트 반환
 	@MessageMapping("/chat/{roomNumber}")
     @SendTo("/api/sub/chat/{roomNumber}")
     public ChatMessageDTO handleChatMessage(@DestinationVariable("roomNumber") String roomNumber, @Payload ChatMessageDTO message) {
+		String token = message.getNickname();
+        
         message.setRoom_number(roomNumber);
-        System.out.println("현재 : " + message);
+        message.setId(jwtUtil.getUserIdFromToken(token));
+        message.setNickname(jwtUtil.getNickFromToken(token));
+        chatService.saveChat(message);
         return message; // 클라이언트로 메시지 반환
     }
 	
-	
+	@GetMapping("/getMessage")
+	public ResponseEntity<?> getMessage(@RequestParam(value="roomNumber") String roomNumber){
+		System.out.println(roomNumber);
+		List<ChatMessageDTO> dto = chatService.getMessage(roomNumber);
+		System.out.println(dto);
+		return ResponseEntity.ok(dto);
+	}
 
 	// 메시지 송신 및 수신, /pub가 생략된 모습. 클라이언트 단에선 /pub/message로 요청
 	@MessageMapping("/message")
@@ -90,4 +101,6 @@ public class ChatController {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("selectRoom error");
 		}
 	}
+	
+	
 }

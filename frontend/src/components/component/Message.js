@@ -57,16 +57,30 @@ function Message() {
 	const handleSendMessage = (event) => {
 		event.preventDefault();
 		if (inputMessage.trim()) {
-			const message = { content: inputMessage };
-			const nickname = localStorage.getItem('nickname');
-			webSocketService.send(`/api/pub/chat/${selectedChat}`, message, nickname);
+			const message = {
+				content: inputMessage,
+				nickname: localStorage.getItem('nickname') // nickname을 문자열로만 보냄
+			};
+
+			webSocketService.send(`/api/pub/chat/${selectedChat}`, message, localStorage.getItem("userInfo"));
+
 			setInputMessage('');
 		}
 	};
 
-	const handleChatSelect = (room) => {
+	const handleChatSelect = async(room) => {
+		try {
+			setMessages([]);// 채팅방 변경 시 메시지 초기화
+			const response = await api.get(`/getMessage`, {
+				params: {roomNumber : room.roomNumber},
+				withCredentials: true,
+			});
+			console.log(response.data);
+			setMessages(response.data);
+		} catch (error) {
+			console.error('Error fetching comments:', error);
+		}
 		setSelectedChat(room.roomNumber);
-		setMessages([]);  // 채팅방 변경 시 메시지 초기화
 	};
 
 	const handleChange = (room) => {
@@ -160,11 +174,8 @@ function Message() {
 						)}
 
 
-
-
-
 						<div className="w-[300px] border-l bg-gray-100/40 p-6 dark:bg-gray-800/40">
-							<div className="flex-1 overflow-y-auto py-2 max-h-[calc(100vh-135px)] p-6"> //여기
+							<div className="flex-1 overflow-y-auto py-2 max-h-[calc(100vh-135px)] p-6"> {/*//여기*/}
 
 								<nav className="grid items-start px-4 text-sm font-medium">
 									<Link
@@ -189,11 +200,11 @@ function Message() {
 										<GroupIcon className="h-4 w-4" />
 										함께해요
 									</Link>
-									<hr className="mt-4 mb-2 border-gray-300 dark:border-gray-700" />
+									<hr className="mt-6 mb-2 border-gray-300 dark:border-gray-700" />
 									<div className="flex justify-center items-center h-full">
 										<button onClick={() => { setShowModal(true); }}
-											className="px-4 py-2 rounded bg-black text-white" >
-											새로운 채팅
+											className="px-4 py-2 mt-2 rounded bg-black text-white" >
+											채팅 추가
 										</button>
 									</div>
 									<hr className="mt-4 mb-2 border-gray-300 dark:border-gray-700" />

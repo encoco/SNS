@@ -14,6 +14,8 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 @RequiredArgsConstructor
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     
+	private final JwtChannelInterceptor jwtChannelInterceptor;
+	private final JwtUtil jwtutil;
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
         /* 메시지 앞에 해당 prefix로 해당 경로를 처리하고 있는 핸들러로 전달된다. */
@@ -23,11 +25,12 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/api/ws")
-                .setAllowedOrigins("*");
-        
-        registry.addEndpoint("/api/ws")
-        .setAllowedOrigins("http://localhost:3000") // React 개발 서버의 주소 추가
-        .withSockJS();
+        registry.addEndpoint("/api/ws").setAllowedOrigins("*");
+        registry.addEndpoint("/api/ws").withSockJS();
+    }
+    
+    @Override
+    public void configureClientInboundChannel(ChannelRegistration registration) {
+        registration.interceptors(jwtChannelInterceptor);
     }
 }

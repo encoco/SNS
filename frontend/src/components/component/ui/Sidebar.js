@@ -23,7 +23,7 @@ function Sidebar() {
 		<div className="w-70 bg-white p-5">
 			<div className="flex flex-col items-center">
 				<Avatar>
-					<AvatarImage alt="User Avatar" src="/placeholder.svg?height=120&width=120" />
+					<AvatarImage alt="User Avatar" src="/placeholder.svg?height=100&width=100" />
 					<AvatarFallback>U</AvatarFallback>
 				</Avatar>
 				<h2 className="mt-4 font-semibold text-xl">{localStorage.getItem('nickname')}</h2>

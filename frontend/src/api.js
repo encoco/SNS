@@ -28,7 +28,6 @@ api.interceptors.response.use( //맨처음 요청에서 오류나면 실행되�
         localStorage.setItem('userInfo', data);
         // 오리지널 요청에 새 토큰을 설정하고 요청을 다시 시도
         originalRequest.headers['Authorization'] = `Bearer ${data}`;
-        console.clear();
         return api(originalRequest);
       } catch (refreshError) {
 		console.log('refreshError',refreshError);
