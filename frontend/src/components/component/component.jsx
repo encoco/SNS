@@ -22,24 +22,6 @@ export default function Component() {
 	const [currentComments, setCurrentComments] = useState([]);
 	const [selectedPostId, setSelectedPostId] = useState(null);
 
-	/*//댓글 목록
-	useEffect(() => {
-		const fetchComments = async () => {
-			try {
-				const response = await api.get(`/getComments/${selectedPostId}`, {
-					withCredentials: true,
-				});
-				setCurrentComments(response.data.comments);
-			} catch (error) {
-				console.error('Error fetching comments:', error);
-			}
-		};
-		// selectedPostId가 변경될 때마다 댓글 새로 불러오기
-		if (selectedPostId !== null) {
-			fetchComments();
-		}
-	}, [selectedPostId]);*/
-
 	// 댓글 버튼 클릭 시 해당 게시물의 board_id 설정
 	const handleCommentButtonClick = async (boardId) => {
 		setSelectedPostId(boardId);

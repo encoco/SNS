@@ -101,6 +101,7 @@ public class BoardController {
 			boardDTO.setId(userId);
 			boardDTO.setNickname(nickname);
 			boardDTO.setContent(content);
+			System.out.println(boardDTO);
 			if (imgs != null && !imgs.isEmpty()) {
 				boardDTO.setImg(imgs); // 여러 이미지 파일 설정
 			}
@@ -151,11 +152,11 @@ public class BoardController {
 	@PostMapping("/CommentWrite")
 	public ResponseEntity<?> writeComment(@RequestBody CommentDTO dto, HttpServletRequest request) {
 		try {
-			System.out.println(dto);
 			String token = jwtUtil.token(request.getHeader("Authorization"));
 			int userId = jwtUtil.getUserIdFromToken(token);
+			String nickname = jwtUtil.getNickFromToken(token);
 			dto.setId(userId);
-
+			dto.setNickname(nickname);
 			boardService.writeComment(dto);
 			return ResponseEntity.ok("success");
 		} catch (Exception e) {
@@ -180,6 +181,27 @@ public class BoardController {
 			return ResponseEntity.ok("수정 완료");
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("글 update.");
+		}
+	}
+	
+	@PostMapping("/EditComment")
+	public ResponseEntity<?> UpdateComment(@RequestBody CommentDTO commentDTO) {
+		try {
+			boardService.updateComment(commentDTO);
+			return ResponseEntity.ok("success");
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("댓글 update.");
+		}
+	}
+	
+	@PostMapping("/DeleteComment")
+	public ResponseEntity<?> DeleteComment(@RequestBody CommentDTO commentDTO) {
+		System.out.println("넘어옴!!!" + commentDTO);
+		try {
+			boardService.DeleteComment(commentDTO);
+			return ResponseEntity.ok("success");
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("댓글 update.");
 		}
 	}
 

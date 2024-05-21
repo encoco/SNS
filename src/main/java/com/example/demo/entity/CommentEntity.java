@@ -38,12 +38,19 @@ public class CommentEntity {
 	@Column(name = "id")
 	private int userId;
 	private String comment;
+	private String nickname;
 	@Builder.Default
 	private String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm"));
 
 	public static CommentEntity toEntity(CommentDTO dto) {
-		return CommentEntity.builder().comment_id(dto.getComment_id()).boardId(dto.getBoard_id())
-				.userId(dto.getId()).comment(dto.getComment()).date(dto.getDate()).build();
+		return CommentEntity.builder()
+				.comment_id(dto.getComment_id())
+				.boardId(dto.getBoard_id())
+				.userId(dto.getId())
+				.nickname(dto.getNickname())
+				.comment(dto.getComment())
+				.date(dto.getDate())
+				.build();
 	}
 	
 	public static List<CommentDTO> ToDtoList(List<CommentEntity> entities) {
@@ -54,7 +61,9 @@ public class CommentEntity {
 	        dto.setBoard_id(entity.getBoardId());
 	        dto.setId(entity.getUserId());
 	        dto.setComment(entity.getComment());
+	        dto.setNickname(entity.getNickname());
 	        dto.setDate(entity.getDate());
+	        
 	        dtos.add(dto);
 	    }
 	    return dtos;
