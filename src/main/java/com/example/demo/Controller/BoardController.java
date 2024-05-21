@@ -7,8 +7,6 @@ import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -101,6 +99,7 @@ public class BoardController {
 			boardDTO.setId(userId);
 			boardDTO.setNickname(nickname);
 			boardDTO.setContent(content);
+			System.out.println(boardDTO);
 			if (imgs != null && !imgs.isEmpty()) {
 				boardDTO.setImg(imgs); // 여러 이미지 파일 설정
 			}
@@ -135,14 +134,27 @@ public class BoardController {
 		}
 	}
 
+	// BoardController.java에 댓글 관련 메소드 추가
+	@GetMapping("/getComments")
+	public ResponseEntity<?> getComments(@RequestParam(value = "boardId") int boardId) {
+		try {
+			List<CommentDTO> comments = boardService.getComments(boardId);
+			return ResponseEntity.ok(comments);
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("댓글 불러오기 중 오류가 발생했습니다.");
+		}
+	}
+
 	@PostMapping("/CommentWrite")
 	public ResponseEntity<?> writeComment(@RequestBody CommentDTO dto, HttpServletRequest request) {
 		try {
-			System.out.println(dto);
 			String token = jwtUtil.token(request.getHeader("Authorization"));
 			int userId = jwtUtil.getUserIdFromToken(token);
 			dto.setId(userId);
 
+			String nickname = jwtUtil.getNickFromToken(token);
+			dto.setId(userId);
+			dto.setNickname(nickname);
 			boardService.writeComment(dto);
 			return ResponseEntity.ok("success");
 		} catch (Exception e) {
@@ -169,6 +181,27 @@ public class BoardController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("글 update.");
 		}
 	}
+	
+	@PostMapping("/EditComment")
+	public ResponseEntity<?> UpdateComment(@RequestBody CommentDTO commentDTO) {
+		try {
+			boardService.updateComment(commentDTO);
+			return ResponseEntity.ok("success");
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("댓글 update.");
+		}
+	}
+	
+	@PostMapping("/DeleteComment")
+	public ResponseEntity<?> DeleteComment(@RequestBody CommentDTO commentDTO) {
+		System.out.println("넘어옴!!!" + commentDTO);
+		try {
+			boardService.DeleteComment(commentDTO);
+			return ResponseEntity.ok("success");
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("댓글 update.");
+		}
+	}
 
 	@PostMapping("/boardDelete")
 	public ResponseEntity<?> DeleteBoard(@RequestBody int board_id) {
@@ -180,14 +213,4 @@ public class BoardController {
 		}
 	}
 
-	// BoardController.java에 댓글 관련 메소드 추가
-	@GetMapping("/getComments")
-	public ResponseEntity<?> getComments(@RequestParam(value = "boardId") int boardId) {
-		try {
-			List<CommentDTO> comments = boardService.getComments(boardId);
-			return ResponseEntity.ok(comments);
-		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("댓글 불러오기 중 오류가 발생했습니다.");
-		}
-	}
 }

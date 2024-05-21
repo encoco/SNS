@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import ImageSlider from './ImageSlider'; // ImageSlider 컴포넌트를 import
 import api from "../../api";
-import {  useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { Button } from "./ui/button"
 import { CardTitle, CardHeader, CardContent, CardFooter, Card } from "./ui/card"
-
+import axios from 'axios';
+import { useAuth } from '../../contexts/AuthContext'; // 경로는 실제 구조에 맞게 조정해야 함
 import Sidebar from "./ui/Sidebar";
 import DropdownMenu from './ui/DropdownMenu';
 import Comment from './ui/Comment';
@@ -15,8 +17,18 @@ function Mypage() {
 	const [likesCount, setLikesCount] = useState([]);
 	const [showModal, setShowModal] = useState(false);
 	const [currentComments, setCurrentComments] = useState([]);
-	const [boardId, setBoardId] = useState([]);
+	const [selectedPostId, setSelectedPostId] = useState(null);
 
+	const dummyComments = [
+		{ nickname: "aaa", img: "/placeholder.svg", comment: "좋은 글이에요!", id: 1 },
+		{ nickname: "bbb", img: "/placeholder.svg", comment: "Thanks for sharing!", id: 2 }
+	];
+	
+	// 댓글 버튼 클릭 시 해당 게시물의 board_id 설정
+	const handleCommentButtonClick = (postId) => {
+		setSelectedPostId(postId);
+	};
+	
 	useEffect(() => {
 		const fetchPosts = async () => {
 			try {
@@ -85,25 +97,7 @@ function Mypage() {
 		});
 	};
 
-	const dummyComments = [
-		{ nickname : "aaa", img : "/placeholder.svg" , comment: "Great post!" },
-		{ nickname : "bbb" , img : "/placeholder.svg", comment: "Thanks for sharing!" },
-		{ nickname : "bbb" , img : "/placeholder.svg", comment: "Thanks for sharing!" },
-		{ nickname : "bbb" , img : "/placeholder.svg", comment: "Thanks for sharing!" },
-		{ nickname : "bbb" , img : "/placeholder.svg", comment: "Thanks for sharing!" },
-		{ nickname : "bbb" , img : "/placeholder.svg", comment: "Thanks for sharing!" },
-		{ nickname : "bbb" , img : "/placeholder.svg", comment: "Thanks for sharing!" },
-		{ nickname : "bbb" , img : "/placeholder.svg", comment: "Thanks for sharing!" },
-		{ nickname : "bbb" , img : "/placeholder.svg", comment: "Thanks for sharing!" },
-		{ nickname : "bbb" , img : "/placeholder.svg", comment: "Thanks for sharing!" },
-		{ nickname : "bbb" , img : "/placeholder.svg", comment: "Thanks for sharing!" },
-		{ nickname : "bbb" , img : "/placeholder.svg", comment: "Thanks for sharing!" },
-		{ nickname : "bbb" , img : "/placeholder.svg", comment: "Thanks for sharing!" },
-		{ nickname : "bbb" , img : "/placeholder.svg", comment: "Thanks for sharing!" },
-		{ nickname : "bbb" , img : "/placeholder.svg", comment: "Thanks for sharing!" },
-		{ nickname : "bbb" , img : "/placeholder.svg", comment: "Thanks for sharing!" },
-		{ nickname : "bbb" , img : "/placeholder.svg", comment: "Thanks for sharing!" }
-	];
+
 	return (
 		<div className="flex min-h-screen bg-gray-100">
 
@@ -148,7 +142,7 @@ function Mypage() {
 										onClick={() => {
 											setCurrentComments(dummyComments); // 현재 댓글 설정
 											setShowModal(true); // 모달 보이기
-											setBoardId(post.board_id);
+											handleCommentButtonClick(post.board_id);
 										}}
 									>
 										댓글
@@ -161,8 +155,8 @@ function Mypage() {
 				</div>
 			</div>
 
-			<Comment isOpen={showModal} onClose={() => setShowModal(false)} comments={currentComments} board_id={boardId} />
-			
+			<Comment isOpen={showModal} onClose={() => setShowModal(false)} comments={currentComments} boardId={selectedPostId}/>
+
 			{showTopBtn && (
 				<button
 					className="fixed bottom-10 right-10 bg-white hover:bg-gray-100 text-gray-900 font-bold rounded-full h-12 w-12 flex justify-center items-center border-4 border-gray-900 cursor-pointer"

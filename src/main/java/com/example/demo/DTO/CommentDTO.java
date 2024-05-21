@@ -24,21 +24,23 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CommentDTO {
-
-   private int comment_id;
-   private int board_id;
-   private int id;
-   private String comment;
-   
-   @Builder.Default
+	private int comment_id;
+	private int board_id;
+	private int id;
+	private String comment;
+	private String nickname;
+	
+	@Builder.Default
     private String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm"));
 
-   public static CommentDTO toDTO(CommentEntity entity) {
-      return CommentDTO.builder()
-            .comment_id(entity.getComment_id())
-            .board_id(entity.getBoardId())
-            .id(entity.getUserId())
-            .date(entity.getDate())
-            .build();
-   }
+	public static CommentDTO toDTO(CommentEntity entity) {
+		return CommentDTO.builder()
+				.comment_id(entity.getComment_id())
+				.board_id(entity.getBoardId())
+				.id(entity.getUserId())
+				.nickname(entity.getNickname())
+				.comment(entity.getComment())
+				.date(entity.getDate())
+				.build();
+	}
 }

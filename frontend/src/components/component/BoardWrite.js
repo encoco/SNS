@@ -70,6 +70,7 @@ function BoardWrite() {
 		const formData = new FormData(); // FormData 객체 생성
 		
 		formData.append('content', content); // 글 내용 추가
+		formData.append('nickname', localStorage.getItem("nickname"));
 		images.forEach((image) => {
 			formData.append('img', image);
 		});

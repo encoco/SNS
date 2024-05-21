@@ -5,18 +5,15 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
 import com.amazonaws.SdkClientException;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.example.demo.Config.S3Config;
 import com.example.demo.DTO.BoardDTO;
 import com.example.demo.DTO.BoardLikeDTO;
-import com.example.demo.DTO.SearchDTO;
 import com.example.demo.DTO.CommentDTO;
 import com.example.demo.Repository.BoardCommentRepository;
 import com.example.demo.Repository.BoardLikeRepository;
@@ -24,9 +21,7 @@ import com.example.demo.Repository.BoardRepository;
 import com.example.demo.Repository.followRepository;
 import com.example.demo.entity.BoardEntity;
 import com.example.demo.entity.BoardLikeEntity;
-import com.example.demo.entity.UsersEntity;
 import com.example.demo.entity.CommentEntity;
-
 import io.jsonwebtoken.io.IOException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -125,7 +120,7 @@ public class BoardService {
 		}
 	}
 
-	@Transactional
+	@Transactional // 트랜잭션을 사용하여 업데이트를 보장
 	public void updatePost(BoardDTO dto) { // findById == select * from board where board_id = dto.getBoard_id();
 		BoardEntity post = boardRepository.findById(dto.getBoard_id())
 				.orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없습니다."));
@@ -140,6 +135,13 @@ public class BoardService {
 			}
 		}
 		post.setUpdateContent(dto.getContent(), imgpath);
+	}
+
+	@Transactional
+	public void updateComment(CommentDTO commentDTO) {
+		System.out.println("서비스 넘어옴!!");
+		CommentEntity board = CommentEntity.toEntity(commentDTO);
+		boardCommentRepository.save(board);
 	}
 
 	@Transactional
@@ -168,8 +170,16 @@ public class BoardService {
 		return likeDTOs;
 	}
 
+	// 댓글 조회
 	public List<CommentDTO> getComments(int boardId) {
 		List<CommentEntity> commentEntities = boardCommentRepository.findByboardId(boardId);
 		return CommentEntity.ToDtoList(commentEntities);
 	}
+
+	@Transactional
+	public void DeleteComment(CommentDTO commentDTO) {
+		CommentEntity board = CommentEntity.toEntity(commentDTO);
+		boardCommentRepository.delete(board);
+	}
+
 }
