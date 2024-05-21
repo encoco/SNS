@@ -1,8 +1,4 @@
-import axios from 'axios';
-import { Link , useNavigate} from "react-router-dom";
-import { useAuth } from 'contexts/AuthContext'; // 경로는 실제 구조에 맞게 조정해야 함
-
-
+import axios from 'axios'
 
 const api = axios.create({ //기본 요청 주소
   baseURL: 'http://localhost:8080/api',
@@ -32,7 +28,6 @@ api.interceptors.response.use( //맨처음 요청에서 오류나면 실행되�
         localStorage.setItem('userInfo', data);
         // 오리지널 요청에 새 토큰을 설정하고 요청을 다시 시도
         originalRequest.headers['Authorization'] = `Bearer ${data}`;
-        console.clear();
         return api(originalRequest);
       } catch (refreshError) {
 		console.log('refreshError',refreshError);

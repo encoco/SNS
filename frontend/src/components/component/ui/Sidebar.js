@@ -1,13 +1,12 @@
 import { AvatarImage, AvatarFallback, Avatar } from "./avatar"
-import api from "../../../api";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from '../../../contexts/AuthContext'; // 경로는 실제 구조에 맞게 조정해야 함
-import React, { useState,useEffect } from 'react';
+import React  from 'react';
 // Define the Sidebar component
 function Sidebar() {
 	const navigate = useNavigate();
 	const location = useLocation();
-	const { users, logout } = useAuth();
+	const { logout } = useAuth();
 	
 	const handleLogout = async () => {
 		try {
@@ -24,7 +23,7 @@ function Sidebar() {
 		<div className="w-70 bg-white p-5">
 			<div className="flex flex-col items-center">
 				<Avatar>
-					<AvatarImage alt="User Avatar" src="/placeholder.svg?height=120&width=120" />
+					<AvatarImage alt="User Avatar" src="/placeholder.svg?height=100&width=100" />
 					<AvatarFallback>U</AvatarFallback>
 				</Avatar>
 				<h2 className="mt-4 font-semibold text-xl">{localStorage.getItem('nickname')}</h2>

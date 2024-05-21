@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -48,6 +47,7 @@ public class TestController {
 
 	@PostMapping("/Signup")
 	public ResponseEntity<UsersDTO> signup(@RequestBody UsersDTO request) {
+		System.out.println("signup");
 		Uservice.registerUser(request);
 	    return new ResponseEntity<>(HttpStatus.CREATED); // ID가 설정된 기본 DTO와 함께 반환
 	}
@@ -78,7 +78,7 @@ public class TestController {
 
     @GetMapping("/search")
     public ResponseEntity<?> searchUser(@RequestParam("searchTerm") String searchTerm){
-    	List<SearchDTO> searchResults = Uservice.searchUsers(searchTerm);    	
+    	List<SearchDTO> searchResults = Uservice.searchUsers(searchTerm);
     	return ResponseEntity.ok(searchResults);
     }
     

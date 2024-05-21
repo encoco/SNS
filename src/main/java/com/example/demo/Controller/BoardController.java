@@ -7,8 +7,6 @@ import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -147,13 +145,13 @@ public class BoardController {
 		}
 	}
 
-	
-
 	@PostMapping("/CommentWrite")
 	public ResponseEntity<?> writeComment(@RequestBody CommentDTO dto, HttpServletRequest request) {
 		try {
 			String token = jwtUtil.token(request.getHeader("Authorization"));
 			int userId = jwtUtil.getUserIdFromToken(token);
+			dto.setId(userId);
+
 			String nickname = jwtUtil.getNickFromToken(token);
 			dto.setId(userId);
 			dto.setNickname(nickname);

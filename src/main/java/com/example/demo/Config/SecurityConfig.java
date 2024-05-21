@@ -36,7 +36,7 @@ public class SecurityConfig {
             .and()
             .authorizeRequests(authorizeRequests ->
                 authorizeRequests
-                    .requestMatchers("/",  "/login/**",  "/oauth2/**",  "/api/**",  "/user/**").permitAll()
+                    .requestMatchers("**").permitAll()
                     .anyRequest().authenticated() // 위에 지정된 경로를 제외한 모든 요청은 인증이 필요합니다. user, admin,
 
             )

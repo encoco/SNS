@@ -14,7 +14,7 @@ public class CustomAuthenticationFailureHandler implements AuthenticationFailure
 	@Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
                                         AuthenticationException exception) throws IOException, ServletException {
-        System.out.println("실패");
+        System.out.println("로그인실패");
 		response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // 401 상태 코드 설정
 		response.sendRedirect("http://localhost:3000");
         response.getWriter().append("Authentication failed");
