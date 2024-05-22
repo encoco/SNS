@@ -22,36 +22,36 @@ repositories {
 }
 
 dependencies {
-	// JDBC, JPA
-	implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
-	runtimeOnly 'com.mysql:mysql-connector-j'
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	
-	// Security, OAuth2
-	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
-	implementation 'org.springframework.boot:spring-boot-starter-security'
-	testImplementation 'org.springframework.security:spring-security-test'
-	
-	// JWT
-	implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
-	implementation 'io.jsonwebtoken:jjwt-impl:0.11.5'
-	implementation 'io.jsonwebtoken:jjwt-jackson:0.11.5'
-		
-	compileOnly 'org.projectlombok:lombok'
-	developmentOnly 'org.springframework.boot:spring-boot-devtools'
-	
-	// S3
-	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
-	implementation 'javax.xml.bind:jaxb-api:2.3.1'
-	annotationProcessor 'org.projectlombok:lombok'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	
-	//websocket 실시간 채팅
-	implementation 'org.springframework.boot:spring-boot-starter-websocket'
-	implementation 'org.webjars:sockjs-client:1.5.1'
-	implementation 'org.webjars:stomp-websocket:2.3.4'
-	implementation 'com.google.code.gson:gson:2.9.0'
+   // JDBC, JPA
+   implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
+   runtimeOnly 'com.mysql:mysql-connector-j'
+   implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+   implementation 'org.springframework.boot:spring-boot-starter-web'
+   
+   // Security, OAuth2
+   implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+   implementation 'org.springframework.boot:spring-boot-starter-security'
+   testImplementation 'org.springframework.security:spring-security-test'
+   
+   // JWT
+   implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+   implementation 'io.jsonwebtoken:jjwt-impl:0.11.5'
+   implementation 'io.jsonwebtoken:jjwt-jackson:0.11.5'
+      
+   compileOnly 'org.projectlombok:lombok'
+   developmentOnly 'org.springframework.boot:spring-boot-devtools'
+   
+   // S3
+   implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+   implementation 'javax.xml.bind:jaxb-api:2.3.1'
+   annotationProcessor 'org.projectlombok:lombok'
+   testImplementation 'org.springframework.boot:spring-boot-starter-test'
+   
+   //websocket 실시간 채팅
+   implementation 'org.springframework.boot:spring-boot-starter-websocket'
+   implementation 'org.webjars:sockjs-client:1.5.1'
+   implementation 'org.webjars:stomp-websocket:2.3.4'
+   implementation 'com.google.code.gson:gson:2.9.0'
 }
 
 def frontendDir = "$projectDir/frontend"

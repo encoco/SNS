@@ -6,8 +6,8 @@ function Together() {
    const [selectedPostId, setSelectedPostId] = useState(null); // State to store the ID of the post the user clicked
 
    const posts = [
-      { id: 1, title: '깨끗!', People: 20, image: 'https://s3.ap-northeast-2.amazonaws.com/sygrsns/image/5181233d-c4aa-4f8c-befd-e0beb52c74a1.jpg', hashtags: ['#노을', '#노을지다', '#봄', '#아이린리그', '#봄도둑'] },
-      { id: 2, title: '깨끗!', People: 17, image: 'https://s3.ap-northeast-2.amazonaws.com/sygrsns/image/adc71b8e-76e8-42bb-ac1f-70f16729d7d5.png', hashtags: ['#노을', '#노을지다', '#봄', '#아이린리그', '#봄도둑'] },
+      { id: 1, title: '깨끗!', People: 20, image: 'https://s3.ap-northeast-2.amazonaws.com/sygrsns/image/5181233d-c4aa-4f8c-befd-e0beb52c74a1.jpg', hashtags: ['#분리수거', '#일상', '#깨끗', '#함께하자'] },
+      { id: 2, title: 'TOGETHER', People: 17, image: 'https://s3.ap-northeast-2.amazonaws.com/sygrsns/image/adc71b8e-76e8-42bb-ac1f-70f16729d7d5.png', hashtags: ['#설명1', '#설명2', '#설명3', '#설명4', '#설명5'] },
       // Add more posts here if needed
    ];
 
