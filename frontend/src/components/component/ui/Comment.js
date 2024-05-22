@@ -1,12 +1,11 @@
-
 import React, { useState, useEffect } from 'react';
 import api from "../../../api";
 
 function Comment({ isOpen, onClose, boardId }) {
-	const [commentText, setCommentText] = useState('');
-	const [commentText2, setCommentText2] = useState('');
-	const [activeDropdown, setActiveDropdown] = useState(null);
-	const [editCommentId, setEditCommentId] = useState(null);
+	const [commentText, setCommentText] = useState(''); //제일 처음 쓴 댓글
+	const [commentText2, setCommentText2] = useState(''); // 수정 댓글 변수
+	const [activeDropdown, setActiveDropdown] = useState(null); //수정, 댓글 드롭 다운메뉴
+	const [editCommentId, setEditCommentId] = useState(null); 
 	const [originalCommentText, setOriginalCommentText] = useState('');
 	const [comments, setComments] = useState([]);
 
@@ -26,6 +25,20 @@ function Comment({ isOpen, onClose, boardId }) {
 		} catch (error) {
 			console.error('Error fetching comments:', error);
 		}
+	};
+
+	const formatDate = (dateString) => {
+		const date = new Date(dateString);
+		const formattedDate = date.toLocaleDateString('en-CA'); // YYYY-MM-DD format
+
+		const options = {
+			hour: 'numeric',
+			minute: 'numeric',
+			hour12: true
+		};
+		const formattedTime = new Intl.DateTimeFormat('en-US', options).format(date);
+
+		return `${formattedDate} ${formattedTime}`;
 	};
 
 	const handleClose = () => {
@@ -121,6 +134,12 @@ function Comment({ isOpen, onClose, boardId }) {
 		setActiveDropdown(null);
 	};
 
+	const handleKeyPress = (e) => {
+		if (e.key === 'Enter') {
+			handleCommentWrite();
+		}
+	};
+
 	if (!isOpen) {
 		return null;
 	}
@@ -136,6 +155,7 @@ function Comment({ isOpen, onClose, boardId }) {
 						className="border border-gray-300 p-2 flex-grow mr-2"
 						value={commentText}
 						onChange={(e) => setCommentText(e.target.value)}
+						onKeyPress={handleKeyPress}
 					/>
 					<button onClick={handleCommentWrite} className="bg-black hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
 						댓글 달기
@@ -162,7 +182,7 @@ function Comment({ isOpen, onClose, boardId }) {
 											</div>
 											<span className="text-gray-600 ">{comment.comment}</span>
 											<div className="flex items-center text-sm text-gray-500">
-												<span>{comment.date}</span>
+												<span>{formatDate(comment.date)}</span>
 											</div>
 										</>
 									)}

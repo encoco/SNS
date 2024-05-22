@@ -172,7 +172,7 @@ public class BoardService {
 
 	// 댓글 조회
 	public List<CommentDTO> getComments(int boardId) {
-		List<CommentEntity> commentEntities = boardCommentRepository.findByboardId(boardId);
+		List<CommentEntity> commentEntities = boardCommentRepository.findByBoardIdOrderByDateDesc(boardId);
 		return CommentEntity.ToDtoList(commentEntities);
 	}
 

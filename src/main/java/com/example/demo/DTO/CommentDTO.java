@@ -31,7 +31,7 @@ public class CommentDTO {
 	private String nickname;
 	
 	@Builder.Default
-    private String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm"));
+    private String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss"));
 
 	public static CommentDTO toDTO(CommentEntity entity) {
 		return CommentDTO.builder()

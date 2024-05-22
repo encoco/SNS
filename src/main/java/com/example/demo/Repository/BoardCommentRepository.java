@@ -9,8 +9,9 @@ import com.example.demo.DTO.CommentDTO;
 import com.example.demo.entity.CommentEntity;
 
 public interface BoardCommentRepository extends JpaRepository<CommentEntity, Integer>{
-	public List<CommentEntity> findByboardId(int userId);
+	//public List<CommentEntity> findByboardId(int userId);
 	public Optional<CommentEntity> findByBoardIdAndUserId(int boardId, int userId);
+	List<CommentEntity> findByBoardIdOrderByDateDesc(int boardId);
 	
 	@Query(value = "SELECT * FROM comment WHERE comment_id in :ids", nativeQuery = true)
     public List<CommentEntity> findByBoardIds(@Param("ids") List<Integer> ids);
