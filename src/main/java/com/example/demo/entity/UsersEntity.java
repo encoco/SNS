@@ -2,6 +2,7 @@ package com.example.demo.entity;
 
 
 import com.example.demo.DTO.UsersDTO;
+import com.example.demo.DTO.UsersInfoDTO;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -29,6 +30,7 @@ public class UsersEntity {
 	private String nickname;
     private String password;
     private String img;
+    String state_message;
     private String phone;
 	private String email;
 
@@ -42,11 +44,11 @@ public class UsersEntity {
                 .nickname(dto.getNickname())
                 .password(dto.getPassword())
                 .img(dto.getImg())
+                .state_message(dto.getState_message())
                 .phone(dto.getPhone())
                 .email(dto.getEmail())
                 .role(dto.getRole())
                 .build();
     }
-
 
 }

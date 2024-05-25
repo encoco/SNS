@@ -5,9 +5,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.web.multipart.MultipartFile;
-
-import com.example.demo.entity.BoardEntity;
 import com.example.demo.entity.BoardLikeEntity;
 
 import lombok.AllArgsConstructor;
@@ -29,7 +26,7 @@ public class BoardLikeDTO {
 	private int board_id;
 	@Builder.Default
     private String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm"));
-	
+
 	public static BoardLikeDTO toDTO(BoardLikeEntity entity) {
         return BoardLikeDTO.builder()
                 .boardlike_id(entity.getBoardlike_id())

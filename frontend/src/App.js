@@ -26,6 +26,17 @@ function App() {
   return (
     <div className="App">
       <Routes>
+        {/*<Route path="/" element={<PublicRoute><LoginPage /></PublicRoute>} />
+        <Route path="/signup" element={<PublicRoute><SignupPage /></PublicRoute>} />
+        <Route path="/index" element={<PublicRoute><Component /></PublicRoute>} />
+        <Route path="/BoardWrite" element={<PublicRoute><BoardWrite /></PublicRoute>} />
+        <Route path="/mypage" element={<PublicRoute><Mypage/></PublicRoute>} />
+        <Route path="/UserPage/:userId" element={<PublicRoute><UserPage/></PublicRoute>} />
+        <Route path="/Message" element={<PublicRoute><Message/></PublicRoute>} />
+        <Route path="/Participate" element={<PublicRoute><Participate/></PublicRoute>} />
+        <Route path="/Setting" element={<PublicRoute><Setting/></PublicRoute>} />
+        <Route path="/Together" element={<PublicRoute><Together/></PublicRoute>} />*/}
+        
         <Route path="/" element={<PublicRoute><LoginPage /></PublicRoute>} />
         <Route path="/signup" element={<PublicRoute><SignupPage /></PublicRoute>} />
         <Route path="/index" element={<PrivateRoute><Component /></PrivateRoute>} />
@@ -33,9 +44,9 @@ function App() {
         <Route path="/mypage" element={<PrivateRoute><Mypage/></PrivateRoute>} />
         <Route path="/UserPage/:userId" element={<PrivateRoute><UserPage/></PrivateRoute>} />
         <Route path="/Message" element={<PrivateRoute><Message/></PrivateRoute>} />
-        <Route path="/Participate" element={<PublicRoute><Participate/></PublicRoute>} />
-        <Route path="/Setting" element={<PublicRoute><Setting/></PublicRoute>} />
-        <Route path="/Together" element={<PublicRoute><Together/></PublicRoute>} />
+        <Route path="/Participate" element={<PrivateRoute><Participate/></PrivateRoute>} />
+        <Route path="/Setting" element={<PrivateRoute><Setting/></PrivateRoute>} />
+        <Route path="/Together" element={<PrivateRoute><Together/></PrivateRoute>} />
       </Routes>
     </div>
   );

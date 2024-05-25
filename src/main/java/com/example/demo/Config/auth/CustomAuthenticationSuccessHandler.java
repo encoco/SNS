@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 
 import com.example.demo.Config.JwtUtil;
 import com.example.demo.DTO.UsersDTO;
+import com.example.demo.DTO.UsersInfoDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.servlet.ServletException;
@@ -39,23 +40,23 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
         	String accessToken = jwtUtil.generateToken(userDetails,accessExpirationTime); // Access Token 생성
             String refreshToken = jwtUtil.generateToken(userDetails,refreshExpirationTime); // Refresh Token 생성
             UsersDTO userDTO = userDetails.getUsersDTO();
-
+            UsersInfoDTO dto = UsersInfoDTO.toInfoDTO(userDTO);
+            
             ResponseCookie cookie = ResponseCookie.from("refreshToken", refreshToken)
     	            .httpOnly(true)
     	            .path("/")
     	            .build();
     	    response.setHeader(HttpHeaders.SET_COOKIE, cookie.toString());
             // Access Token만 JSON 응답으로 반환
-            Map<String, String> tokenMap = new HashMap<>();
-            tokenMap.put("accessToken", accessToken);
-            tokenMap.put("nickname", userDTO.getNickname()); // 닉네임 추가
-            
+    	    Map<String, Object> tokenMap = new HashMap<>();
+    	    tokenMap.put("accessToken", accessToken);
+    	    tokenMap.put("nickname", dto); // UsersDTO 객체를 그대로 추가
+    	    
             String tokensJson = new ObjectMapper().writeValueAsString(tokenMap);
-            System.out.println("로그인 성공" + tokensJson);
             response.setContentType("application/json;charset=UTF-8");
             response.getWriter().write(tokensJson); // 클라이언트로 응답 전송
             if(userDTO.getRole().equals("ROLE_USER_SNS")) {
-            	response.sendRedirect("http://localhost:3000/?accesstoken=" + accessToken+ "&nickname=" + userDTO.getNickname());
+            	response.sendRedirect("http://localhost:3000/?tokensJson=" + tokensJson);
             }
         }
     }

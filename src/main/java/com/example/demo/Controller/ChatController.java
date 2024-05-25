@@ -1,9 +1,9 @@
 package com.example.demo.Controller;
 
-import lombok.RequiredArgsConstructor;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
@@ -17,11 +17,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
 import com.example.demo.Config.JwtUtil;
 import com.example.demo.DTO.ChatDTO;
 import com.example.demo.DTO.ChatMessageDTO;
 import com.example.demo.Service.ChatService;
+
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
@@ -36,19 +39,18 @@ public class ChatController {
     @SendTo("/api/sub/chat/{roomNumber}")
     public ChatMessageDTO handleChatMessage(@DestinationVariable("roomNumber") String roomNumber, @Payload ChatMessageDTO message) {
 		String token = message.getNickname();
-        
         message.setRoom_number(roomNumber);
         message.setId(jwtUtil.getUserIdFromToken(token));
         message.setNickname(jwtUtil.getNickFromToken(token));
+        System.out.println("ChatController : " + message);
         chatService.saveChat(message);
         return message; // 클라이언트로 메시지 반환
     }
-	
+
 	@GetMapping("/getMessage")
 	public ResponseEntity<?> getMessage(@RequestParam(value="roomNumber") String roomNumber){
 		System.out.println(roomNumber);
 		List<ChatMessageDTO> dto = chatService.getMessage(roomNumber);
-		System.out.println(dto);
 		return ResponseEntity.ok(dto);
 	}
 
@@ -101,6 +103,6 @@ public class ChatController {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("selectRoom error");
 		}
 	}
-	
-	
+
+
 }

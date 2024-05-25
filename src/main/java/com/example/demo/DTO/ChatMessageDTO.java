@@ -1,14 +1,16 @@
 package com.example.demo.DTO;
 
-import com.example.demo.entity.ChatMessageEntity;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.example.demo.entity.ChatMessageEntity;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Builder
@@ -22,7 +24,7 @@ public class ChatMessageDTO {
 	private String nickname;
     @Builder.Default
     private String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm"));
-    
+
     public static ChatMessageDTO toDTO(ChatMessageEntity entity) {
         return ChatMessageDTO.builder()
         		.message_id(entity.getMessage_id())
@@ -33,7 +35,7 @@ public class ChatMessageDTO {
         		.date(entity.getDate())
                 .build();
     }
-    
+
     public static List<ChatMessageDTO> ToDtoList(List<ChatMessageEntity> entities) {
 	    List<ChatMessageDTO> dtos = new ArrayList<>();
 	    for (ChatMessageEntity entity : entities) {

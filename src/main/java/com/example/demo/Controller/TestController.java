@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
 import com.example.demo.Config.JwtUtil;
 import com.example.demo.DTO.SearchDTO;
 import com.example.demo.DTO.UsersDTO;
@@ -61,27 +62,27 @@ public class TestController {
 
         return new ResponseEntity<>("You've been logged out successfully.", HttpStatus.OK);
     }
-	
+
 	@PostMapping("/refresh")
     public ResponseEntity<?> refreshToken(HttpServletRequest request) {
         // 리프레시 토큰 검증 로직
 		String refreshToken = (String) request.getAttribute("refreshToken");
         if (refreshToken != null && jwtutil.validateToken(refreshToken)) {
             String newAccessToken = jwtutil.newAccessToken(refreshToken);
-            
+
             return ResponseEntity.ok().body(newAccessToken);
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid Refresh Token");
         }
     }
-	
+
 
     @GetMapping("/search")
     public ResponseEntity<?> searchUser(@RequestParam("searchTerm") String searchTerm){
     	List<SearchDTO> searchResults = Uservice.searchUsers(searchTerm);
     	return ResponseEntity.ok(searchResults);
     }
-    
+
     @GetMapping("/userFollow")
     public ResponseEntity<?> followUser(@RequestParam("userId") int userId, HttpServletRequest request){
     	try {
@@ -90,7 +91,7 @@ public class TestController {
         	if(Uservice.followUser(userId,myId).equals("del")) {
         		return ResponseEntity.ok("삭제");
         	}
-        	else return ResponseEntity.ok("추가");	
+        	else return ResponseEntity.ok("추가");
     	}catch(Exception e) {
     		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("error");
     	}

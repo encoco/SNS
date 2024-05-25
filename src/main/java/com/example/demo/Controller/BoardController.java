@@ -181,7 +181,7 @@ public class BoardController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("글 update.");
 		}
 	}
-	
+
 	@PostMapping("/EditComment")
 	public ResponseEntity<?> UpdateComment(@RequestBody CommentDTO commentDTO) {
 		try {
@@ -191,7 +191,7 @@ public class BoardController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("댓글 update.");
 		}
 	}
-	
+
 	@PostMapping("/DeleteComment")
 	public ResponseEntity<?> DeleteComment(@RequestBody CommentDTO commentDTO) {
 		System.out.println("넘어옴!!!" + commentDTO);

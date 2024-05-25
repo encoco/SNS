@@ -1,0 +1,100 @@
+import React, { useState, useEffect } from 'react';
+import api from "../../../api";
+
+function EditProfile({ Open, Close, userInfo }) {
+	const [profilePic, setProfilePic] = useState(userInfo.img);
+	const [profilePicPreview, setProfilePicPreview] = useState('');
+	const [nickname, setNickname] = useState(userInfo.nickname);
+	const [statusMessage, setStatusMessage] = useState(userInfo.state_message);
+
+	useEffect(() => {
+		if (userInfo.img) {
+			setProfilePicPreview(userInfo.img);
+		}
+	}, [userInfo]);
+
+	const handleFileChange = (e) => {
+		const file = e.target.files[0];
+		if (file) {
+			setProfilePic(file);
+			const reader = new FileReader();
+			reader.onloadend = () => {
+				setProfilePicPreview(reader.result);
+			};
+			reader.readAsDataURL(file);
+		}
+	};
+
+	const handleClose = () => {
+		Close();
+	};
+
+	const handleOverlayClick = () => {
+		Close();
+	};
+
+	const handleModalContentClick = (e) => {
+		e.stopPropagation();
+	};
+
+	if (!Open) {
+		return null;
+	}
+
+	const handleSave = () => {
+		console.log(profilePic, nickname, statusMessage);
+		// 이곳에 프로필 정보를 업데이트하는 API 호출 로직을 추가하십시오.
+	};
+
+	return (
+		<div className="fixed inset-0 bg-gray-700 bg-opacity-50 flex justify-center items-center z-50" onClick={handleOverlayClick}>
+			<div className="bg-white p-6 rounded-lg shadow-lg max-w-lg w-full m-4 z-50 relative" onClick={handleModalContentClick}>
+				<h2 className="text-xl font-bold mb-4">내정보수정</h2>
+				<div className="mb-4">
+					<label className="block text-gray-700 text-sm font-bold mb-2">
+						프로필 사진
+					</label>
+					<input
+						type="file"
+						className="border border-gray-300 p-2 w-full"
+						onChange={handleFileChange}
+						accept="image/*"
+					/>
+					{profilePicPreview && (
+						<img src={profilePicPreview} alt="프로필 미리보기" className="mt-4 w-32 h-32 rounded-full" />
+					)}
+				</div>
+				<div className="mb-4">
+					<label className="block text-gray-700 text-sm font-bold mb-2">
+						닉네임
+					</label>
+					<input
+						type="text"
+						placeholder="닉네임"
+						className="border border-gray-300 p-2 w-full"
+						value={nickname || ''}
+						onChange={(e) => setNickname(e.target.value)}
+					/>
+				</div>
+				<div className="mb-4">
+					<label className="block text-gray-700 text-sm font-bold mb-2">
+						상태 메시지
+					</label>
+					<input
+						type="text"
+						placeholder="상태 메시지"
+						className="border border-gray-300 p-2 w-full"
+						value={statusMessage || ''}
+						onChange={(e) => setStatusMessage(e.target.value)}
+					/>
+				</div>
+				<button onClick={handleSave} className="bg-black hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+					저장
+				</button>
+				<button onClick={handleClose} className="absolute top-2 right-2 text-2xl font-bold text-gray-800">&times;</button>
+			</div>
+		</div>
+	);
+}
+
+export default EditProfile;

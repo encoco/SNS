@@ -5,9 +5,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
 import com.amazonaws.SdkClientException;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
@@ -22,6 +24,7 @@ import com.example.demo.Repository.followRepository;
 import com.example.demo.entity.BoardEntity;
 import com.example.demo.entity.BoardLikeEntity;
 import com.example.demo.entity.CommentEntity;
+
 import io.jsonwebtoken.io.IOException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -172,7 +175,7 @@ public class BoardService {
 
 	// 댓글 조회
 	public List<CommentDTO> getComments(int boardId) {
-		List<CommentEntity> commentEntities = boardCommentRepository.findByboardId(boardId);
+		List<CommentEntity> commentEntities = boardCommentRepository.findByBoardIdOrderByDateDesc(boardId);
 		return CommentEntity.ToDtoList(commentEntities);
 	}
 

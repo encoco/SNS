@@ -1,19 +1,16 @@
 package com.example.demo.DTO;
 
-import com.example.demo.entity.BoardEntity;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
+
 import com.example.demo.entity.ChatEntity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.springframework.web.multipart.MultipartFile;
 
 @Data
 @Builder
@@ -28,7 +25,7 @@ public class ChatDTO {
     private String joinId;
     @Builder.Default
     private String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm"));
-    
+
     public static ChatDTO toDTO(ChatEntity entity) {
         return ChatDTO.builder()
                 .userchatId(entity.getUserchatId())
@@ -39,7 +36,7 @@ public class ChatDTO {
                 .date(entity.getDate())
                 .build();
     }
-    
+
     public static List<ChatDTO> ToDtoList(List<ChatEntity> entities) {
 	    List<ChatDTO> dtos = new ArrayList<>();
 	    for (ChatEntity entity : entities) {

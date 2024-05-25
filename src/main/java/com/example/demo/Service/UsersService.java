@@ -1,20 +1,15 @@
 package com.example.demo.Service;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.example.demo.DTO.BoardDTO;
 import com.example.demo.DTO.SearchDTO;
 import com.example.demo.DTO.UsersDTO;
 import com.example.demo.DTO.followDTO;
 import com.example.demo.Repository.UsersRepository;
 import com.example.demo.Repository.followRepository;
-import com.example.demo.entity.BoardEntity;
 import com.example.demo.entity.UsersEntity;
 import com.example.demo.entity.followEntity;
 
@@ -26,7 +21,7 @@ public class UsersService {
 	 private final UsersRepository usersRepository;
 	 private final followRepository fRepository;
 	 private final PasswordEncoder passwordEncoder;
-	 
+
     public boolean isUserIdDuplicate(String username) {
         return usersRepository.existsByUsername(username);
     }
@@ -58,19 +53,19 @@ public class UsersService {
 			return null;//계정 없음
 		}
     }
-    
+
     public List<SearchDTO> searchUsers(String searchTerm){
     	List<UsersEntity> entity = usersRepository.findBynicknameContaining(searchTerm);
     	List<SearchDTO> dto = SearchDTO.toSearchDTO(entity);
-    	
+
     	return dto;
     }
-    
+
 	public SearchDTO userInfo(int userId) {
 		UsersEntity entity = usersRepository.findById(userId)
 											.orElseThrow(() -> new RuntimeException("User not found with ID: " + userId));
     	SearchDTO dto = SearchDTO.toDTO(entity);
-    	
+
     	return dto;
 	}
 

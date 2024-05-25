@@ -4,7 +4,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
+
 import org.springframework.stereotype.Service;
+
 import com.example.demo.DTO.ChatDTO;
 import com.example.demo.DTO.ChatMessageDTO;
 import com.example.demo.Repository.ChatMessageRepository;
@@ -36,7 +38,6 @@ public class ChatService {
 	public ChatDTO CreateRoom(List<Integer> userIds, int myId) {
 		String roomNumber = UUID.randomUUID().toString();
 		String name = "";
-		ChatDTO dto = new ChatDTO();
 		String ids = makeIds(userIds);
 
 		while (chatRepository.existsByRoomNumber(roomNumber)) {
@@ -44,14 +45,15 @@ public class ChatService {
 		}
 
 		for (Integer userId : userIds) {
-			if (userId == myId)
-				continue;
-			if (name.length() > 0)
-				name += ",";
-			name += uRepository.findNicknameById(userId);
-		}
-		for (Integer userId : userIds) {
 			ChatEntity chatUser = new ChatEntity();
+			name = "";
+			for (Integer id : userIds) {
+				if (userId == id)
+					continue;
+				if (name.length() > 0)
+					name += ",";
+				name += uRepository.findNicknameById(id);
+			}
 			chatUser.setRoomname(name);
 			chatUser.setRoomNumber(roomNumber);
 			chatUser.setUserId(userId);
@@ -84,7 +86,6 @@ public class ChatService {
 
 	public List<ChatMessageDTO> getMessage(String roomNumber) {
 		List<ChatMessageEntity> entity = messageRepository.findByroomNumber(roomNumber);
-		System.out.println(entity);
 		return ChatMessageDTO.ToDtoList(entity);
 	}
 }

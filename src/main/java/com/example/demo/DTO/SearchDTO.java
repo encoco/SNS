@@ -2,7 +2,6 @@ package com.example.demo.DTO;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import com.example.demo.entity.UsersEntity;
 
@@ -17,7 +16,7 @@ public class SearchDTO {
 	private int id;
 	private String nickname;
 	private String img;
-	
+
 	public static List<SearchDTO> toSearchDTO(List<UsersEntity> entity) {
 		List<SearchDTO> dtos = new ArrayList<>();
 		for(UsersEntity ent : entity) {

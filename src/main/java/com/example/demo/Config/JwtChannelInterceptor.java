@@ -1,4 +1,4 @@
-package com.example.demo.Config; 
+package com.example.demo.Config;
 
 import java.util.Collections;
 
@@ -34,7 +34,7 @@ public class JwtChannelInterceptor implements ChannelInterceptor {
                 if (jwtUtil.validateToken(jwt)) {
                     int userId = jwtUtil.getUserIdFromToken(jwt);
                     String nickname = jwtUtil.getNickFromToken(jwt);
-                    
+
                     System.out.println("jwtinterceptor id : " + userId);
                     System.out.println("jwtinterceptor nn : " + nickname);
                     // 사용자 정보를 설정

@@ -35,7 +35,7 @@ public class BoardLikeEntity {
 
 	@Column(name = "board_id")
 	private int boardId;
-	
+
 	@Builder.Default
 	private String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm"));
 
