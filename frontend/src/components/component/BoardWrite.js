@@ -102,6 +102,7 @@ function BoardWrite() {
 			alert('글쓰기에 실패했습니다. 다시 시도해주세요.');
 		}
 	};
+	
 	const handleButtonClick = () => {
 		fileInputRef.current.click();
 	};

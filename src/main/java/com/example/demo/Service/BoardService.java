@@ -59,7 +59,7 @@ public class BoardService {
 
 		// 올바른 경로의 URL 주소를 생성하여 저장
 		String s3Url = s3Config.amazonS3Client().getUrl(bucket + "/" + path, newFilename).toString();
-		return s3Url; // db에 url 저장을 위해 return
+		return s3Url; 
 	}
 
 	public List<BoardDTO> getPost(int id) {

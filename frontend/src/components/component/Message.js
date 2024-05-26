@@ -23,6 +23,7 @@ function Message() {
 	const [selectedRoom, setSelectedRoom] = useState(null);
 	const [isChatOptionsVisible, setIsChatOptionsVisible] = useState(false);
 	const [showRooms, setShowRooms] = useState(false);
+	const [groupRooms, setGroupRooms] = useState(false);
 	const [selectedRoomName, setSelectedRoomName] = useState(false);
 
 	const [nickname, setNickname] = useState(''); // 초기 상태를 빈 문자열로 설정
@@ -39,7 +40,7 @@ function Message() {
 			setId(userInfo.id);
 		}
 	}, []); // 의존성 배열을 빈 배열로 설정하여 컴포넌트 마운트 시에만 실행
-	
+
 	const toggleChatOptions = () => {
 		setIsChatOptionsVisible(!isChatOptionsVisible);
 	};
@@ -60,6 +61,21 @@ function Message() {
 		}
 	};
 
+	const handleGroupClick = async (room) => {
+		setSelectedRoomName(room.roomname);
+		setSelectedRoom(room.userchat_id);
+		setSelectedChat(room.roomNumber);
+		try {
+			setMessages([]);// 채팅방 변경 시 메시지 초기화
+			const response = await api.get(`/getMessage`, {
+				params: { roomNumber: room.roomNumber },
+				withCredentials: true,
+			});
+			setMessages(response.data);
+		} catch (error) {
+			console.error('Error fetching comments:', error);
+		}
+	};
 
 	useEffect(() => {
 		const connectWebSocket = () => {
@@ -79,6 +95,43 @@ function Message() {
 			};
 		}
 	}, [selectedChat]);
+
+	const handleChat = async () => {
+		setActiveView('chat');
+		setSelectedRoomName("");
+		setSelectedRoom("");
+		setSelectedChat("");
+		try {
+			const response = await api.get(`/selectRoom`, {
+				withCredentials: true,
+			});
+			setChatRoom(response.data === "채팅방 없음" ? [] : response.data);
+		} catch (error) {
+			console.log(error);
+		}
+
+	}
+
+	const handleGroup = async () => {
+		setActiveView('group');
+		setSelectedRoomName("");
+		setSelectedRoom("");
+		setSelectedChat("");
+		try {
+			const response = await api.get(`/selectCommuRoom`, {
+				withCredentials: true,
+			});
+			// 배열 데이터 검증 후 상태 업데이트
+			if (Array.isArray(response.data)) {
+				setChatRoom(response.data);
+			} else {
+				setChatRoom([]); // 비정상 응답 처리
+			}
+		} catch (error) {
+			setChatRoom([]); // 오류 시 빈 배열로 초기화
+		}
+	}
+
 
 	useEffect(() => {
 		const fetchChatrooms = async () => {
@@ -127,7 +180,7 @@ function Message() {
 	};
 
 	const handleNewRoomCreated = (newRoom) => {
-		setChatRoom(prevRooms => [...prevRooms, newRoom]); // 새 채팅방 추가
+		handleChat();
 		setSelectedChat(newRoom.roomNumber); // 새 채팅방 선택
 	};
 
@@ -201,18 +254,51 @@ function Message() {
 										</div>
 									</div>
 								) : (
-									// 함께해요 화면 컨텐츠
-									<div className="flex-1 flex flex-col">
-										<div className="flex-1 overflow-auto p-6">
-											<div className="grid h-full gap-4">
-												{/* 함께해요 활동 목록 */}
-												<div className="flex flex-col border-r bg-gray-100/40 dark:bg-gray-800/40">
-													<Together />
+									selectedChat ? (
+										<div className="flex-1 flex flex-col">
+											{/* 채팅 메시지 출력 영역 */}
+											<div className="flex-1 overflow-y-auto py-2 max-h-[calc(100vh-135px)] p-6">
+												<div className="grid gap-4">
+													{messages && messages.length > 0 ? (
+														messages.map(message => (
+															<div key={message.message_id} className={`flex items-start gap-4 ${message.nickname === nickname ? 'justify-end' : ''}`}>
+																<Avatar>
+																	<AvatarImage alt={message.name} src="/placeholder-user.jpg" style={{ width: '50px', height: '50px', objectFit: 'cover' }} />
+																	<AvatarFallback>{message.room_number[0]}</AvatarFallback>
+																</Avatar>
+																<div className="max-w-[40%]">
+																	<div className={`rounded-lg p-4 text-sm ${message.nickname === nickname ? 'bg-blue-500 text-white' : 'bg-gray-100 dark:bg-gray-800'}`}>
+																		<p>{message.content}</p>
+																	</div>
+																	<div className="text-xs text-gray-500 dark:text-gray-400">{message.date}</div>
+																</div>
+															</div>
+														))
+													) : (
+														<div className="flex justify-center items-center h-full">
+															<p className="text-gray-500">채팅을 시작하세요</p>
+														</div>
+													)}
 												</div>
 											</div>
+											{/* 메시지 입력란 */}
+											<div className="border-t px-6 py-4">
+												<form className="flex items-center gap-2" onSubmit={handleSendMessage}>
+													<Input className="flex-1" placeholder="메세지를 입력하세요..." type="text" value={inputMessage} onChange={e => setInputMessage(e.target.value)} />
+													<Button size="icon" type="submit" variant="ghost">
+														<SendIcon className="h-5 w-5" />
+													</Button>
+												</form>
+											</div>
 										</div>
-									</div>
-								)}
+									) : (
+										// 'Together' 컴포넌트 렌더링
+										<div className="flex-1 overflow-auto p-6">
+											<div className="grid h-full gap-4">
+												<Together />
+											</div>
+										</div>
+									))}
 
 
 								<div className="w-[300px] border-l bg-gray-100/40 p-6 dark:bg-gray-800/40">
@@ -225,7 +311,7 @@ function Message() {
 													: 'text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50'
 													}`}
 												href="#"
-												onClick={() => setActiveView('chat')}
+												onClick={() => handleChat()}
 											>
 												<MessageCircleIcon className="h-4 w-4" />
 												개인채팅방
@@ -236,7 +322,7 @@ function Message() {
 													: 'text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50'
 													}`}
 												href="#"
-												onClick={() => setActiveView('group')}
+												onClick={() => handleGroup()}
 											>
 												<GroupIcon className="h-4 w-4" />
 												함께해요
@@ -252,29 +338,38 @@ function Message() {
 
 											{chatroom && chatroom.length > 0 ? (
 												chatroom.map(room => (
-													<div key={room.userchatId} className="flex justify-center items-center h-full">
+													<div key={activeView === 'group' ? room.ccjId : room.userchatId} className="flex justify-center items-center h-full">
 														<button onClick={() => handleChatSelect(room)}
 															className={`flex items-center space-x-3 p-2 rounded-lg transition-colors w-full text-left 
-													${selectedChat === room.roomNumber ?
-																	'bg-gray-200' : 'hover:bg-gray-20 dark:hover:bg-gray-100'}`
-															}>
+                ${selectedChat === room.roomNumber ? 'bg-gray-200' : 'hover:bg-gray-100 dark:hover:bg-gray-800'}`}
+														>
 															<div className="w-12 h-12 rounded-full overflow-hidden shrink-0">
-																<img src="/placeholder-user.jpg" alt={room.name} className="w-full h-full object-cover" />
+																<img src={room.imgpath || "/placeholder-user.jpg"} alt={room.name} className="w-full h-full object-cover" />
 															</div>
-															<span className="text-sm font-medium text-gray-800 dark:text-white"> {truncateString(room.roomname, 10)} </span>
+															<span className="text-sm font-medium text-gray-800 dark:text-white">
+																{truncateString(room.roomname, 10)}
+															</span>
 														</button>
 													</div>
 												))
-											) : (<></>)}
+											) : (
+												<div className="flex justify-center items-center h-full">
+													<p className="text-gray-500">사용 가능한 채팅방이 없습니다</p>
+												</div>
+											)}
 										</nav>
 									</div>
 								</div>
 							</div>
+
+
+
 						</main>
 					</div>
 					<Search isOpen={showModal} onClose={() => setShowModal(false)} onRoomCreated={handleNewRoomCreated} roomList={chatroom} RoomSelectChange={handleChange} />
 				</div>
 			</BrowserView>
+
 
 
 
@@ -297,7 +392,7 @@ function Message() {
 									: 'text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50'
 									}`}
 								href="#"
-								onClick={() => setActiveView('chat')}
+								onClick={() => handleChat()}
 							>
 								<MessageCircleIcon className="h-3 w-3" />
 								개인채팅방
@@ -308,7 +403,7 @@ function Message() {
 									: 'text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50'
 									}`}
 								href="#"
-								onClick={() => setActiveView('group')}
+								onClick={() => handleGroup()}
 							>
 								<GroupIcon className="h-3 w-3" />
 								함께해요
@@ -384,6 +479,9 @@ function Message() {
 					</form>
 				</div>
 			</MobileView>
+
+
+
 		</div>
 	)
 }

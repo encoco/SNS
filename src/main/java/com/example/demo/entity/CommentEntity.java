@@ -39,6 +39,7 @@ public class CommentEntity {
 	private int userId;
 	private String comment;
 	private String nickname;
+	
 	@Builder.Default
 	private String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm"));
 

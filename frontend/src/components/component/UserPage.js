@@ -3,7 +3,6 @@ import ImageSlider from './ImageSlider'; // ImageSlider 컴포넌트를 import
 import api from "../../api";
 import { useParams } from "react-router-dom";
 import { CardTitle, CardHeader, CardContent, CardFooter, Card } from "./ui/card"
-
 import { useAuth } from '../../contexts/AuthContext'; // 경로는 실제 구조에 맞게 조정해야 함
 import Sidebar from "./ui/Sidebar";
 import DropdownMenu from './ui/DropdownMenu';

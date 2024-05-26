@@ -12,6 +12,7 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,8 +20,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.Config.JwtUtil;
+import com.example.demo.DTO.CCJDTO;
 import com.example.demo.DTO.ChatDTO;
 import com.example.demo.DTO.ChatMessageDTO;
+import com.example.demo.DTO.CommunityChatDTO;
 import com.example.demo.Service.ChatService;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -49,7 +52,6 @@ public class ChatController {
 
 	@GetMapping("/getMessage")
 	public ResponseEntity<?> getMessage(@RequestParam(value="roomNumber") String roomNumber){
-		System.out.println(roomNumber);
 		List<ChatMessageDTO> dto = chatService.getMessage(roomNumber);
 		return ResponseEntity.ok(dto);
 	}
@@ -58,7 +60,6 @@ public class ChatController {
 	@MessageMapping("/message")
 	public ResponseEntity<Void> receiveMessage(@RequestBody ChatMessageDTO chat) {
 		// 메시지를 해당 채팅방 구독자들에게 전송
-		System.out.println("CM : " + chat);
 		template.convertAndSend("/sub/chatroom/1", chat);
 		return ResponseEntity.ok().build();
 	}
@@ -104,5 +105,51 @@ public class ChatController {
 		}
 	}
 
+	@PostMapping("/CreateCommChat")
+	 public ResponseEntity<?> createCommChat(@ModelAttribute CommunityChatDTO dto, HttpServletRequest request) {
+		try {
+			String token = jwtUtil.token(request.getHeader("Authorization"));
+			dto.setId(jwtUtil.getUserIdFromToken(token));
+			chatService.CreateCommChat(dto);
+			return ResponseEntity.ok("");
 
+		} catch (Exception e) {
+			System.out.println(e);
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("selectRoom error");
+		}
+	}
+	@GetMapping("/selectAllCommuRoom")
+	public ResponseEntity<?> selectCommuRoom(HttpServletRequest request) {
+		List<CommunityChatDTO> dto = chatService.selectAllCommuRoom();
+		try {
+			if (dto != null) {
+				return ResponseEntity.ok(dto);
+			}
+			return ResponseEntity.ok("채팅방 없음");
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("selectRoom error");
+		}
+	}
+	
+	@PostMapping("/JoinCommuRoom")
+	public ResponseEntity<?> JoinCommuRoom(@RequestBody CommunityChatDTO dto, HttpServletRequest request){
+		String token = jwtUtil.token(request.getHeader("Authorization"));
+		dto.setId(jwtUtil.getUserIdFromToken(token));
+		chatService.joinCommunity(dto);
+		return ResponseEntity.ok(null);
+	} 
+	
+	@GetMapping("/selectCommuRoom")
+	public ResponseEntity<?> selCommuRoom(HttpServletRequest request) {
+		String token = jwtUtil.token(request.getHeader("Authorization"));
+		List<CCJDTO> dto = chatService.selectCommuRoom(jwtUtil.getUserIdFromToken(token));
+		try {
+			if (dto != null) {
+				return ResponseEntity.ok(dto);
+			}
+			return ResponseEntity.ok("채팅방 없음");
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("selectRoom error");
+		}
+	}
 }
