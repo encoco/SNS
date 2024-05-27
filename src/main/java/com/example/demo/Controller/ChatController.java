@@ -152,6 +152,7 @@ public class ChatController {
 	public ResponseEntity<?> JoinCommuRoom(@RequestBody CommunityChatDTO dto, HttpServletRequest request) {
 		String token = jwtUtil.token(request.getHeader("Authorization"));
 		dto.setId(jwtUtil.getUserIdFromToken(token));
+		System.out.println(dto);
 		chatService.joinCommunity(dto);
 		return ResponseEntity.ok(null);
 	}

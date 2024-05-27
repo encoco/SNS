@@ -23,6 +23,19 @@ export default function Component() {
 	const [showModal, setShowModal] = useState(false);
 	const [currentComments, setCurrentComments] = useState([]);
 	const [selectedPostId, setSelectedPostId] = useState(null);
+	const [userLikes, setUserLikes] = useState(new Set()); 
+	const [profile, setProfile] = useState('');
+	
+	
+	useEffect(() => {
+		// userInfo에서 nickname을 추출하여 상태에 저장
+		const userInfoJSON = localStorage.getItem('nickname');
+		if (userInfoJSON) {
+			const userInfo = JSON.parse(userInfoJSON);
+			setProfile(userInfo);
+		}
+	}, []); 
+	
 	// 댓글 버튼 클릭 시 해당 게시물의 board_id 설정
 	const handleCommentButtonClick = async (boardId) => {
 		setSelectedPostId(boardId);
@@ -37,28 +50,35 @@ export default function Component() {
 			console.error('Error fetching comments:', error);
 		}
 	};
-
+		
 	// 글 목록 받아오기
 	useEffect(() => {
 		const fetchPosts = async () => {
 			try {
+				// userId를 사용하여 사용자의 게시물을 가져옴
 				const response = await api.get(`/mainboardList`, {
 					withCredentials: true,
 				});
 				setPosts(response.data.posts);
-				console.log(response.data.posts);
+
 				const likesCount = response.data.likes.reduce((acc, like) => {
 					acc[like.board_id] = (acc[like.board_id] || 0) + 1;
 					return acc;
 				}, {});
 
 				setLikesCount(likesCount);
+
+				// 사용자가 좋아요를 누른 게시물 ID를 Set으로 저장
+				const userLikes = new Set(response.data.likes.filter(like => like.id === parseInt(profile.id)).map(like => like.board_id));
+				setUserLikes(userLikes);
+
 			} catch (error) {
 				console.log(error);
 			}
 		};
 		fetchPosts();
-	}, [logout, navigate]);
+	}, [profile.id]);
+
 
 	// 스크롤 이벤트 리스너 설정 및 정리
 	useEffect(() => {
@@ -84,6 +104,7 @@ export default function Component() {
 					},
 					withCredentials: true
 				});
+				console.log(response.data);
 				setSearchResults(response.data);
 			} catch (error) {
 				console.error('Error fetching search results:', error);
@@ -107,8 +128,6 @@ export default function Component() {
 
 	const LikeHandler = async (boardId) => {
 		try {
-			const formData = new FormData();
-			formData.append('boardId', boardId);
 			const response = await api.get(`/boardLike?boardId=${boardId}`, {
 				withCredentials: true,
 			});
@@ -118,6 +137,7 @@ export default function Component() {
 					...prevLikesCount,
 					[boardId]: Math.max((prevLikesCount[boardId] || 0) + 1, 0)
 				}));
+				setUserLikes(prevLikes => new Set(prevLikes).add(boardId)); // 좋아요 추가
 			}
 			else if (response.data === "fail") {
 				alert('좋아요 삭제');
@@ -125,6 +145,11 @@ export default function Component() {
 					...prevLikesCount,
 					[boardId]: Math.max((prevLikesCount[boardId] || 0) - 1, 0)
 				}));
+				setUserLikes(prevLikes => {
+					const newLikes = new Set(prevLikes);
+					newLikes.delete(boardId); // 좋아요 삭제
+					return newLikes;
+				});
 			}
 		} catch (error) {
 			console.log(error);
@@ -211,7 +236,7 @@ export default function Component() {
 											<div className="flex space-x-4 flex-wrap">
 												<button
 													className="w-10 h-8"
-													style={{ color: likesCount[post.board_id] > 0 ? "red" : "inherit" }}
+													style={{ color: userLikes.has(post.board_id) ? "red" : "inherit" }} // 좋아요 상태에 따라 색상 변경
 													onClick={() => LikeHandler(post.board_id)}
 												>
 													{likesCount[post.board_id] > 0 ? `${likesCount[post.board_id]} ❤` : '0 ❤'}

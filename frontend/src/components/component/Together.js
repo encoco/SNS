@@ -2,13 +2,11 @@ import React, { useState, useEffect } from 'react';
 import AddCommuChat from './ui/AddCommuChat.js';
 import api from "../../api";
 
-function Together() {
-	const [hoveredPost, setHoveredPost] = useState(null); // State to track hovered post
-	const [showModal, setShowModal] = useState(false); // State to track modal visibility
-	const [selectedPostId, setSelectedPostId] = useState(null); // State to store the ID of the post the user clicked
+function Together({ onJoinRoom }) {
+	const [showModal, setShowModal] = useState(false); 
+	const [selectedPostId, setSelectedPostId] = useState(null);
 	const [addCommu, setAddCommu] = useState(false);
 	const [commuRoom, setCommuRoom] = useState(null);
-	const [expandedId, setExpandedId] = useState(null);
 
 	useEffect(() => {
 		const fetchCommuRooms = async () => {
@@ -28,18 +26,19 @@ function Together() {
 	const handleJoin = async (room) => {
 		const confirmJoin = window.confirm("정말 참여하시겠습니까?");
 		if (confirmJoin) {
-			console.log('room' ,room);
 			try {
-				const response = await api.post(`/JoinCommuRoom`,{
-                communitychatId: room.communitychatId,
-                id: room.id,  
-               	title : room.title,
-               	description : room.description,
-               	imgpath : room.imgpath 
-            },{
+				const response = await api.post(`/JoinCommuRoom`, {
+					communitychatId: room.communitychatId,
+					id: room.id,
+					title: room.title,
+					description: room.description,
+					imgpath: room.imgpath
+				}, {
 					withCredentials: true,
 				});
-				console.log(response.data);
+				console.log("hi");
+				onJoinRoom(room); // Join 후 상위 컴포넌트에 알림
+				
 			} catch (error) {
 				console.log(error);
 			}
