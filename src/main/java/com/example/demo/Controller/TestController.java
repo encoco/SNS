@@ -6,6 +6,7 @@ import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -96,5 +97,16 @@ public class TestController {
     		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("error");
     	}
     }
+    
+    @PostMapping("/WriteProfile")
+    public ResponseEntity<?> updateProfile(@ModelAttribute UsersDTO profile, HttpServletRequest request) {
+         try {
+            System.out.println("프로필 : " + profile);
+              //UsersDTO updatedProfile = Uservice.updateUserProfile(img, nickname, stateMessage);
+              return ResponseEntity.ok("");
+          } catch (Exception e) {
+              return ResponseEntity.internalServerError().body("프로필 업데이트 실패: " + e.getMessage());
+          }
+      }
 }
 

@@ -44,7 +44,6 @@ function AddCommuChat({ Open, Close }) {
 	}
 
 	const handleSave = async () => {
-		console.log('sdasad', img, title, description);
 
 		const formData = new FormData(); // FormData 객체 생성
 

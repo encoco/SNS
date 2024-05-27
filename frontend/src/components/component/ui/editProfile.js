@@ -41,10 +41,29 @@ function EditProfile({ Open, Close, userInfo }) {
 		return null;
 	}
 
-	const handleSave = () => {
-		console.log(profilePic, nickname, statusMessage);
-		// 이곳에 프로필 정보를 업데이트하는 API 호출 로직을 추가하십시오.
+	const handleSave = async () => {
+		const formData = new FormData();
+		formData.append('nickname', nickname);
+		formData.append('state_message', statusMessage);
+		
+		if(profilePic){
+			formData.append('imgpath', profilePic);
+		}
+		try {
+			const response = await api.post(`/WriteProfile`, formData, {
+				headers: {
+					'Content-Type': 'multipart/form-data'
+				},
+				withCredentials: true,
+			});
+			alert('프로필이 성공적으로 업데이트되었습니다.');
+			Close();
+		} catch (error) {
+			console.error('프로필 업데이트 실패:', error);
+			alert('프로필 업데이트에 실패했습니다.');
+		}
 	};
+
 
 	return (
 		<div className="fixed inset-0 bg-gray-700 bg-opacity-50 flex justify-center items-center z-50" onClick={handleOverlayClick}>
