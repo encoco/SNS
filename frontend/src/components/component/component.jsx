@@ -169,7 +169,7 @@ export default function Component() {
 		<div className="app">
 			{/* 데스크톱 화면 */}
 			<BrowserView>
-				<div className="flex min-h-screen bg-gray-100">
+				<div className="grid min-h-screen w-full grid-cols-[280px_1fr] flex min-h-screen bg-gray-100">
 					<Sidebar />
 					<div className="flex flex-col w-full ml-10 relative">
 						<div className="flex justify-center items-center flex-col w-full relative">

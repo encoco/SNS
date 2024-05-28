@@ -22,8 +22,13 @@ public class UsersInfoDTO {
 	}
 	
 	public static UsersInfoDTO toInfoDTO(UsersDTO entity) {
-		return UsersInfoDTO.builder().id(entity.getId()).nickname(entity.getNickname()).img(entity.getImg())
-				.state_message(entity.getState_message()).phone(entity.getPhone()).email(entity.getEmail()).build();
+		return UsersInfoDTO.builder()
+				.id(entity.getId())
+				.nickname(entity.getNickname())
+				.img(entity.getImg())
+				.state_message(entity.getState_message())
+				.phone(entity.getPhone())
+				.email(entity.getEmail()).build();
 	}
 
 }

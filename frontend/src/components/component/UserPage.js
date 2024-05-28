@@ -30,6 +30,7 @@ function UserPage() {
 			const userInfo = JSON.parse(userInfoJSON);
 			setNickname(userInfo.nickname); // nickname 상태 업데이트
 			setProfile(userInfo);
+			console.log("pro : ",profile);
 		}
 	}, []); 
 	
@@ -130,33 +131,37 @@ function UserPage() {
 	};
 
 	const handleEditProfile = () => {
+		console.log("pro : ", profile);
 		setEditProfile(true);
 	};
 
 	return (
-		<div className="flex min-h-screen bg-gray-100">
+		<div className="grid min-h-screen w-full grid-cols-[280px_1fr] flex min-h-screen bg-gray-100">
 			<Sidebar />
-			<div className="flex flex-col w-full ml-10">
+			<div className="flex flex-col ml-10">
 				{userInfo && (
-					<div className="flex items-center mb-5">
-						<img
-							alt="Profile"
-							className="w-8 h-8 rounded-full mr-2"
-							src={userInfo.img || "/placeholder.svg"}
-						/>
-						<h2 className="text-2xl">{userInfo.nickname}</h2>
-						{nickname !== userInfo.nickname ? (
-							<button
-								onClick={handleFollow}
-								className={`ml-5 px-3 py-1 text-sm font-medium rounded transition duration-150 ease-in-out ${isFollowing ? 'bg-red-500 hover:bg-red-700 text-white' : 'bg-black hover:bg-green-600 text-white'}`}
-							>
-								{isFollowing ? '언팔로우' : '팔로우'}
-							</button>
-						) : (
-							<button onClick={handleEditProfile} className="ml-5 px-3 py-1 text-sm font-medium rounded transition duration-150 ease-in-out bg-black hover:bg-green-600 text-white">
-								내 정보 수정
-							</button>
-						)}
+					<div className="flex flex-col  mb-5">
+						<div className="flex items-center">
+							<img
+								alt="Profile"
+								className="w-8 h-8 rounded-full mr-2"
+								src={userInfo.img || "/placeholder.svg"}
+							/>
+							<h2 className="text-2xl">{userInfo.nickname}</h2>
+							{nickname !== userInfo.nickname ? (
+								<button
+									onClick={handleFollow}
+									className={`ml-5 px-3 py-1 text-sm font-medium rounded transition duration-150 ease-in-out ${isFollowing ? 'bg-red-500 hover:bg-red-700 text-white' : 'bg-black hover:bg-green-600 text-white'}`}
+								>
+									{isFollowing ? '언팔로우' : '팔로우'}
+								</button>
+							) : (
+								<button onClick={handleEditProfile} className="ml-5 px-3 py-1 text-sm font-medium rounded transition duration-150 ease-in-out bg-black hover:bg-green-600 text-white">
+									내 정보 수정
+								</button>
+							)}
+						</div>
+						<p className="mt-1 text-sm text-gray-600">{profile.state_message}</p> {/* 상태 메시지 추가 */}
 					</div>
 				)}
 

@@ -4,13 +4,16 @@ import api from "../../../api";
 function EditProfile({ Open, Close, userInfo }) {
 	const [profilePic, setProfilePic] = useState(userInfo.img);
 	const [profilePicPreview, setProfilePicPreview] = useState('');
-	const [nickname, setNickname] = useState(userInfo.nickname);
-	const [statusMessage, setStatusMessage] = useState(userInfo.state_message);
+	const [nickname, setNickname] = useState("");
+	const [statusMessage, setStatusMessage] = useState("");
 
 	useEffect(() => {
+		setNickname(userInfo.nickname);
+		setStatusMessage(userInfo.state_message);
 		if (userInfo.img) {
 			setProfilePicPreview(userInfo.img);
 		}
+
 	}, [userInfo]);
 
 	const handleFileChange = (e) => {
@@ -26,10 +29,12 @@ function EditProfile({ Open, Close, userInfo }) {
 	};
 
 	const handleClose = () => {
+		setProfilePicPreview('');
 		Close();
 	};
 
 	const handleOverlayClick = () => {
+		setProfilePicPreview('');
 		Close();
 	};
 
@@ -56,6 +61,8 @@ function EditProfile({ Open, Close, userInfo }) {
 				},
 				withCredentials: true,
 			});
+			setProfilePicPreview('');
+			localStorage.setItem('nickname', JSON.stringify(response.data));
 			alert('프로필이 성공적으로 업데이트되었습니다.');
 			Close();
 		} catch (error) {
