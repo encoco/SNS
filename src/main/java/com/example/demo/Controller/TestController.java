@@ -105,7 +105,6 @@ public class TestController {
 			String token = jwtutil.token(request.getHeader("Authorization"));
 			profile.setId(jwtutil.getUserIdFromToken(token));
 			String original = jwtutil.getNickFromToken(token); 
-			System.out.println(profile);
 			UsersInfoDTO updatedProfile = Uservice.updateUserProfile(profile, original);
 			return ResponseEntity.ok(updatedProfile);
 		} catch (Exception e) {

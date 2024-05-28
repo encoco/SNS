@@ -30,6 +30,7 @@ public class BoardDTO {
 	private String nickname;
 	private List<MultipartFile> img;
 	private String imgpath;
+	private String profile_img;
     private String video;
     private String content;
     private int like;
@@ -58,6 +59,7 @@ public class BoardDTO {
 	        dto.setId(entity.getId());
 	        dto.setNickname(entity.getNickname());
 	        dto.setImgpath(entity.getImg());
+	        dto.setProfile_img(entity.getProfile_img());
 	        dto.setVideo(entity.getVideo());
 	        dto.setDate(entity.getDate());
 	        dto.setContent(entity.getContent());

@@ -25,6 +25,7 @@ import com.example.demo.DTO.CCMDTO;
 import com.example.demo.DTO.ChatDTO;
 import com.example.demo.DTO.ChatMessageDTO;
 import com.example.demo.DTO.CommunityChatDTO;
+import com.example.demo.DTO.UsersInfoDTO;
 import com.example.demo.Service.ChatService;
 
 import io.jsonwebtoken.io.IOException;
@@ -68,7 +69,7 @@ public class ChatController {
 	}
 
 	@GetMapping("/getMessage")
-	public ResponseEntity<?> getMessage(@RequestParam(value = "roomNumber") String roomNumber) {
+	public ResponseEntity<?> getMessage(@RequestParam(value = "roomNumber") String roomNumber, HttpServletRequest request) {
 		List<ChatMessageDTO> dto = chatService.getMessage(roomNumber);
 		return ResponseEntity.ok(dto);
 	}
@@ -136,7 +137,7 @@ public class ChatController {
 	}
 
 	@GetMapping("/selectAllCommuRoom")
-	public ResponseEntity<?> selectCommuRoom(HttpServletRequest request) {
+	public ResponseEntity<?> selectAllCommuRoom(HttpServletRequest request) {
 		List<CommunityChatDTO> dto = chatService.selectAllCommuRoom();
 		try {
 			if (dto != null) {

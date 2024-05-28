@@ -27,11 +27,11 @@ public class CommunityChatJoinEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name="ccj_id")
 	private int ccjId;
-	
 	@Column(name="communitychat_id")
 	private int communitychatId;
 	private String title;
 	private int id;
+	private String imgpath;
 	
 	@Builder.Default
 	private String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm"));
@@ -40,6 +40,7 @@ public class CommunityChatJoinEntity {
         return CommunityChatJoinEntity.builder()
                 .communitychatId(entity.getCommunitychatId())
                 .title(entity.getTitle())
+                .imgpath(entity.getImgpath())
                 .id(entity.getId())
                 .date(entity.getDate())
                 .build();

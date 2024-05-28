@@ -19,7 +19,7 @@ public class UsersDTO {
 	private String username;
 	private String nickname;
     private String password;
-    private String img;
+    private String profile_img;
     private String state_message;
     private MultipartFile imgpath;
     private String phone;
@@ -35,7 +35,7 @@ public class UsersDTO {
                 .nickname(dto.getNickname())
                 .password(dto.getPassword())
                 .state_message(dto.getState_message())
-                .img(dto.getImg())
+                .profile_img(dto.getProfile_img())
                 .phone(dto.getPhone())
                 .email(dto.getEmail())
                 .role(dto.getRole())

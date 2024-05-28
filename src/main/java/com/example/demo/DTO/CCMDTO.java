@@ -26,6 +26,7 @@ public class CCMDTO {
 	int id;
 	String nickname;
 	String content;
+	
 
 	@Builder.Default
 	private String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm"));
