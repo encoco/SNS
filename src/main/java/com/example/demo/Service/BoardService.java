@@ -5,9 +5,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
 import com.amazonaws.SdkClientException;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
@@ -22,6 +24,7 @@ import com.example.demo.Repository.followRepository;
 import com.example.demo.entity.BoardEntity;
 import com.example.demo.entity.BoardLikeEntity;
 import com.example.demo.entity.CommentEntity;
+
 import io.jsonwebtoken.io.IOException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -56,7 +59,7 @@ public class BoardService {
 
 		// 올바른 경로의 URL 주소를 생성하여 저장
 		String s3Url = s3Config.amazonS3Client().getUrl(bucket + "/" + path, newFilename).toString();
-		return s3Url; // db에 url 저장을 위해 return
+		return s3Url; 
 	}
 
 	public List<BoardDTO> getPost(int id) {

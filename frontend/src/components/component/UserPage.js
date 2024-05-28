@@ -3,40 +3,35 @@ import ImageSlider from './ImageSlider'; // ImageSlider 컴포넌트를 import
 import api from "../../api";
 import { useParams } from "react-router-dom";
 import { CardTitle, CardHeader, CardContent, CardFooter, Card } from "./ui/card"
-
 import { useAuth } from '../../contexts/AuthContext'; // 경로는 실제 구조에 맞게 조정해야 함
 import Sidebar from "./ui/Sidebar";
 import DropdownMenu from './ui/DropdownMenu';
 import Comment from './ui/Comment';
+import EditProfile from './ui/editProfile.js';
+
 function UserPage() {
 	const [showTopBtn, setShowTopBtn] = useState(false);
 	const [posts, setPosts] = useState([]);
 	const [likesCount, setLikesCount] = useState([]);
-
 	const { userId } = useParams(); // URL에서 userId 추출
 	const [userInfo, setUserInfo] = useState(null);
 	const [isFollowing, setIsFollowing] = useState(false);
 	const [showModal, setShowModal] = useState(false);
+	const [editProfile, setEditProfile] = useState(false);
 	const [currentComments, setCurrentComments] = useState([]);
-	const dummyComments = [
-		{ nickname: "aaa", img: "/placeholder.svg", comment: "Great post!" },
-		{ nickname: "bbb", img: "/placeholder.svg", comment: "Thanks for sharing!" },
-		{ nickname: "bbb", img: "/placeholder.svg", comment: "Thanks for sharing!" },
-		{ nickname: "bbb", img: "/placeholder.svg", comment: "Thanks for sharing!" },
-		{ nickname: "bbb", img: "/placeholder.svg", comment: "Thanks for sharing!" },
-		{ nickname: "bbb", img: "/placeholder.svg", comment: "Thanks for sharing!" },
-		{ nickname: "bbb", img: "/placeholder.svg", comment: "Thanks for sharing!" },
-		{ nickname: "bbb", img: "/placeholder.svg", comment: "Thanks for sharing!" },
-		{ nickname: "bbb", img: "/placeholder.svg", comment: "Thanks for sharing!" },
-		{ nickname: "bbb", img: "/placeholder.svg", comment: "Thanks for sharing!" },
-		{ nickname: "bbb", img: "/placeholder.svg", comment: "Thanks for sharing!" },
-		{ nickname: "bbb", img: "/placeholder.svg", comment: "Thanks for sharing!" },
-		{ nickname: "bbb", img: "/placeholder.svg", comment: "Thanks for sharing!" },
-		{ nickname: "bbb", img: "/placeholder.svg", comment: "Thanks for sharing!" },
-		{ nickname: "bbb", img: "/placeholder.svg", comment: "Thanks for sharing!" },
-		{ nickname: "bbb", img: "/placeholder.svg", comment: "Thanks for sharing!" },
-		{ nickname: "bbb", img: "/placeholder.svg", comment: "Thanks for sharing!" }
-	];
+	const [nickname, setNickname] = useState(''); // 초기 상태를 빈 문자열로 설정
+	const [profile, setProfile] = useState('');
+
+	useEffect(() => {
+		// userInfo에서 nickname을 추출하여 상태에 저장
+		const userInfoJSON = localStorage.getItem('nickname');
+		if (userInfoJSON) {
+			const userInfo = JSON.parse(userInfoJSON);
+			setNickname(userInfo.nickname); // nickname 상태 업데이트
+			setProfile(userInfo);
+		}
+	}, []); 
+	
 
 	useEffect(() => {
 		const fetchPosts = async () => {
@@ -123,6 +118,10 @@ function UserPage() {
 			alert('다시 시도해주세요');
 		}
 	};
+	
+	const handleEditProfile = () => {
+		setEditProfile(true);
+	};
 
 	return (
 		<div className="flex min-h-screen bg-gray-100">
@@ -136,13 +135,16 @@ function UserPage() {
 							src={userInfo.img || "/placeholder.svg"}
 						/>
 						<h2 className="text-2xl">{userInfo.nickname}</h2>
-						{localStorage.getItem('nickname') !== userInfo.nickname && (
+						{nickname !== userInfo.nickname ? (
 							<button
 								onClick={handleFollow}
-								className={`ml-5 px-3 py-1 text-sm font-medium rounded transition duration-150 ease-in-out ${isFollowing ? 'bg-red-500 hover:bg-red-700 text-white' : 'bg-black hover:bg-green-600 text-white'
-									}`}
+								className={`ml-5 px-3 py-1 text-sm font-medium rounded transition duration-150 ease-in-out ${isFollowing ? 'bg-red-500 hover:bg-red-700 text-white' : 'bg-black hover:bg-green-600 text-white'}`}
 							>
 								{isFollowing ? '언팔로우' : '팔로우'}
+							</button>
+						) : (
+							<button onClick={handleEditProfile} className="ml-5 px-3 py-1 text-sm font-medium rounded transition duration-150 ease-in-out bg-black hover:bg-green-600 text-white">
+								내 정보 수정
 							</button>
 						)}
 					</div>
@@ -186,7 +188,7 @@ function UserPage() {
 										<button
 											className="w-16 h-8"
 											onClick={() => {
-												setCurrentComments(dummyComments); // 현재 댓글 설정
+												//setCurrentComments(dummyComments); // 현재 댓글 설정
 												setShowModal(true); // 모달 보이기
 											}}
 										>
@@ -200,8 +202,11 @@ function UserPage() {
 					</div>
 				)}
 			</div>
-			
+
 			<Comment isOpen={showModal} onClose={() => setShowModal(false)} comments={currentComments} />
+			
+			<EditProfile Open={editProfile} Close={() => setEditProfile(false)} userInfo={profile}/>
+			
 			{showTopBtn && (
 				<button
 					className="fixed bottom-10 right-10 bg-white hover:bg-gray-100 text-gray-900 font-bold rounded-full h-12 w-12 flex justify-center items-center border-4 border-gray-900 cursor-pointer"

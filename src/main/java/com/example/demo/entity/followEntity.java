@@ -1,6 +1,5 @@
 package com.example.demo.entity;
 
-import com.example.demo.DTO.BoardDTO;
 import com.example.demo.DTO.followDTO;
 
 import jakarta.persistence.Column;
@@ -24,13 +23,13 @@ public class followEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int follow_id;
-	
+
 	@Column(name = "follower_id")
 	private int followerId;
-	
+
 	@Column(name = "following_id")
 	private int followingId;
-	
+
 	public static followEntity toEntity(followDTO dto) {
         return followEntity.builder()
         		.followerId(dto.getFollowerId())

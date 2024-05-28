@@ -33,7 +33,7 @@ public class BoardDTO {
     private String video;
     private String content;
     private int like;
-    
+
     @Builder.Default
     private String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm"));
 

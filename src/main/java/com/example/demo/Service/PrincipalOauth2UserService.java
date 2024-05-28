@@ -68,7 +68,7 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService{
 		            isUnique = true;
 		        }
 		    } while (!isUnique);
-			
+
 			// DTO를 엔티티로 변환
 		    findMember = UsersEntity.builder()
 		            .username(user.getUsername())

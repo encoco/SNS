@@ -1,5 +1,8 @@
 package com.example.demo.entity;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 import com.example.demo.DTO.ChatMessageDTO;
 
 import jakarta.persistence.Column;
@@ -12,9 +15,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 @Builder
 @Data
@@ -31,10 +31,10 @@ public class ChatMessageEntity {
 	private int id;
 	private String content;
 	private String nickname;
-	
+
     @Builder.Default
     private String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm"));
-    
+
     public static ChatMessageEntity toEntity(ChatMessageDTO dto) {
         return ChatMessageEntity.builder()
         		.message_id(dto.getMessage_id())

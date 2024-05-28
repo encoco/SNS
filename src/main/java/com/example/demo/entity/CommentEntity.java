@@ -4,7 +4,9 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+
 import com.example.demo.DTO.CommentDTO;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -37,6 +39,7 @@ public class CommentEntity {
 	private int userId;
 	private String comment;
 	private String nickname;
+	
 	@Builder.Default
 	private String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm"));
 
@@ -50,7 +53,7 @@ public class CommentEntity {
 				.date(dto.getDate())
 				.build();
 	}
-	
+
 	public static List<CommentDTO> ToDtoList(List<CommentEntity> entities) {
 	    List<CommentDTO> dtos = new ArrayList<>();
 	    for (CommentEntity entity : entities) {
@@ -61,7 +64,7 @@ public class CommentEntity {
 	        dto.setComment(entity.getComment());
 	        dto.setNickname(entity.getNickname());
 	        dto.setDate(entity.getDate());
-	        
+
 	        dtos.add(dto);
 	    }
 	    return dtos;

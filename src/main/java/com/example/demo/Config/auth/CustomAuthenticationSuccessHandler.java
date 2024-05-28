@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 
 import com.example.demo.Config.JwtUtil;
 import com.example.demo.DTO.UsersDTO;
+import com.example.demo.DTO.UsersInfoDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.servlet.ServletException;
@@ -36,26 +37,26 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
     	Object principal = authentication.getPrincipal();
         if (principal instanceof PrincipalDetails) {
         	PrincipalDetails userDetails = (PrincipalDetails) principal;
-        	String accessToken = jwtUtil.generateToken(userDetails,accessExpirationTime); // Access Token ìƒì„±
-            String refreshToken = jwtUtil.generateToken(userDetails,refreshExpirationTime); // Refresh Token ìƒì„±
+        	String accessToken = jwtUtil.generateToken(userDetails,accessExpirationTime); // Access Token »ı¼º
+            String refreshToken = jwtUtil.generateToken(userDetails,refreshExpirationTime); // Refresh Token »ı¼º
             UsersDTO userDTO = userDetails.getUsersDTO();
-
+            UsersInfoDTO dto = UsersInfoDTO.toInfoDTO(userDTO);
+            
             ResponseCookie cookie = ResponseCookie.from("refreshToken", refreshToken)
     	            .httpOnly(true)
     	            .path("/")
     	            .build();
     	    response.setHeader(HttpHeaders.SET_COOKIE, cookie.toString());
-            // Access Tokenë§Œ JSON ì‘ë‹µìœ¼ë¡œ ë°˜í™˜
-            Map<String, String> tokenMap = new HashMap<>();
-            tokenMap.put("accessToken", accessToken);
-            tokenMap.put("nickname", userDTO.getNickname()); // ë‹‰ë„¤ì„ ì¶”ê°€
-            
+            // Access Token¸¸ JSON ÀÀ´äÀ¸·Î ¹İÈ¯
+    	    Map<String, Object> tokenMap = new HashMap<>();
+    	    tokenMap.put("accessToken", accessToken);
+    	    tokenMap.put("nickname", dto); // UsersDTO °´Ã¼¸¦ ±×´ë·Î Ãß°¡
+    	    
             String tokensJson = new ObjectMapper().writeValueAsString(tokenMap);
-            System.out.println("ë¡œê·¸ì¸ ì„±ê³µ" + tokensJson);
             response.setContentType("application/json;charset=UTF-8");
-            response.getWriter().write(tokensJson); // í´ë¼ì´ì–¸íŠ¸ë¡œ ì‘ë‹µ ì „ì†¡
+            response.getWriter().write(tokensJson); // Å¬¶óÀÌ¾ğÆ®·Î ÀÀ´ä Àü¼Û
             if(userDTO.getRole().equals("ROLE_USER_SNS")) {
-            	response.sendRedirect("http://localhost:3000/?accesstoken=" + accessToken+ "&nickname=" + userDTO.getNickname());
+            	response.sendRedirect("http://localhost:3000/?tokensJson=" + tokensJson);
             }
         }
     }

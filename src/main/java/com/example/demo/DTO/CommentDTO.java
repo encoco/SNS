@@ -2,12 +2,7 @@ package com.example.demo.DTO;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
 
-import org.springframework.web.multipart.MultipartFile;
-
-import com.example.demo.entity.BoardEntity;
 import com.example.demo.entity.CommentEntity;
 
 import lombok.AllArgsConstructor;
@@ -29,7 +24,7 @@ public class CommentDTO {
 	private int id;
 	private String comment;
 	private String nickname;
-	
+
 	@Builder.Default
     private String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss"));
 

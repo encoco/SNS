@@ -1,16 +1,11 @@
 package com.example.demo.DTO;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.example.demo.entity.BoardEntity;
 import com.example.demo.entity.UsersEntity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 
 @Data
@@ -23,6 +18,7 @@ public class UsersDTO {
 	private String nickname;
     private String password;
     private String img;
+    private String state_message;
     private String phone;
 	private String email;
 
@@ -35,6 +31,7 @@ public class UsersDTO {
                 .username(dto.getUsername())
                 .nickname(dto.getNickname())
                 .password(dto.getPassword())
+                .state_message(dto.getState_message())
                 .img(dto.getImg())
                 .phone(dto.getPhone())
                 .email(dto.getEmail())

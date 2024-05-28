@@ -1,4 +1,3 @@
-
 package com.example.demo.Config;
 
 import java.util.Collections;
@@ -17,39 +16,39 @@ import org.springframework.stereotype.Component;
 @Component
 public class JwtChannelInterceptor implements ChannelInterceptor {
 
-	private final JwtUtil jwtUtil;
+    private final JwtUtil jwtUtil;
 
-	@Autowired
-	public JwtChannelInterceptor(JwtUtil jwtUtil) {
-		this.jwtUtil = jwtUtil;
-	}
+    @Autowired
+    public JwtChannelInterceptor(JwtUtil jwtUtil) {
+        this.jwtUtil = jwtUtil;
+    }
 
-	@Override
-	public Message<?> preSend(Message<?> message, MessageChannel channel) {
-		StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
-		if (accessor != null && accessor.getCommand() == StompCommand.CONNECT) {
-			String authorizationHeader = accessor.getFirstNativeHeader("Authorization");
-			if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-				String jwt = authorizationHeader.substring(7);
-				System.out.println("jwt : " + jwt);
-				if (jwtUtil.validateToken(jwt)) {
-					int userId = jwtUtil.getUserIdFromToken(jwt);
-					String nickname = jwtUtil.getNickFromToken(jwt);
+    @Override
+    public Message<?> preSend(Message<?> message, MessageChannel channel) {
+        StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
+        if (accessor != null && accessor.getCommand() == StompCommand.CONNECT) {
+            String authorizationHeader = accessor.getFirstNativeHeader("Authorization");
+            if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+                String jwt = authorizationHeader.substring(7);
+                System.out.println("jwt : " + jwt);
+                if (jwtUtil.validateToken(jwt)) {
+                    int userId = jwtUtil.getUserIdFromToken(jwt);
+                    String nickname = jwtUtil.getNickFromToken(jwt);
 
-					System.out.println("jwtinterceptor id : " + userId);
-					System.out.println("jwtinterceptor nn : " + nickname);
-					// ÏÇ¨Ïö©Ïûê Ï†ïÎ≥¥Î•º ÏÑ§Ï†ï
-					UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-							nickname, null, Collections.emptyList());
-					SecurityContextHolder.getContext().setAuthentication(authentication);
-					accessor.setUser(authentication);
-				} else {
-					// JWT Í≤ÄÏ¶ù Ïã§Ìå® Ï≤òÎ¶¨
-					SecurityContextHolder.clearContext();
-				}
-			}
-		}
+                    System.out.println("jwtinterceptor id : " + userId);
+                    System.out.println("jwtinterceptor nn : " + nickname);
+                    // ªÁøÎ¿⁄ ¡§∫∏∏¶ º≥¡§
+                    UsernamePasswordAuthenticationToken authentication =
+                        new UsernamePasswordAuthenticationToken(nickname, null, Collections.emptyList());
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                    accessor.setUser(authentication);
+                } else {
+                    // JWT ∞À¡ı Ω«∆– √≥∏Æ
+                    SecurityContextHolder.clearContext();
+                }
+            }
+        }
 
-		return message;
-	}
+        return message;
+    }
 }
