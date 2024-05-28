@@ -31,14 +31,14 @@ import lombok.ToString;
 @Entity
 public class CommentEntity {
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)//
 	private int comment_id;
 	@Column(name = "board_id")
 	private int boardId;
-	@Column(name = "id")
-	private int userId;
+	private int id;
 	private String comment;
 	private String nickname;
+	private String profile_img;
 	
 	@Builder.Default
 	private String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm"));
@@ -47,7 +47,7 @@ public class CommentEntity {
 		return CommentEntity.builder()
 				.comment_id(dto.getComment_id())
 				.boardId(dto.getBoard_id())
-				.userId(dto.getId())
+				.id(dto.getId())
 				.nickname(dto.getNickname())
 				.comment(dto.getComment())
 				.date(dto.getDate())
@@ -60,8 +60,9 @@ public class CommentEntity {
 	    	CommentDTO dto = new CommentDTO();
 	    	dto.setComment_id(entity.getComment_id());
 	        dto.setBoard_id(entity.getBoardId());
-	        dto.setId(entity.getUserId());
+	        dto.setId(entity.getId());
 	        dto.setComment(entity.getComment());
+	        dto.setProfile_img(entity.getProfile_img());
 	        dto.setNickname(entity.getNickname());
 	        dto.setDate(entity.getDate());
 

@@ -36,21 +36,6 @@ export default function Component() {
 		}
 	}, []); 
 	
-	// 댓글 버튼 클릭 시 해당 게시물의 board_id 설정
-	const handleCommentButtonClick = async (boardId) => {
-		setSelectedPostId(boardId);
-		try {
-			const response = await api.get(`/getComments`, {
-				params: { boardId },
-				withCredentials: true,
-			});
-			console.log(response.data);
-			setCurrentComments(response.data);
-		} catch (error) {
-			console.error('Error fetching comments:', error);
-		}
-	};
-		
 	// 글 목록 받아오기
 	useEffect(() => {
 		const fetchPosts = async () => {
@@ -77,24 +62,8 @@ export default function Component() {
 			}
 		};
 		fetchPosts();
-	}, [profile.id]);
-
-
-	// 스크롤 이벤트 리스너 설정 및 정리
-	useEffect(() => {
-		const handleScroll = () => {
-			if (window.scrollY > 300) {
-				setShowTopBtn(true);
-			} else {
-				setShowTopBtn(false);
-			}
-		};
-
-		window.addEventListener("scroll", handleScroll);
-		// 컴포넌트 언마운트 시 이벤트 리스너 제거
-		return () => window.removeEventListener("scroll", handleScroll);
 	}, []);
-
+	
 	useEffect(() => {
 		const fetchSearchResults = async () => {
 			try {
@@ -119,6 +88,37 @@ export default function Component() {
 			setSearchResults([]);
 		}
 	}, [searchTerm]);
+	
+	// 댓글 버튼 클릭 시 해당 게시물의 board_id 설정
+	const handleCommentButtonClick = async (boardId) => {
+		setSelectedPostId(boardId);
+		try {
+			const response = await api.get(`/getComments`, {
+				params: { boardId },
+				withCredentials: true,
+			});
+			console.log(response.data);
+			setCurrentComments(response.data);
+		} catch (error) {
+			console.error('Error fetching comments:', error);
+		}
+	};
+
+	// 스크롤 이벤트 리스너 설정 및 정리
+	useEffect(() => {
+		const handleScroll = () => {
+			if (window.scrollY > 300) {
+				setShowTopBtn(true);
+			} else {
+				setShowTopBtn(false);
+			}
+		};
+
+		window.addEventListener("scroll", handleScroll);
+		// 컴포넌트 언마운트 시 이벤트 리스너 제거
+		return () => window.removeEventListener("scroll", handleScroll);
+	}, []);
+	
 	const handleChange = (event) => {
 		setSearchTerm(event.target.value);
 	};

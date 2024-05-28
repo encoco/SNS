@@ -207,7 +207,7 @@ function UserPage() {
                               <button
                                  className="w-16 h-8"
                                  onClick={() => {
-                                    //setCurrentComments(dummyComments); // 현재 댓글 설정
+									setCurrentComments(post.board_id);
                                     setShowModal(true); // 모달 보이기
                                  }}
                               >
@@ -222,7 +222,7 @@ function UserPage() {
             )}
          </div>
 
-         <Comment isOpen={showModal} onClose={() => setShowModal(false)} comments={currentComments} />
+         <Comment isOpen={showModal} onClose={() => setShowModal(false)} boardId={currentComments} />
          
          <EditProfile Open={editProfile} Close={() => setEditProfile(false)} userInfo={profile}/>
          

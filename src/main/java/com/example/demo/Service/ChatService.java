@@ -42,7 +42,7 @@ public class ChatService {
 	private final BoardService boardService;
 
 	public List<ChatDTO> selectRoom(int userId) {
-		List<ChatEntity> entity = chatRepository.findByUserId(userId);
+		List<ChatEntity> entity = chatRepository.CustomfindById(userId);
 		if (entity != null) {
 			List<ChatDTO> dto = ChatDTO.ToDtoList(entity);
 			return dto;
@@ -72,18 +72,18 @@ public class ChatService {
 			}
 			chatUser.setRoomname(name);
 			chatUser.setRoomNumber(roomNumber);
-			chatUser.setUserId(userId);
+			chatUser.setId(userId);
 			chatUser.setJoinId(ids);
 			chatRepository.save(chatUser);
 		}
-		ChatEntity create = chatRepository.findByJoinIdAndUserId(ids, myId);
+		ChatEntity create = chatRepository.findByJoinIdAndId(ids, myId);
 		return ChatDTO.toDTO(create);
 	}
 
 	public ChatDTO findRoom(List<Integer> userIds, int myId) {
 		Collections.sort(userIds);
 		String userIdsString = userIds.stream().map(String::valueOf).collect(Collectors.joining(","));
-		ChatEntity selectE = chatRepository.findByJoinIdAndUserId(userIdsString, myId);
+		ChatEntity selectE = chatRepository.findByJoinIdAndId(userIdsString, myId);
 		if (selectE != null)
 			return ChatDTO.toDTO(selectE);
 		return null;

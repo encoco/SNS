@@ -63,8 +63,8 @@ public class BoardService {
 	}
 
 	public List<BoardDTO> getPost(int id) {
-		if (boardRepository.findByid(id) != null) {
-			List<BoardEntity> entity = boardRepository.findByid(id);
+		if (boardRepository.findById(id) != null) {
+			List<BoardEntity> entity = boardRepository.findByidOrderByDateDesc(id);
 			List<BoardDTO> dto = BoardDTO.ToDtoList(entity);
 			return dto;
 		}
@@ -73,7 +73,7 @@ public class BoardService {
 
 	public List<BoardLikeDTO> getLike(int userId) {
 		// 해당 userId에 해당하는 글을 찾습니다.
-		List<BoardEntity> userPosts = boardRepository.findByid(userId);
+		List<BoardEntity> userPosts = boardRepository.findByidOrderByDateDesc(userId);
 		if (!userPosts.isEmpty()) {
 			List<BoardLikeDTO> dtos = new ArrayList<>();
 			for (BoardEntity post : userPosts) {
@@ -97,8 +97,8 @@ public class BoardService {
 					imgPath += "|" + uploadFile(img, "image");
 				}
 			}
+			boardDTO.setImgpath(imgPath);
 		}
-		boardDTO.setImgpath(imgPath);
 		BoardEntity board = BoardEntity.toEntity(boardDTO);
 		boardRepository.save(board);
 	}
@@ -125,8 +125,7 @@ public class BoardService {
 
 	@Transactional // 트랜잭션을 사용하여 업데이트를 보장
 	public void updatePost(BoardDTO dto) { // findById == select * from board where board_id = dto.getBoard_id();
-		BoardEntity post = boardRepository.findById(dto.getBoard_id())
-				.orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없습니다."));
+		BoardEntity post = boardRepository.findById(dto.getBoard_id()).orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없습니다."));
 		String imgpath = dto.getImgpath();
 		if (dto.getImg() != null) {
 			for (MultipartFile img : dto.getImg()) {
@@ -174,6 +173,7 @@ public class BoardService {
 
 	// 댓글 조회
 	public List<CommentDTO> getComments(int boardId) {
+		System.out.println(boardId);
 		List<CommentEntity> commentEntities = boardCommentRepository.findByBoardIdOrderByDateDesc(boardId);
 		return CommentEntity.ToDtoList(commentEntities);
 	}

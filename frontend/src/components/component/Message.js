@@ -52,6 +52,7 @@ function Message() {
             const response = await api.get(`/selectRoom`, {
                withCredentials: true,
             });
+            console.log(response.data);
             setChatRoom(response.data === "채팅방 없음" ? [] : response.data);
          } catch (error) {
             console.log(error);
@@ -385,7 +386,7 @@ function Message() {
                                                  ${selectedChat === room.roomNumber ? 'bg-gray-200' : 'hover:bg-gray-100 dark:hover:bg-gray-800'}`}>
                                              <div className="w-12 h-12 rounded-full overflow-hidden shrink-0">
                                                 {(
-                                                   <img src={room.imgpath || "/placeholder-user.jpg"} alt={room.name} className="w-full h-full object-cover" />
+                                                   <img src={room.imgpath || room.profile_img ||  "/placeholder-user.jpg"} alt={room.name} className="w-full h-full object-cover" />
                                                 )}
                                              </div>
                                              <span className="text-sm font-medium text-gray-800 dark:text-white">

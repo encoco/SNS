@@ -24,6 +24,7 @@ public class CommentDTO {
 	private int id;
 	private String comment;
 	private String nickname;
+	private String profile_img;
 
 	@Builder.Default
     private String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss"));
@@ -32,9 +33,10 @@ public class CommentDTO {
 		return CommentDTO.builder()
 				.comment_id(entity.getComment_id())
 				.board_id(entity.getBoardId())
-				.id(entity.getUserId())
+				.id(entity.getId())
 				.nickname(entity.getNickname())
 				.comment(entity.getComment())
+				.profile_img(entity.getProfile_img())
 				.date(entity.getDate())
 				.build();
 	}
