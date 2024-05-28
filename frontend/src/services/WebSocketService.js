@@ -22,7 +22,6 @@ class WebSocketService {
 	}
 
 	subscribe(destination, callback) {
-		console.log("Subscribing to: ", destination); // 구독 시도 로그
 		this.client.subscribe(destination, message => {
 			callback(JSON.parse(message.body));
 		});

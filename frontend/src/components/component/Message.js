@@ -63,7 +63,6 @@ function Message() {
 	useEffect(() => {
 		const connectWebSocket = () => {
 			webSocketService.connect(() => {
-				console.log("Connected to WebSocket server");
 				if (activeView == 'chat') {
 					webSocketService.subscribe(`/api/sub/chat/${selectedChat}`, (message) => {
 						setMessages(prevMessages => [...prevMessages, message]);
@@ -246,7 +245,7 @@ function Message() {
 												{selectedChat && messages && messages.length > 0 ? messages.map((message,index) => (
 													<div key={`${message.message_id}_${index}`} className={`flex items-start gap-4 ${message.nickname === nickname ? 'justify-end' : ''}`}>
 														<Avatar>
-															<AvatarImage alt={message.name} src="/placeholder-user.jpg"
+															<AvatarImage alt={message.name}  src={message.nickname === nickname ? img : "/placeholder-user.jpg"}
 																style={{
 																	width: '50px',
 																	height: '50px',
@@ -292,7 +291,8 @@ function Message() {
 														messages.map((message,index)=> (
 															<div key={`${message.commessage_id}_${index}`} className={`flex items-start gap-4 ${message.nickname === nickname ? 'justify-end' : ''}`}>
 																<Avatar>
-																	<AvatarImage alt={message.nickname} src="/placeholder-user.jpg" style={{ width: '50px', height: '50px', objectFit: 'cover' }} />
+																	<AvatarImage alt={message.name}  src={message.nickname === nickname ? img : "/placeholder-user.jpg"} 
+																	style={{ width: '50px', height: '50px', objectFit: 'cover' }} />
 																	<AvatarFallback>{message.communitychat_id}</AvatarFallback>
 																</Avatar>
 																<div className="max-w-[40%]">
@@ -385,7 +385,7 @@ function Message() {
                 											${selectedChat === room.roomNumber ? 'bg-gray-200' : 'hover:bg-gray-100 dark:hover:bg-gray-800'}`}>
 															<div className="w-12 h-12 rounded-full overflow-hidden shrink-0">
 																{activeView === 'chat' && (
-																	<img src={room.imgpath || "/placeholder-user.jpg"} alt={room.name} className="w-full h-full object-cover" />
+																	<img src={room.img || "/placeholder-user.jpg"} alt={room.name} className="w-full h-full object-cover" />
 																)}
 															</div>
 															<span className="text-sm font-medium text-gray-800 dark:text-white">
