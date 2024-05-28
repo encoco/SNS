@@ -73,7 +73,7 @@ function EditProfile({ Open, Close, userInfo }) {
 
 
 	return (
-		<div className="fixed inset-0 bg-gray-700 bg-opacity-50 flex justify-center items-center z-50" onClick={handleOverlayClick}>
+		<div className="fixed inset-0 bg-gray-40 bg-opacity-50 flex justify-center items-center z-50" onClick={handleOverlayClick}>
 			<div className="bg-white p-6 rounded-lg shadow-lg max-w-lg w-full m-4 z-50 relative" onClick={handleModalContentClick}>
 				<h2 className="text-xl font-bold mb-4">내정보수정</h2>
 				<div className="mb-4">

@@ -44,7 +44,6 @@ function Sidebar() {
 							<div className="w-25 h-25 rounded-full overflow-hidden">
 								<AvatarImage alt="User Avatar" className="w-full h-full object-cover" src={img || "/placeholder.svg?height=100&width=100"} />
 							</div>
-							<AvatarFallback>U</AvatarFallback>
 						</Avatar>
 						<h2 className="mt-4 font-semibold text-xl">{nickname}</h2>
 						<p className="text-sm text-gray-600">팔로워: 123 · 팔로잉: 123</p>

@@ -162,10 +162,7 @@ function UserPage() {
                      )}
                   </div>
                   <div className="text-left my-4">
-                            <span className="text-lg mx-2"> 게시물 33</span>
-                            <span className="text-lg mx-2">팔로워 33</span>
-                            <span className="text-lg mx-2"> 팔로우 22</span>
-                            <p className="mt-5 text-sm text-gray-600 mx-2">{profile.state_message}</p> {/* 상태 메시지 추가 */}
+                            <p className="mt-5 text-sm text-gray-600 mx-2">{profile.state_message || ""}</p> {/* 상태 메시지 추가 */}
                         </div>
                         
                         <hr className="mt-4 mb-2 border-gray-300 dark:border-gray-700" />
