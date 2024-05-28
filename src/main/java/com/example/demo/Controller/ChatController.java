@@ -21,11 +21,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.Config.JwtUtil;
 import com.example.demo.DTO.CCJDTO;
+import com.example.demo.DTO.CCMDTO;
 import com.example.demo.DTO.ChatDTO;
 import com.example.demo.DTO.ChatMessageDTO;
 import com.example.demo.DTO.CommunityChatDTO;
 import com.example.demo.Service.ChatService;
 
+import io.jsonwebtoken.io.IOException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 
@@ -39,29 +41,43 @@ public class ChatController {
 
 	// 채팅 리스트 반환
 	@MessageMapping("/chat/{roomNumber}")
-    @SendTo("/api/sub/chat/{roomNumber}")
-    public ChatMessageDTO handleChatMessage(@DestinationVariable("roomNumber") String roomNumber, @Payload ChatMessageDTO message) {
+	@SendTo("/api/sub/chat/{roomNumber}")
+	public ChatMessageDTO handleChatMessage(@DestinationVariable("roomNumber") String roomNumber,
+			@Payload ChatMessageDTO message) {
 		String token = message.getNickname();
-        message.setRoom_number(roomNumber);
-        message.setId(jwtUtil.getUserIdFromToken(token));
-        message.setNickname(jwtUtil.getNickFromToken(token));
-        System.out.println("ChatController : " + message);
-        chatService.saveChat(message);
-        return message; // 클라이언트로 메시지 반환
-    }
+		// 오픈채팅은 1부터 AutoIncrement 설정이고 일반채팅은 UUID를 통한 값이기 때문에 parseInt에서 에러가 안뜨면 오픈채팅.
+		message.setRoom_number(roomNumber);
+		message.setId(jwtUtil.getUserIdFromToken(token));
+		message.setNickname(jwtUtil.getNickFromToken(token));
+		chatService.saveChat(message);
+		return message;
+	}
+
+	@MessageMapping("/commChat/{roomNumber}")
+	@SendTo("/api/sub/commChat/{roomNumber}")
+	public CCMDTO handleCommChatMessage(@DestinationVariable("roomNumber") int roomNumber,
+			@Payload CCMDTO message) {
+		String token = message.getNickname();
+		System.out.println("토큰 : " + token);
+		message.setCommunitychat_id(roomNumber);
+		message.setId(jwtUtil.getUserIdFromToken(token));
+		message.setNickname(jwtUtil.getNickFromToken(token));
+		chatService.saveCommChat(message);
+		System.out.println("group : " + message);
+		return message;
+	}
 
 	@GetMapping("/getMessage")
-	public ResponseEntity<?> getMessage(@RequestParam(value="roomNumber") String roomNumber){
+	public ResponseEntity<?> getMessage(@RequestParam(value = "roomNumber") String roomNumber) {
 		List<ChatMessageDTO> dto = chatService.getMessage(roomNumber);
 		return ResponseEntity.ok(dto);
 	}
-
-	// 메시지 송신 및 수신, /pub가 생략된 모습. 클라이언트 단에선 /pub/message로 요청
-	@MessageMapping("/message")
-	public ResponseEntity<Void> receiveMessage(@RequestBody ChatMessageDTO chat) {
-		// 메시지를 해당 채팅방 구독자들에게 전송
-		template.convertAndSend("/sub/chatroom/1", chat);
-		return ResponseEntity.ok().build();
+	
+	@GetMapping("/getCommMessage")
+	public ResponseEntity<?> getCommMessage(@RequestParam(value = "communitychat_id") String communitychat_id) {
+		List<CCMDTO> dto = chatService.getCommMessage(Integer.parseInt(communitychat_id));
+		System.out.println(dto);
+		return ResponseEntity.ok(dto);
 	}
 
 	@GetMapping("/selectRoom")
@@ -106,7 +122,7 @@ public class ChatController {
 	}
 
 	@PostMapping("/CreateCommChat")
-	 public ResponseEntity<?> createCommChat(@ModelAttribute CommunityChatDTO dto, HttpServletRequest request) {
+	public ResponseEntity<?> createCommChat(@ModelAttribute CommunityChatDTO dto, HttpServletRequest request) {
 		try {
 			String token = jwtUtil.token(request.getHeader("Authorization"));
 			dto.setId(jwtUtil.getUserIdFromToken(token));
@@ -118,6 +134,7 @@ public class ChatController {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("selectRoom error");
 		}
 	}
+
 	@GetMapping("/selectAllCommuRoom")
 	public ResponseEntity<?> selectCommuRoom(HttpServletRequest request) {
 		List<CommunityChatDTO> dto = chatService.selectAllCommuRoom();
@@ -130,15 +147,15 @@ public class ChatController {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("selectRoom error");
 		}
 	}
-	
+
 	@PostMapping("/JoinCommuRoom")
-	public ResponseEntity<?> JoinCommuRoom(@RequestBody CommunityChatDTO dto, HttpServletRequest request){
+	public ResponseEntity<?> JoinCommuRoom(@RequestBody CommunityChatDTO dto, HttpServletRequest request) {
 		String token = jwtUtil.token(request.getHeader("Authorization"));
 		dto.setId(jwtUtil.getUserIdFromToken(token));
 		chatService.joinCommunity(dto);
 		return ResponseEntity.ok(null);
-	} 
-	
+	}
+
 	@GetMapping("/selectCommuRoom")
 	public ResponseEntity<?> selCommuRoom(HttpServletRequest request) {
 		String token = jwtUtil.token(request.getHeader("Authorization"));

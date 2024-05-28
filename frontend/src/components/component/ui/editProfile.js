@@ -41,13 +41,12 @@ function EditProfile({ Open, Close, userInfo }) {
 		return null;
 	}
 
-
 	const handleSave = async () => {
 		const formData = new FormData();
 		formData.append('nickname', nickname);
 		formData.append('state_message', statusMessage);
-
-		if (profilePic) {
+		
+		if(profilePic){
 			formData.append('imgpath', profilePic);
 		}
 		try {

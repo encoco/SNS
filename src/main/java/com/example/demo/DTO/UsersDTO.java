@@ -1,5 +1,7 @@
 package com.example.demo.DTO;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import com.example.demo.entity.UsersEntity;
 
 import lombok.AllArgsConstructor;
@@ -19,6 +21,7 @@ public class UsersDTO {
     private String password;
     private String img;
     private String state_message;
+    private MultipartFile imgpath;
     private String phone;
 	private String email;
 

@@ -41,49 +41,36 @@ function Message() {
 		}
 	}, []); // 의존성 배열을 빈 배열로 설정하여 컴포넌트 마운트 시에만 실행
 
-	const toggleChatOptions = () => {
-		setIsChatOptionsVisible(!isChatOptionsVisible);
-	};
 
-	const handleRoomClick = async (room) => {
-		setSelectedRoomName(room.roomname);
-		setSelectedRoom(room.userchat_id);
-		setSelectedChat(room.roomNumber);
-		try {
-			setMessages([]);// 채팅방 변경 시 메시지 초기화
-			const response = await api.get(`/getMessage`, {
-				params: { roomNumber: room.roomNumber },
-				withCredentials: true,
-			});
-			setMessages(response.data);
-		} catch (error) {
-			console.error('Error fetching comments:', error);
-		}
-	};
-
-	const handleGroupClick = async (room) => {
-		setSelectedRoomName(room.roomname);
-		setSelectedRoom(room.userchat_id);
-		setSelectedChat(room.roomNumber);
-		try {
-			setMessages([]);// 채팅방 변경 시 메시지 초기화
-			const response = await api.get(`/getMessage`, {
-				params: { roomNumber: room.roomNumber },
-				withCredentials: true,
-			});
-			setMessages(response.data);
-		} catch (error) {
-			console.error('Error fetching comments:', error);
-		}
-	};
+	useEffect(() => {
+		const fetchChatrooms = async () => {
+			try {
+				const response = await api.get(`/selectRoom`, {
+					withCredentials: true,
+				});
+				setChatRoom(response.data === "채팅방 없음" ? [] : response.data);
+			} catch (error) {
+				console.log(error);
+			}
+		};
+		fetchChatrooms();
+	}, []);
 
 	useEffect(() => {
 		const connectWebSocket = () => {
 			webSocketService.connect(() => {
 				console.log("Connected to WebSocket server");
-				webSocketService.subscribe(`/api/sub/chat/${selectedChat}`, (message) => {
-					setMessages(prevMessages => [...prevMessages, message]);
-				});
+				if (activeView == 'chat') {
+					webSocketService.subscribe(`/api/sub/chat/${selectedChat}`, (message) => {
+						setMessages(prevMessages => [...prevMessages, message]);
+					});
+				}
+				else if ('group') {
+					webSocketService.subscribe(`/api/sub/commChat/${selectedChat}`, (message) => {
+						console.log("socketconnect : ",message);
+						setMessages(prevMessages => [...prevMessages, message]);
+					});
+				}
 			});
 		};
 		if (selectedChat) {
@@ -96,11 +83,59 @@ function Message() {
 		}
 	}, [selectedChat]);
 
+	const handleSendMessage = (event) => {
+		event.preventDefault();
+		if (inputMessage.trim()) {
+			if (activeView == 'group') {
+				const message = {
+					content: inputMessage,
+					nickname: nickname
+				};
+				webSocketService.send(`/api/pub/commChat/${selectedChat}`, message, localStorage.getItem("userInfo"));
+			}
+			else if (activeView == 'chat') {
+				const message = {
+					content: inputMessage,
+					nickname: nickname
+				};
+				webSocketService.send(`/api/pub/chat/${selectedChat}`, message, localStorage.getItem("userInfo"));
+
+			}
+			else { return; }
+			setInputMessage('');
+		}
+	};
+
+	const toggleChatOptions = () => {
+		setIsChatOptionsVisible(!isChatOptionsVisible);
+	};
+
+	const handleCommChat = async (room) => {
+		console.log('room이다',room);
+		setSelectedRoomName(room.roomname);
+		setSelectedRoom(room.ccjId);
+		setSelectedChat(room.roomNumber);
+		setActiveView('group');
+
+		try {
+			setMessages([]);// 채팅방 변경 시 메시지 초기화
+			const response = await api.get(`/getCommMessage`, {
+				params: { communitychat_id: room.roomNumber },
+				withCredentials: true,
+			});
+			console.log("getCMessage",response.data);
+			setMessages(response.data);
+		} catch (error) {
+			console.error('Error fetching comments:', error);
+		}
+	};
+
 	const handleChat = async () => {
 		setActiveView('chat');
 		setSelectedRoomName("");
 		setSelectedRoom("");
 		setSelectedChat("");
+		console.log(activeView);
 		try {
 			const response = await api.get(`/selectRoom`, {
 				withCredentials: true,
@@ -131,35 +166,6 @@ function Message() {
 			setChatRoom([]); // 오류 시 빈 배열로 초기화
 		}
 	}
-
-
-	useEffect(() => {
-		const fetchChatrooms = async () => {
-			try {
-				const response = await api.get(`/selectRoom`, {
-					withCredentials: true,
-				});
-				setChatRoom(response.data === "채팅방 없음" ? [] : response.data);
-			} catch (error) {
-				console.log(error);
-			}
-		};
-		fetchChatrooms();
-	}, []);
-
-	const handleSendMessage = (event) => {
-		event.preventDefault();
-		if (inputMessage.trim()) {
-			const message = {
-				content: inputMessage,
-				nickname: nickname
-			};
-
-			webSocketService.send(`/api/pub/chat/${selectedChat}`, message, localStorage.getItem("userInfo"));
-
-			setInputMessage('');
-		}
-	};
 
 	const handleChatSelect = async (room) => {
 		try {
@@ -217,7 +223,7 @@ function Message() {
 											<div className="grid gap-4">
 												{/* 채팅 메시지 출력 영역 */}
 												{/* 채팅 예제 */}
-												{selectedChat && messages.length > 0 ? messages.map(message => (
+												{selectedChat && messages && messages.length > 0 ? messages.map(message => (
 													<div key={message.message_id} className={`flex items-start gap-4 ${message.nickname === nickname ? 'justify-end' : ''}`}>
 														<Avatar>
 															<AvatarImage alt={message.name} src="/placeholder-user.jpg"
@@ -261,10 +267,10 @@ function Message() {
 												<div className="grid gap-4">
 													{messages && messages.length > 0 ? (
 														messages.map(message => (
-															<div key={message.message_id} className={`flex items-start gap-4 ${message.nickname === nickname ? 'justify-end' : ''}`}>
+															<div key={message.commessage_id} className={`flex items-start gap-4 ${message.nickname === nickname ? 'justify-end' : ''}`}>
 																<Avatar>
-																	<AvatarImage alt={message.name} src="/placeholder-user.jpg" style={{ width: '50px', height: '50px', objectFit: 'cover' }} />
-																	<AvatarFallback>{message.room_number[0]}</AvatarFallback>
+																	<AvatarImage alt={message.nickname} src="/placeholder-user.jpg" style={{ width: '50px', height: '50px', objectFit: 'cover' }} />
+																	<AvatarFallback>{message.communitychat_id}</AvatarFallback>
 																</Avatar>
 																<div className="max-w-[40%]">
 																	<div className={`rounded-lg p-4 text-sm ${message.nickname === nickname ? 'bg-blue-500 text-white' : 'bg-gray-100 dark:bg-gray-800'}`}>
@@ -303,7 +309,6 @@ function Message() {
 
 								<div className="w-[300px] border-l bg-gray-100/40 p-6 dark:bg-gray-800/40">
 									<div className="flex-1 overflow-y-auto py-2 max-h-[calc(100vh-135px)] p-6"> {/*//여기*/}
-
 										<nav className="grid items-start px-4 text-sm font-medium">
 											<Link
 												className={`flex items-center gap-3 rounded-lg px-3 py-2 transition-all ${activeView === 'chat'
@@ -339,12 +344,19 @@ function Message() {
 											{chatroom && chatroom.length > 0 ? (
 												chatroom.map(room => (
 													<div key={activeView === 'group' ? room.ccjId : room.userchatId} className="flex justify-center items-center h-full">
-														<button onClick={() => handleChatSelect(room)}
+														<button onClick={() => {
+															if (activeView === 'group') {
+																handleCommChat(room);
+															} else {
+																handleChatSelect(room);
+															}
+														}}
 															className={`flex items-center space-x-3 p-2 rounded-lg transition-colors w-full text-left 
-                ${selectedChat === room.roomNumber ? 'bg-gray-200' : 'hover:bg-gray-100 dark:hover:bg-gray-800'}`}
-														>
+                											${selectedChat === room.roomNumber ? 'bg-gray-200' : 'hover:bg-gray-100 dark:hover:bg-gray-800'}`}>
 															<div className="w-12 h-12 rounded-full overflow-hidden shrink-0">
-																<img src={room.imgpath || "/placeholder-user.jpg"} alt={room.name} className="w-full h-full object-cover" />
+																{activeView === 'chat' && (
+																	<img src={room.imgpath || "/placeholder-user.jpg"} alt={room.name} className="w-full h-full object-cover" />
+																)}
 															</div>
 															<span className="text-sm font-medium text-gray-800 dark:text-white">
 																{truncateString(room.roomname, 10)}
@@ -354,7 +366,7 @@ function Message() {
 												))
 											) : (
 												<div className="flex justify-center items-center h-full">
-													<p className="text-gray-500">사용 가능한 채팅방이 없습니다</p>
+													<p className="text-gray-500">채팅방이 없습니다</p>
 												</div>
 											)}
 										</nav>
@@ -419,35 +431,13 @@ function Message() {
 
 
 
-					{/* Chat room list */}
-					<div className="relative">
-						<div className="overflow-hidden border rounded-lg">
-							<button
-								className="w-full px-4 py-2 text-left bg-gray-100 focus:outline-none"
-								onClick={() => setShowRooms(!showRooms)}
-							>
-								{selectedRoomName ? selectedRoomName : "방 목록"}
-							</button>
-						</div>
-						{showRooms && (
-							<div className="absolute z-10 w-full max-h-40 overflow-y-auto border rounded-lg bg-white shadow-lg mt-2">
-								<ul className="space-y-2">
-									{chatroom && chatroom.map(room => (
-										<li key={room.userchat_id} className={`px-4 py-2 cursor-pointer ${selectedRoom === room.roomNumber ? 'bg-blue-200' : ''}`} onClick={() => { handleRoomClick(room); setShowRooms(false); }}>
-											{room.roomname}
-										</li>
-									))}
-								</ul>
-							</div>
-						)}
-					</div>
 
 
 					{/* Chat messages */}
 					<div className="flex items-center justify-center h-full">
 						{selectedChat && messages.length > 0 ? (
 							<div className="bg-white rounded-lg shadow-lg p-4 w-full max-w-lg h-full overflow-y-auto">
-								{messages.map(message => (
+								{messages && messages.map(message => (
 									<div key={message.message_id} className={`flex items-start gap-4 ${message.nickname === nickname ? 'justify-end' : ''}`}>
 										<Avatar>
 											<AvatarImage alt={message.name} src="/placeholder-user.jpg" style={{ width: '50px', height: '50px', objectFit: 'cover' }} />

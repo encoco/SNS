@@ -8,14 +8,17 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.DTO.CCJDTO;
+import com.example.demo.DTO.CCMDTO;
 import com.example.demo.DTO.ChatDTO;
 import com.example.demo.DTO.ChatMessageDTO;
 import com.example.demo.DTO.CommunityChatDTO;
+import com.example.demo.Repository.CCMRepository;
 import com.example.demo.Repository.ChatMessageRepository;
 import com.example.demo.Repository.ChatRepository;
 import com.example.demo.Repository.CommuChatJoinRepository;
 import com.example.demo.Repository.CommuChatRepository;
 import com.example.demo.Repository.UsersRepository;
+import com.example.demo.entity.CCMEntity;
 import com.example.demo.entity.ChatEntity;
 import com.example.demo.entity.ChatMessageEntity;
 import com.example.demo.entity.CommunityChatEntity;
@@ -32,6 +35,7 @@ public class ChatService {
 	private final UsersRepository uRepository;
 	private final CommuChatRepository commuRepository;
 	private final CommuChatJoinRepository CCJRepository;
+	private final CCMRepository ccmrepository;
 	private final BoardService boardService; 
 	
 	public List<ChatDTO> selectRoom(int userId) {
@@ -118,5 +122,16 @@ public class ChatService {
 
 	public List<CCJDTO> selectCommuRoom(int userIdFromToken) {
 		return CCJDTO.toDTOList(CCJRepository.findAllById(userIdFromToken));
+	}
+
+	public void saveCommChat(CCMDTO message) {
+		CCMEntity entity = CCMEntity.toEntity(message);
+		System.out.println("entity : " + entity);
+		ccmrepository.save(entity);
+	}
+
+	public List<CCMDTO> getCommMessage(int communitychat_id) {
+		List<CCMEntity> entity = ccmrepository.findBycommunitychatId(communitychat_id);
+		return CCMDTO.ToDtoList(entity);
 	}
 }
