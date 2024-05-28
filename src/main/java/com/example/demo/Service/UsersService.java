@@ -1,108 +1,103 @@
 package com.example.demo.Service;
 
 import java.util.List;
-import java.util.UUID;
+import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
-import com.amazonaws.SdkClientException;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.example.demo.Config.S3Config;
 import com.example.demo.DTO.SearchDTO;
 import com.example.demo.DTO.UsersDTO;
+import com.example.demo.DTO.UsersInfoDTO;
 import com.example.demo.DTO.followDTO;
 import com.example.demo.Repository.UsersRepository;
 import com.example.demo.Repository.followRepository;
 import com.example.demo.entity.UsersEntity;
 import com.example.demo.entity.followEntity;
 
-import io.jsonwebtoken.io.IOException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
 public class UsersService {
-	private final UsersRepository usersRepository;
-	private final followRepository fRepository;
-	private final PasswordEncoder passwordEncoder;
-	private final BoardService boardService;
+	 private final UsersRepository usersRepository;
+	 private final followRepository fRepository;
+	 private final PasswordEncoder passwordEncoder;
+	 private final BoardService bservice;
+    public boolean isUserIdDuplicate(String username) {
+        return usersRepository.existsByUsername(username);
+    }
 
-	public boolean isUserIdDuplicate(String username) {
-		return usersRepository.existsByUsername(username);
-	}
+    public String registerUser(UsersDTO user) {
+        // 비밀번호 암호화
+        String encodedPassword = passwordEncoder.encode(user.getPassword());
+        user.setPassword(encodedPassword);
+        UsersEntity entity = UsersEntity.toEntity(user);
+        // 암호화된 비밀번호와 함께 사용자 정보 저장
+        UsersEntity savedEntity = usersRepository.save(entity);
+        // 저장된 엔티티의 ID 반환
+        return String.valueOf(savedEntity.getUsername()); // getUserId()가 사용자 ID를 반환한다고 가정
+    }
 
-	public String registerUser(UsersDTO user) {
-		// 비밀번호 암호화
-		String encodedPassword = passwordEncoder.encode(user.getPassword());
-		user.setPassword(encodedPassword);
-		UsersEntity entity = UsersEntity.toEntity(user);
-		// 암호화된 비밀번호와 함께 사용자 정보 저장
-		UsersEntity savedEntity = usersRepository.save(entity);
-		// 저장된 엔티티의 ID 반환
-		return String.valueOf(savedEntity.getUsername()); // getUserId()가 사용자 ID를 반환한다고 가정
-	}
+    public String findbyId(UsersDTO user) {
+        UsersEntity foundUser = usersRepository.findByUsername(user.getUsername());
 
-	public String findbyId(UsersDTO user) {
-		UsersEntity foundUser = usersRepository.findByUsername(user.getUsername());
-
-		if (foundUser != null) {
-			String encodedPassword = foundUser.getPassword(); // 데이터베이스에서 가져온 인코딩된 비밀번호
-			if (passwordEncoder.matches(user.getPassword(), encodedPassword)) {
-				return foundUser.getUsername(); // 성공
-			} else {
-				return null; // 비번 틀림
+        if (foundUser != null) {
+            String encodedPassword = foundUser.getPassword(); // 데이터베이스에서 가져온 인코딩된 비밀번호
+            if (passwordEncoder.matches(user.getPassword(), encodedPassword)) {
+                return foundUser.getUsername(); //성공
+            }
+			else {
+				return null; //비번 틀림
 			}
-		} else {
-			return null;// 계정 없음
+        }
+		else {
+			return null;//계정 없음
 		}
-	}
+    }
 
-	public List<SearchDTO> searchUsers(String searchTerm) {
-		List<UsersEntity> entity = usersRepository.findBynicknameContaining(searchTerm);
-		List<SearchDTO> dto = SearchDTO.toSearchDTO(entity);
+    public List<SearchDTO> searchUsers(String searchTerm){
+    	List<UsersEntity> entity = usersRepository.findBynicknameContaining(searchTerm);
+    	List<SearchDTO> dto = SearchDTO.toSearchDTO(entity);
 
-		return dto;
-	}
+    	return dto;
+    }
 
 	public SearchDTO userInfo(int userId) {
 		UsersEntity entity = usersRepository.findById(userId)
-				.orElseThrow(() -> new RuntimeException("User not found with ID: " + userId));
-		SearchDTO dto = SearchDTO.toDTO(entity);
+											.orElseThrow(() -> new RuntimeException("User not found with ID: " + userId));
+    	SearchDTO dto = SearchDTO.toDTO(entity);
 
-		return dto;
+    	return dto;
 	}
 
 	public String followUser(int userId, int myId) {
-		followEntity entity = fRepository.findByFollowerIdAndFollowingId(myId, userId);
-		if (entity != null) {
-			fRepository.delete(entity);
-			System.out.println("followDel");
+		followEntity entity = fRepository.findByFollowerIdAndFollowingId(myId,userId);
+		if(entity != null) {
+			fRepository.delete(entity);			
 			return "del";
-		} else {
+		}
+		else {
 			followDTO dto = new followDTO();
 			dto.setFollowerId(myId);
 			dto.setFollowingId(userId);
 			entity = followEntity.toEntity(dto);
 			fRepository.save(entity);
-			System.out.println("follow success");
 			return "add";
 		}
 	}
 
-	public UsersDTO updateUserProfile(UsersDTO usersDTO, MultipartFile img) throws IOException {
-		// 이미지 파일이 제공되면 S3에 업로드하고 URL을 저장
-		String imagePath = null;
-		if (img != null) {
-			imagePath = boardService.uploadFile(img, "user_images");
+	@Transactional
+	public UsersInfoDTO updateUserProfile(UsersDTO profile, String nickname) {
+		UsersEntity entity = usersRepository.findByNickname(nickname);
+		entity.setNickname(profile.getNickname());
+		entity.setState_message(profile.getState_message());
+		if(profile.getImgpath() != null) {
+			entity.setImg(bservice.uploadFile(profile.getImgpath(), "userProfile"));
 		}
-
-		UsersEntity user = usersRepository.findById(1).orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
-		usersRepository.save(user);
-
-		return UsersDTO.toDTO(user);
+		usersRepository.save(entity);
+		UsersInfoDTO dto = UsersInfoDTO.toInfoDTO(entity);
+		return dto;
 	}
 }

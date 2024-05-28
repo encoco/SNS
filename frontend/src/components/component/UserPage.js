@@ -21,7 +21,8 @@ function UserPage() {
 	const [currentComments, setCurrentComments] = useState([]);
 	const [nickname, setNickname] = useState(''); // 초기 상태를 빈 문자열로 설정
 	const [profile, setProfile] = useState('');
-
+	const [userLikes, setUserLikes] = useState(new Set()); 
+	
 	useEffect(() => {
 		// userInfo에서 nickname을 추출하여 상태에 저장
 		const userInfoJSON = localStorage.getItem('nickname');
@@ -29,10 +30,10 @@ function UserPage() {
 			const userInfo = JSON.parse(userInfoJSON);
 			setNickname(userInfo.nickname); // nickname 상태 업데이트
 			setProfile(userInfo);
+			console.log("pro : ",profile);
 		}
 	}, []); 
 	
-
 	useEffect(() => {
 		const fetchPosts = async () => {
 			try {
@@ -49,6 +50,11 @@ function UserPage() {
 				}, {});
 
 				setLikesCount(likesCount);
+
+				// 사용자가 좋아요를 누른 게시물 ID를 Set으로 저장
+				const userLikes = new Set(response.data.likes.filter(like => like.id === parseInt(userId)).map(like => like.board_id));
+				setUserLikes(userLikes);
+
 			} catch (error) {
 				console.log(error);
 			}
@@ -92,10 +98,9 @@ function UserPage() {
 			behavior: 'smooth' // 부드러운 스크롤
 		});
 	};
+
 	const LikeHandler = async (boardId) => {
 		try {
-			const formData = new FormData();
-			formData.append('boardId', boardId);
 			const response = await api.get(`/boardLike?boardId=${boardId}`, {
 				withCredentials: true,
 			});
@@ -105,6 +110,7 @@ function UserPage() {
 					...prevLikesCount,
 					[boardId]: Math.max((prevLikesCount[boardId] || 0) + 1, 0)
 				}));
+				setUserLikes(prevLikes => new Set(prevLikes).add(boardId)); // 좋아요 추가
 			}
 			else if (response.data === "fail") {
 				alert('좋아요 삭제');
@@ -112,41 +118,57 @@ function UserPage() {
 					...prevLikesCount,
 					[boardId]: Math.max((prevLikesCount[boardId] || 0) - 1, 0)
 				}));
+				setUserLikes(prevLikes => {
+					const newLikes = new Set(prevLikes);
+					newLikes.delete(boardId); // 좋아요 삭제
+					return newLikes;
+				});
 			}
 		} catch (error) {
 			console.log(error);
 			alert('다시 시도해주세요');
 		}
 	};
-	
+
 	const handleEditProfile = () => {
+		console.log("pro : ", profile);
 		setEditProfile(true);
 	};
 
 	return (
-		<div className="flex min-h-screen bg-gray-100">
+		<div className="grid min-h-screen w-full grid-cols-[280px_1fr] flex min-h-screen bg-gray-100 ">
 			<Sidebar />
-			<div className="flex flex-col w-full ml-10">
+			<div className="flex flex-col ml-10 mr-10">
 				{userInfo && (
-					<div className="flex items-center mb-5">
-						<img
-							alt="Profile"
-							className="w-8 h-8 rounded-full mr-2"
-							src={userInfo.img || "/placeholder.svg"}
-						/>
-						<h2 className="text-2xl">{userInfo.nickname}</h2>
-						{nickname !== userInfo.nickname ? (
-							<button
-								onClick={handleFollow}
-								className={`ml-5 px-3 py-1 text-sm font-medium rounded transition duration-150 ease-in-out ${isFollowing ? 'bg-red-500 hover:bg-red-700 text-white' : 'bg-black hover:bg-green-600 text-white'}`}
-							>
-								{isFollowing ? '언팔로우' : '팔로우'}
-							</button>
-						) : (
-							<button onClick={handleEditProfile} className="ml-5 px-3 py-1 text-sm font-medium rounded transition duration-150 ease-in-out bg-black hover:bg-green-600 text-white">
-								내 정보 수정
-							</button>
-						)}
+					<div className="flex flex-col  mb-5 mt-6">
+						<div className="flex items-center">
+							<img
+								alt="Profile"
+								className="w-8 h-8 rounded-full mr-2"
+								src={userInfo.img || "/placeholder.svg"}
+							/>
+							<h2 className="text-2xl">{userInfo.nickname}</h2>
+							{nickname !== userInfo.nickname ? (
+								<button
+									onClick={handleFollow}
+									className={`ml-5 px-3 py-1 text-sm font-medium rounded transition duration-150 ease-in-out ${isFollowing ? 'bg-red-500 hover:bg-red-700 text-white' : 'bg-black hover:bg-green-600 text-white'}`}
+								>
+									{isFollowing ? '언팔로우' : '팔로우'}
+								</button>
+							) : (
+								<button onClick={handleEditProfile} className="ml-5 px-3 py-1 text-sm font-medium rounded transition duration-150 ease-in-out bg-black hover:bg-green-600 text-white">
+									내 정보 수정	
+								</button>
+							)}
+						</div>
+						<div className="text-left my-4">
+                            <span className="text-lg mx-2"> 게시물 33</span>
+                            <span className="text-lg mx-2">팔로워 33</span>
+                            <span className="text-lg mx-2"> 팔로우 22</span>
+                            <p className="mt-5 text-sm text-gray-600 mx-2">{profile.state_message}</p> {/* 상태 메시지 추가 */}
+                        </div>
+                        
+                        <hr className="mt-4 mb-2 border-gray-300 dark:border-gray-700" />
 					</div>
 				)}
 
@@ -180,7 +202,7 @@ function UserPage() {
 									<div className="flex space-x-4 flex-wrap">
 										<button
 											className="w-10 h-8"
-											style={{ color: likesCount[post.board_id] > 0 ? "red" : "inherit" }}
+											style={{ color: userLikes.has(post.board_id) ? "red" : "inherit" }} // 좋아요 상태에 따라 색상 변경
 											onClick={() => LikeHandler(post.board_id)}
 										>
 											{likesCount[post.board_id] > 0 ? `${likesCount[post.board_id]} ❤` : '0 ❤'}

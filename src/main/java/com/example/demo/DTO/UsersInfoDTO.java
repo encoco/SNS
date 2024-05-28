@@ -17,13 +17,18 @@ public class UsersInfoDTO {
 	String role;
 
 	public static UsersInfoDTO toInfoDTO(UsersEntity entity) {
-		return UsersInfoDTO.builder().id(entity.getId()).nickname(entity.getNickname()).img(entity.getImg())
+		return UsersInfoDTO.builder().id(entity.getId()).nickname(entity.getNickname()).img(entity.getProfile_img())
 				.state_message(entity.getState_message()).phone(entity.getPhone()).email(entity.getEmail()).build();
 	}
 	
 	public static UsersInfoDTO toInfoDTO(UsersDTO entity) {
-		return UsersInfoDTO.builder().id(entity.getId()).nickname(entity.getNickname()).img(entity.getImg())
-				.state_message(entity.getState_message()).phone(entity.getPhone()).email(entity.getEmail()).build();
+		return UsersInfoDTO.builder()
+				.id(entity.getId())
+				.nickname(entity.getNickname())
+				.img(entity.getImg())
+				.state_message(entity.getState_message())
+				.phone(entity.getPhone())
+				.email(entity.getEmail()).build();
 	}
 
 }

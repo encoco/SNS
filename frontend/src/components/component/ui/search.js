@@ -6,15 +6,6 @@ function Search({ isOpen, onClose, onRoomCreated, roomList , RoomSelectChange}) 
 	const [searchResults, setSearchResults] = useState([]);
 	const [selectedUsers, setSelectedUsers] = useState([]);
 
-	const handleUserClick = (user) => {
-		setSelectedUsers(prevUsers => {
-			if (prevUsers.includes(user.id)) {
-				return prevUsers.filter(id => id !== user.id);
-			} else {
-				return [...prevUsers, user.id];
-			}
-		});
-	};
 	const handleSelect = (user) => {
 		setSelectedUsers(prevUsers => {
 			if (prevUsers.includes(user.id)) {

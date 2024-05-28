@@ -13,12 +13,14 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 
 @Entity
 @Table(name = "Users")
 @Builder
 @Getter
+@Setter
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
@@ -29,7 +31,7 @@ public class UsersEntity {
 	private String username;
 	private String nickname;
     private String password;
-    private String img;
+    private String profile_img;
     String state_message;
     private String phone;
 	private String email;
@@ -43,7 +45,7 @@ public class UsersEntity {
                 .username(dto.getUsername())
                 .nickname(dto.getNickname())
                 .password(dto.getPassword())
-                .img(dto.getImg())
+                .profile_img(dto.getProfile_img())
                 .state_message(dto.getState_message())
                 .phone(dto.getPhone())
                 .email(dto.getEmail())

@@ -136,7 +136,7 @@ public class ChatController {
 	}
 
 	@GetMapping("/selectAllCommuRoom")
-	public ResponseEntity<?> selectCommuRoom(HttpServletRequest request) {
+	public ResponseEntity<?> selectAllCommuRoom(HttpServletRequest request) {
 		List<CommunityChatDTO> dto = chatService.selectAllCommuRoom();
 		try {
 			if (dto != null) {
@@ -152,6 +152,7 @@ public class ChatController {
 	public ResponseEntity<?> JoinCommuRoom(@RequestBody CommunityChatDTO dto, HttpServletRequest request) {
 		String token = jwtUtil.token(request.getHeader("Authorization"));
 		dto.setId(jwtUtil.getUserIdFromToken(token));
+		System.out.println(dto);
 		chatService.joinCommunity(dto);
 		return ResponseEntity.ok(null);
 	}

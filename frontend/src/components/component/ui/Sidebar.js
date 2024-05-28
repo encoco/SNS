@@ -19,7 +19,6 @@ function Sidebar() {
         const userInfoJSON = localStorage.getItem('nickname');
         if (userInfoJSON) {
             const userInfo = JSON.parse(userInfoJSON);
-            console.log(userInfo);
             setNickname(userInfo.nickname); // nickname 상태 업데이트
             setImg(userInfo.img);
             setId(userInfo.id);
@@ -42,7 +41,9 @@ function Sidebar() {
 				<div className="w-70 h-full bg-white p-5">
 					<div className="flex flex-col items-center">
 						<Avatar>
-							 <AvatarImage alt="User Avatar" src={img || "/placeholder.svg?height=100&width=100"} />
+							<div className="w-25 h-25 rounded-full overflow-hidden">
+								<AvatarImage alt="User Avatar" className="w-full h-full object-cover" src={img || "/placeholder.svg?height=100&width=100"} />
+							</div>
 							<AvatarFallback>U</AvatarFallback>
 						</Avatar>
 						<h2 className="mt-4 font-semibold text-xl">{nickname}</h2>

@@ -15,6 +15,7 @@ public interface UsersRepository extends JpaRepository<UsersEntity, Integer> {
 	public boolean existsByNickname(String nickname);
 
 	public UsersEntity findByUsername(String username);
+	public UsersEntity findByNickname(String nickname);
 	public List<UsersEntity> findBynicknameContaining(String searchTerm);
 
 	@Query(value = "SELECT nickname FROM users WHERE id = :userId", nativeQuery = true)

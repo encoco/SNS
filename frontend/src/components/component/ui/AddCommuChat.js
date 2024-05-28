@@ -72,7 +72,7 @@ function AddCommuChat({ Open, Close }) {
 
 
 	return (
-		<div className="fixed inset-0 bg-gray-700 bg-opacity-50 flex justify-center items-center z-50" onClick={handleOverlayClick}>
+		<div className="fixed inset-0 bg-gray-45 bg-opacity-50 flex justify-center items-center z-50" onClick={handleOverlayClick}>
 			<div className="bg-white p-6 rounded-lg shadow-lg max-w-lg w-full m-4 z-50 relative" onClick={handleModalContentClick}>
 				<h2 className="text-xl font-bold mb-4">오픈채팅 만들기</h2>
 				<div className="mb-4">

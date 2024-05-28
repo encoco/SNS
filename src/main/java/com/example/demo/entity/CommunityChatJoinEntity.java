@@ -31,6 +31,7 @@ public class CommunityChatJoinEntity {
 	@Column(name="communitychat_id")
 	private int communitychatId;
 	private String title;
+	private String imgpath;
 	private int id;
 	
 	@Builder.Default
@@ -40,6 +41,7 @@ public class CommunityChatJoinEntity {
         return CommunityChatJoinEntity.builder()
                 .communitychatId(entity.getCommunitychatId())
                 .title(entity.getTitle())
+                .imgpath(entity.getImgpath())
                 .id(entity.getId())
                 .date(entity.getDate())
                 .build();

@@ -23,7 +23,7 @@ public class SearchDTO {
 			SearchDTO dto = new SearchDTO();
 			dto.setId(ent.getId());
 			dto.setNickname(ent.getNickname());
-			dto.setImg(ent.getImg());
+			dto.setImg(ent.getProfile_img());
 			dtos.add(dto);
 		}
 		return dtos;
@@ -33,7 +33,7 @@ public class SearchDTO {
 		SearchDTO dto = new SearchDTO();
 		dto.setId(entity.getId());
 		dto.setNickname(entity.getNickname());
-		dto.setImg(entity.getImg());
+		dto.setImg(entity.getProfile_img());
 		return dto;
 	}
 }

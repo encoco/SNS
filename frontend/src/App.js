@@ -4,7 +4,6 @@ import LoginPage from './components/component/LoginPage';
 import SignupPage from './components/component/Signup';
 import Component from './components/component/component';
 import BoardWrite from './components/component/BoardWrite';
-import Mypage from './components/component/my-page';
 import Message from './components/component/Message';
 import Participate from './components/component/Participate';
 import Setting from './components/component/Setting';
@@ -41,7 +40,6 @@ function App() {
         <Route path="/signup" element={<PublicRoute><SignupPage /></PublicRoute>} />
         <Route path="/index" element={<PrivateRoute><Component /></PrivateRoute>} />
         <Route path="/BoardWrite" element={<PrivateRoute><BoardWrite /></PrivateRoute>} />
-        <Route path="/mypage" element={<PrivateRoute><Mypage/></PrivateRoute>} />
         <Route path="/UserPage/:userId" element={<PrivateRoute><UserPage/></PrivateRoute>} />
         <Route path="/Message" element={<PrivateRoute><Message/></PrivateRoute>} />
         <Route path="/Participate" element={<PrivateRoute><Participate/></PrivateRoute>} />
