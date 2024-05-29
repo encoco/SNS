@@ -21,7 +21,7 @@ export default function ImageSlider({ imgpath }) {
 	};
 
 	return (
-		<div className="relative w-full flex justify-center items-center overflow-hidden" style={{ zIndex: 1 }}> {/* z-index를 조정 */}
+		<div className="relative w-full flex justify-center items-center overflow-hidden" style={{ zIndex: 0 }}> {/* z-index를 조정 */}
 			{images.length > 1 && (
 				<button onClick={goToPrevious} className="absolute left-0 z-10 inset-y-0 m-auto bg-transparent text-black text-3xl">
 					&#x276E; {/* Left Arrow */}

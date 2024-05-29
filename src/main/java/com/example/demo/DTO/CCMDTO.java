@@ -26,8 +26,8 @@ public class CCMDTO {
 	int id;
 	String nickname;
 	String content;
+	String profile_img;
 	
-
 	@Builder.Default
 	private String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm"));
 	// Entity만들고 컨트롤러에 그룹챗 넘어오는지 확인부터 다시 시작
@@ -39,12 +39,25 @@ public class CCMDTO {
 			dto.setCommessage_id(entity.getCommessageId());
 			dto.setCommunitychat_id(entity.getCommunitychatId());
 			dto.setId(entity.getId());
+			dto.setProfile_img(entity.getProfile_img());
 			dto.setNickname(entity.getNickname());
 			dto.setContent(entity.getContent());
 			dto.setDate(entity.getDate());
 			dtos.add(dto);
 		}
 		return dtos;
+	}
+	
+	public static CCMDTO toDTO(CCMEntity dto) {
+        return CCMDTO.builder()
+            .commessage_id(dto.getCommessageId())
+            .communitychat_id(dto.getCommunitychatId())
+            .id(dto.getId())
+            .nickname(dto.getNickname())
+            .profile_img(dto.getProfile_img())
+            .content(dto.getContent())
+            .date(dto.getDate())
+            .build();
 	}
 
 }

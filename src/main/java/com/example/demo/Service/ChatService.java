@@ -12,6 +12,7 @@ import com.example.demo.DTO.CCMDTO;
 import com.example.demo.DTO.ChatDTO;
 import com.example.demo.DTO.ChatMessageDTO;
 import com.example.demo.DTO.CommunityChatDTO;
+import com.example.demo.DTO.UsersDTO;
 import com.example.demo.DTO.UsersInfoDTO;
 import com.example.demo.Repository.CCMRepository;
 import com.example.demo.Repository.ChatMessageRepository;
@@ -42,7 +43,8 @@ public class ChatService {
 	private final BoardService boardService;
 
 	public List<ChatDTO> selectRoom(int userId) {
-		List<ChatEntity> entity = chatRepository.findByUserId(userId);
+		List<ChatEntity> entity = chatRepository.CustomfindById(userId);
+		System.out.println(entity);
 		if (entity != null) {
 			List<ChatDTO> dto = ChatDTO.ToDtoList(entity);
 			return dto;
@@ -70,20 +72,21 @@ public class ChatService {
 					name += ",";
 				name += uRepository.findNicknameById(id);
 			}
-			chatUser.setRoomname(name);
 			chatUser.setRoomNumber(roomNumber);
-			chatUser.setUserId(userId);
+			chatUser.setId(userId);
 			chatUser.setJoinId(ids);
+			System.out.println("chatUser : " + chatUser);
 			chatRepository.save(chatUser);
 		}
-		ChatEntity create = chatRepository.findByJoinIdAndUserId(ids, myId);
+		ChatEntity create = chatRepository.findByJoinIdAndId(ids, myId);
 		return ChatDTO.toDTO(create);
 	}
 
 	public ChatDTO findRoom(List<Integer> userIds, int myId) {
 		Collections.sort(userIds);
 		String userIdsString = userIds.stream().map(String::valueOf).collect(Collectors.joining(","));
-		ChatEntity selectE = chatRepository.findByJoinIdAndUserId(userIdsString, myId);
+		System.out.println(chatRepository.findByJoinIdAndId(userIdsString, myId));
+		ChatEntity selectE = chatRepository.findByJoinIdAndId(userIdsString, myId);
 		if (selectE != null)
 			return ChatDTO.toDTO(selectE);
 		return null;
@@ -95,13 +98,18 @@ public class ChatService {
 		return userIdsString;
 	}
 
-	public void saveChat(ChatMessageDTO message) {
+	public ChatMessageDTO saveChat(ChatMessageDTO message) {
 		ChatMessageEntity entity = ChatMessageEntity.toEntity(message);
 		messageRepository.save(entity);
+
+		UsersEntity user = usersRepository.findById(entity.getId()).orElseThrow(() -> new RuntimeException("User not found"));
+		message.setProfile_img(user.getProfile_img());
+		return message;
 	}
 
 	public List<ChatMessageDTO> getMessage(String roomNumber) {
 		List<ChatMessageEntity> entity = messageRepository.findByroomNumber(roomNumber);
+		System.out.println(entity);
 		return ChatMessageDTO.ToDtoList(entity);
 	}
 
@@ -130,16 +138,19 @@ public class ChatService {
 		return CCJDTO.toDTOList(CCJRepository.findAllById(userIdFromToken));
 	}
 
-	public void saveCommChat(CCMDTO message) {
+	public CCMDTO saveCommChat(CCMDTO message) {
 		CCMEntity entity = CCMEntity.toEntity(message);
-		System.out.println("entity : " + entity);
 		ccmrepository.save(entity);
+		
+		UsersEntity user = usersRepository.findById(entity.getId()).orElseThrow(() -> new RuntimeException("User not found"));
+		message.setProfile_img(user.getProfile_img());
+		return message;
 	}
 
 	public List<CCMDTO> getCommMessage(int communitychat_id) {
 		List<CCMEntity> entity = ccmrepository.findBycommunitychatId(communitychat_id);
+		System.out.println("getCommMessage : " + entity);
 		return CCMDTO.ToDtoList(entity);
 	}
 
-	
 }

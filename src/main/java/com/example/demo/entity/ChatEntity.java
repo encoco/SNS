@@ -23,31 +23,27 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ChatEntity {
-
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name="userchat_id")
 	private int  userchatId;
-
 	@Column(name="room_number")
 	private String roomNumber;
-
-	@Column(name = "id")
-    private int userId;
-
+    private int id;
 	@Column(name = "join_id")
 	private String joinId;
-
-	private String roomname;
+	private String profile_img;
+	private String nickname;
     @Builder.Default
     private String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm"));
+    
 
     public static ChatEntity toEntity(ChatDTO dto) {
         return ChatEntity.builder()
                 .userchatId(dto.getUserchatId())
                 .roomNumber(dto.getRoomNumber())
-                .userId(dto.getId())
-                .roomname(dto.getRoomname())
+                .id(dto.getId())
+                .nickname(dto.getRoomname())
                 .joinId(dto.getJoinId())
                 .date(dto.getDate())
                 .build();

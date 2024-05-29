@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import com.example.demo.entity.CCMEntity;
 import com.example.demo.entity.CommunityChatEntity;
 import com.example.demo.entity.CommunityChatJoinEntity;
 
@@ -30,6 +31,7 @@ public class CCJDTO {
 	private int id;
 	private String imgpath;
 	private String date;
+	
 	
 	public static List<CCJDTO> toDTOList(List<CommunityChatJoinEntity> entitis) {
 	    List<CCJDTO> dtos = new ArrayList<>();

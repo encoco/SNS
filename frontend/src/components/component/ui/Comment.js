@@ -17,6 +17,7 @@ function Comment({ isOpen, onClose, boardId }) {
 
    const fetchComments = async () => {
       try {
+		  console.log(boardId);
          const response = await api.get(`/getComments`, {
             params: { boardId },
             withCredentials: true,
@@ -166,7 +167,7 @@ function Comment({ isOpen, onClose, boardId }) {
                <ul>
                   {comments && Array.isArray(comments) && comments.map(comment => (
                      <li key={comment.comment_id} className="mt-1 flex items-center relative">
-                        <img src={comment.img} alt="Profile" className="w-10 h-10 rounded-full mr-3" />
+                        <img src={comment.profile_img} alt="Profile" className="w-10 h-10 rounded-full mr-3" />
                         <div className="flex flex-col flex-grow">
                            {editCommentId === comment.comment_id ? (
                               <input

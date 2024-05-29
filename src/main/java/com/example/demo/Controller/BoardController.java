@@ -53,24 +53,6 @@ public class BoardController {
 		}
 	}
 
-	@GetMapping("/boardList")
-	public ResponseEntity<?> boardList(HttpServletRequest request) {
-		try {
-			String token = jwtUtil.token(request.getHeader("Authorization"));
-			int userId = jwtUtil.getUserIdFromToken(token);
-			List<BoardDTO> posts = boardService.getPost(userId);
-			List<BoardLikeDTO> like = boardService.getLike(userId);
-
-			Map<String, Object> response = new HashMap<>();
-			response.put("posts", posts);
-			response.put("likes", like);
-			return ResponseEntity.ok(response);
-		} catch (Exception e) {
-			System.out.println("서버 오류");
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("/boardList");
-		}
-	}
-
 	@GetMapping("/userPosts")
 	public ResponseEntity<?> userPosts(@RequestParam("userId") int userId) {
 		try {
@@ -134,7 +116,6 @@ public class BoardController {
 		}
 	}
 
-	// BoardController.java에 댓글 관련 메소드 추가
 	@GetMapping("/getComments")
 	public ResponseEntity<?> getComments(@RequestParam(value = "boardId") int boardId) {
 		try {
@@ -194,7 +175,6 @@ public class BoardController {
 
 	@PostMapping("/DeleteComment")
 	public ResponseEntity<?> DeleteComment(@RequestBody CommentDTO commentDTO) {
-		System.out.println("넘어옴!!!" + commentDTO);
 		try {
 			boardService.DeleteComment(commentDTO);
 			return ResponseEntity.ok("success");
