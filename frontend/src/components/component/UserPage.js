@@ -136,11 +136,11 @@ function UserPage() {
 	};
 
 	return (
-		<div className="grid min-h-screen w-full grid-cols-[280px_1fr] flex min-h-screen bg-gray-100 ">
+		<div className="grid min-h-screen w-full grid-cols-[280px_1fr] flex min-h-screen bg-gray-100">
 			<Sidebar />
-			<div className="flex flex-col ml-10 mr-10">
+			<div className="flex flex-col ml-10">
 				{userInfo && (
-					<div className="flex flex-col  mb-5 mt-6">
+					<div className="flex flex-col  mb-5">
 						<div className="flex items-center">
 							<img
 								alt="Profile"
@@ -157,18 +157,11 @@ function UserPage() {
 								</button>
 							) : (
 								<button onClick={handleEditProfile} className="ml-5 px-3 py-1 text-sm font-medium rounded transition duration-150 ease-in-out bg-black hover:bg-green-600 text-white">
-									내 정보 수정	
+									내 정보 수정
 								</button>
 							)}
 						</div>
-						<div className="text-left my-4">
-                            <span className="text-lg mx-2"> 게시물 33</span>
-                            <span className="text-lg mx-2">팔로워 33</span>
-                            <span className="text-lg mx-2"> 팔로우 22</span>
-                            <p className="mt-5 text-sm text-gray-600 mx-2">{profile.state_message}</p> {/* 상태 메시지 추가 */}
-                        </div>
-                        
-                        <hr className="mt-4 mb-2 border-gray-300 dark:border-gray-700" />
+						<p className="mt-1 text-sm text-gray-600">{profile.state_message}</p> {/* 상태 메시지 추가 */}
 					</div>
 				)}
 

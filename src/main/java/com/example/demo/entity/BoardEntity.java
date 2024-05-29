@@ -13,11 +13,13 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Entity
 @Table(name = "Board")
 @Builder
 @Getter
+@ToString
 @AllArgsConstructor
 @NoArgsConstructor
 public class BoardEntity {
@@ -26,6 +28,7 @@ public class BoardEntity {
 	private int board_id; //DB가서 pk id로 바꾸기
 	private int id;
 	private String nickname;
+	private String profile_img;
 	private String img;
     private String video;
     private String content;
@@ -42,12 +45,6 @@ public class BoardEntity {
                 .date(dto.getDate())
                 .build();
     }
-
-	@Override
-	public String toString() {
-		return "BoardEntity [board_id=" + board_id + ", id=" + id + ",nickname=" +nickname+ ", img=" + img  + ", video="
-				+ video + ", content=" + content + ", date=" + date + "]";
-	}
 
 	public void setUpdateContent(String content2, String imgpath) {
 		this.content = content2;

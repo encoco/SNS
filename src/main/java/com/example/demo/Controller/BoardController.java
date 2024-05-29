@@ -39,8 +39,8 @@ public class BoardController {
 		try {
 			String token = jwtUtil.token(request.getHeader("Authorization"));
 			int userId = jwtUtil.getUserIdFromToken(token);
-
 			List<BoardDTO> posts = boardService.getfollowPost(userId);
+			System.out.println(posts);
 			List<BoardLikeDTO> like = boardService.getfollowLike(posts);
 
 			Map<String, Object> response = new HashMap<>();

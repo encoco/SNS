@@ -10,6 +10,7 @@ import com.example.demo.DTO.SearchDTO;
 import com.example.demo.DTO.UsersDTO;
 import com.example.demo.DTO.UsersInfoDTO;
 import com.example.demo.DTO.followDTO;
+import com.example.demo.Repository.BoardRepository;
 import com.example.demo.Repository.UsersRepository;
 import com.example.demo.Repository.followRepository;
 import com.example.demo.entity.UsersEntity;
@@ -25,6 +26,8 @@ public class UsersService {
 	 private final followRepository fRepository;
 	 private final PasswordEncoder passwordEncoder;
 	 private final BoardService bservice;
+	 
+	 
     public boolean isUserIdDuplicate(String username) {
         return usersRepository.existsByUsername(username);
     }
@@ -94,9 +97,10 @@ public class UsersService {
 		entity.setNickname(profile.getNickname());
 		entity.setState_message(profile.getState_message());
 		if(profile.getImgpath() != null) {
-			entity.setImg(bservice.uploadFile(profile.getImgpath(), "userProfile"));
+			entity.setProfile_img(bservice.uploadFile(profile.getImgpath(), "userProfile"));
 		}
 		usersRepository.save(entity);
+		
 		UsersInfoDTO dto = UsersInfoDTO.toInfoDTO(entity);
 		return dto;
 	}

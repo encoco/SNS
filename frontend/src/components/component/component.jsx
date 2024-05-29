@@ -171,7 +171,7 @@ export default function Component() {
 			<BrowserView>
 				<div className="grid min-h-screen w-full grid-cols-[280px_1fr] flex min-h-screen bg-gray-100">
 					<Sidebar />
-					<div className="flex flex-col w-full ml-10 relative">
+					<div className="flex flex-col w-full relative">
 						<div className="flex justify-center items-center flex-col w-full relative">
 							<form className="flex items-center gap-2 w-full max-w-md mt-5 relative" onSubmit={handleSubmit}>
 								<SearchIcon className="h-5 w-5" />
@@ -191,7 +191,7 @@ export default function Component() {
 												<img
 													alt="s"
 													className="w-8 h-8 rounded-full"
-													src={user.img || "/placeholder.svg"}
+													src={user.profile_img || "/placeholder.svg"}
 												/>
 												<span>{user.nickname}</span>
 											</div>
@@ -214,7 +214,7 @@ export default function Component() {
 													<img
 														alt="Avatar"
 														className="rounded-full"
-														src="/placeholder.svg"
+														  src={post.profile_img ? post.profile_img : "/placeholder.svg"} 
 														style={{
 															aspectRatio: "1 / 1",
 															objectFit: "cover",

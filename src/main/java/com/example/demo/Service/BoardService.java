@@ -142,7 +142,6 @@ public class BoardService {
 
 	@Transactional
 	public void updateComment(CommentDTO commentDTO) {
-		System.out.println("서비스 넘어옴!!");
 		CommentEntity board = CommentEntity.toEntity(commentDTO);
 		boardCommentRepository.save(board);
 	}

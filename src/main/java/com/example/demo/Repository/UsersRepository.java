@@ -20,6 +20,7 @@ public interface UsersRepository extends JpaRepository<UsersEntity, Integer> {
 
 	@Query(value = "SELECT nickname FROM users WHERE id = :userId", nativeQuery = true)
     public String findNicknameById(@Param("userId")Integer userId);
+
 }
 
 

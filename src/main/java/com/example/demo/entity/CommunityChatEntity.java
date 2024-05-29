@@ -29,7 +29,6 @@ public class CommunityChatEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name="communitychat_id")
 	private int communitychatId;
-	
 	private int id;
 	private String title;
 	private String description;

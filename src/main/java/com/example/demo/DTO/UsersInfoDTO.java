@@ -1,5 +1,7 @@
 package com.example.demo.DTO;
 
+import java.util.List;
+
 import com.example.demo.entity.UsersEntity;
 
 import lombok.Builder;
@@ -25,10 +27,11 @@ public class UsersInfoDTO {
 		return UsersInfoDTO.builder()
 				.id(entity.getId())
 				.nickname(entity.getNickname())
-				.img(entity.getImg())
+				.img(entity.getProfile_img())
 				.state_message(entity.getState_message())
 				.phone(entity.getPhone())
 				.email(entity.getEmail()).build();
 	}
+
 
 }

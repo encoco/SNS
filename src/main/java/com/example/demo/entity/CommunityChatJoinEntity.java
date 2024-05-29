@@ -27,7 +27,6 @@ public class CommunityChatJoinEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name="ccj_id")
 	private int ccjId;
-	
 	@Column(name="communitychat_id")
 	private int communitychatId;
 	private String title;

@@ -4,7 +4,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
+import java.util.Arrays;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.DTO.CCJDTO;
@@ -12,6 +12,7 @@ import com.example.demo.DTO.CCMDTO;
 import com.example.demo.DTO.ChatDTO;
 import com.example.demo.DTO.ChatMessageDTO;
 import com.example.demo.DTO.CommunityChatDTO;
+import com.example.demo.DTO.UsersInfoDTO;
 import com.example.demo.Repository.CCMRepository;
 import com.example.demo.Repository.ChatMessageRepository;
 import com.example.demo.Repository.ChatRepository;
@@ -23,7 +24,8 @@ import com.example.demo.entity.ChatEntity;
 import com.example.demo.entity.ChatMessageEntity;
 import com.example.demo.entity.CommunityChatEntity;
 import com.example.demo.entity.CommunityChatJoinEntity;
-
+import com.example.demo.entity.UsersEntity;
+import com.nimbusds.openid.connect.sdk.claims.UserInfo;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
@@ -36,8 +38,9 @@ public class ChatService {
 	private final CommuChatRepository commuRepository;
 	private final CommuChatJoinRepository CCJRepository;
 	private final CCMRepository ccmrepository;
-	private final BoardService boardService; 
-	
+	private final UsersRepository usersRepository;
+	private final BoardService boardService;
+
 	public List<ChatDTO> selectRoom(int userId) {
 		List<ChatEntity> entity = chatRepository.findByUserId(userId);
 		if (entity != null) {
@@ -104,15 +107,16 @@ public class ChatService {
 
 	public void CreateCommChat(CommunityChatDTO dto) {
 		CommunityChatEntity entity = CommunityChatEntity.toEntity(dto);
-		if(dto.getImg() != null) entity.setImg(boardService.uploadFile(dto.getImg(), "CommunityChat"));
+		if (dto.getImg() != null)
+			entity.setImg(boardService.uploadFile(dto.getImg(), "CommunityChat"));
 		commuRepository.save(entity);
-		
+
 	}
 
 	public List<CommunityChatDTO> selectAllCommuRoom() {
 		List<CommunityChatEntity> entity = commuRepository.findAll();
 		return CommunityChatDTO.toDTOList(entity);
-		
+
 	}
 
 	public void joinCommunity(CommunityChatDTO dto) {
@@ -136,4 +140,6 @@ public class ChatService {
 		List<CCMEntity> entity = ccmrepository.findBycommunitychatId(communitychat_id);
 		return CCMDTO.ToDtoList(entity);
 	}
+
+	
 }
