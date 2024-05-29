@@ -50,8 +50,7 @@ public class ChatController {
 		message.setRoom_number(roomNumber);
 		message.setId(jwtUtil.getUserIdFromToken(token));
 		message.setNickname(jwtUtil.getNickFromToken(token));
-		chatService.saveChat(message);
-		return message;
+		return chatService.saveChat(message);
 	}
 
 	@MessageMapping("/commChat/{roomNumber}")
@@ -59,13 +58,10 @@ public class ChatController {
 	public CCMDTO handleCommChatMessage(@DestinationVariable("roomNumber") int roomNumber,
 			@Payload CCMDTO message) {
 		String token = message.getNickname();
-		System.out.println("토큰 : " + token);
 		message.setCommunitychat_id(roomNumber);
 		message.setId(jwtUtil.getUserIdFromToken(token));
 		message.setNickname(jwtUtil.getNickFromToken(token));
-		chatService.saveCommChat(message);
-		System.out.println("group : " + message);
-		return message;
+		return chatService.saveCommChat(message);
 	}
 
 	@GetMapping("/getMessage")
@@ -102,11 +98,10 @@ public class ChatController {
 			String token = jwtUtil.token(request.getHeader("Authorization"));
 			int userId = jwtUtil.getUserIdFromToken(token);
 			List<Integer> userIds = (List<Integer>) requestData.get("id");
-			ChatDTO dto;
 			userIds.add(userId);
 			Map<String, Object> response = new HashMap<>();
 
-			dto = chatService.findRoom(userIds, userId);
+			ChatDTO dto = chatService.findRoom(userIds, userId);
 			if (dto != null) { // 찾아서 있으면 이미 있으니까 그 방으로 넘기기
 				response.put("1", dto);
 				return ResponseEntity.ok(response);

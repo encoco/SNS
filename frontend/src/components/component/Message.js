@@ -167,6 +167,7 @@ function Message() {
             params: { roomNumber: room.roomNumber },
             withCredentials: true,
          });
+         console.log(response.data);
          setMessages(response.data);
       } catch (error) {
          console.error('Error fetching comments:', error);
@@ -238,42 +239,42 @@ function Message() {
                   <main className="flex-1 flex flex-col">
                      <div className="flex-1 flex">
                         {activeView === 'chat' ? (
-                           // 채팅 화면 컨텐츠
-                           <div className="flex-1 flex flex-col">
-                              <div className="flex-1 overflow-y-auto py-2 max-h-[calc(100vh-135px)] p-6">
-                                 <div className="grid gap-4">
-                                    {/* 채팅 메시지 출력 영역 */}
-                                    {/* 채팅 예제 */}
-                                    {selectedChat && messages && messages.length > 0 ? messages.map((message,index) => (
-                                       <div key={`${message.message_id}_${index}`} className={`flex items-start gap-4 ${message.nickname === nickname ? 'justify-end' : ''}`}>
-                                          <Avatar>
-                                             <AvatarImage alt={message.name} src="/placeholder-user.jpg"
-                                                style={{
-                                                   width: '50px',
-                                                   height: '50px',
-                                                   objectFit: 'cover'
-                                                }}
-                                             />
-                                             <AvatarFallback>{message.room_number[0]}</AvatarFallback>
-                                          </Avatar>
-                                          <div className="max-w-[40%]">
-                                             <div className={`rounded-lg p-4 text-sm ${message.nickname === nickname ? 'bg-blue-500 text-white' : 'bg-gray-100 dark:bg-gray-800'}`}>
-                                                <p>{message.content}</p>
-                                             </div>
-                                             <div className="text-xs text-gray-500 dark:text-gray-400">{message.date}</div>
-                                          </div>
-                                          <div ref={messageEndRef} />
-                                       </div>
-                                    )) : (
-                                       <div className="flex justify-center items-center h-full">
-                                          <p className="text-gray-500">채팅을 시작하세요</p>
-                                       </div>
-                                    )}
+								   // 채팅 화면 컨텐츠
+								   <div className="flex-1 flex flex-col">
+									   <div className="flex-1 overflow-y-auto py-2 max-h-[calc(100vh-135px)] p-6">
+										   <div className="grid gap-4">
+											   {/* 채팅 메시지 출력 영역 */}
+											   {/* 채팅 예제 */}
+											   {selectedChat && messages && messages.length > 0 ? messages.map((message, index) => (
+												   <div key={`${message.message_id}_${index}`} className={`flex items-start gap-4 ${message.id === id ? 'justify-end' : ''}`}>
+													   <Avatar>
+														   <AvatarImage alt={message.nickname} src={message.profile_img || "/placeholder-user.jpg"}
+															   style={{
+																   width: '50px',
+																   height: '50px',
+																   objectFit: 'cover'
+															   }}
+														   />
+														   <AvatarFallback>{message.id ? message.id[0] : '?'}</AvatarFallback>
+													   </Avatar>
+													   <div className="max-w-[40%]">
+														   <div className={`rounded-lg p-4 text-sm ${message.id=== id ? 'bg-blue-500 text-white' : 'bg-gray-100 dark:bg-gray-800'}`}>
+															   <p>{message.content}</p>
+														   </div>
+														   <div className="text-xs text-gray-500 dark:text-gray-400">{message.date}</div>
+													   </div>
+													   <div ref={messageEndRef} />
+												   </div>
+											   )) : (
+												   <div className="flex justify-center items-center h-full">
+													   <p className="text-gray-500">채팅을 시작하세요</p>
+												   </div>
+											   )}
 
-                                 </div>
-                              </div>
-                              <div className="border-t px-6 py-4">
-                                 <form className="flex items-center gap-2" onSubmit={handleSendMessage}>
+										   </div>
+									   </div>
+									   <div className="border-t px-6 py-4">
+										   <form className="flex items-center gap-2" onSubmit={handleSendMessage}>
                                     <Input className="flex-1" placeholder="메세지를 입력하세요..." type="text" value={inputMessage} onChange={e => setInputMessage(e.target.value)} />
                                     <Button size="icon" type="submit" variant="ghost">
                                        <SendIcon className="h-5 w-5" />
@@ -291,13 +292,14 @@ function Message() {
                                     <div className="grid gap-4">
                                        {messages && messages.length > 0 ? (
                                           messages.map((message,index)=> (
-                                             <div key={`${message.commessage_id}_${index}`} className={`flex items-start gap-4 ${message.nickname === nickname ? 'justify-end' : ''}`}>
+                                             <div key={`${message.commessage_id}_${index}`} className={`flex items-start gap-4 ${message.id === id ? 'justify-end' : ''}`}>
                                                 <Avatar>
-                                                   <AvatarImage alt={message.nickname} src="/placeholder-user.jpg" style={{ width: '50px', height: '50px', objectFit: 'cover' }} />
+                                                   <AvatarImage alt={message.id} src={message.profile_img || "/placeholder-user.jpg"} 
+                                                   style={{ width: '50px', height: '50px', objectFit: 'cover' }} />
                                                    <AvatarFallback>{message.communitychat_id}</AvatarFallback>
                                                 </Avatar>
                                                 <div className="max-w-[40%]">
-                                                   <div className={`rounded-lg p-4 text-sm ${message.nickname === nickname ? 'bg-blue-500 text-white' : 'bg-gray-100 dark:bg-gray-800'}`}>
+                                                   <div className={`rounded-lg p-4 text-sm ${message.id === id? 'bg-blue-500 text-white' : 'bg-gray-100 dark:bg-gray-800'}`}>
                                                       <p>{message.content}</p>
                                                    </div>
                                                    <div className="text-xs text-gray-500 dark:text-gray-400">{message.date}</div>

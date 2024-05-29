@@ -31,6 +31,7 @@ public class ChatMessageEntity {
 	private int id;
 	private String content;
 	private String nickname;
+	private String profile_img;
 
     @Builder.Default
     private String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm"));

@@ -22,6 +22,7 @@ public class ChatMessageDTO {
 	private int id;
 	private String content;
 	private String nickname;
+	private String profile_img;
     @Builder.Default
     private String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm"));
 
@@ -30,6 +31,7 @@ public class ChatMessageDTO {
         		.message_id(entity.getMessage_id())
                 .room_number(entity.getRoomNumber())
                 .id(entity.getId())
+                .profile_img(entity.getProfile_img())
                 .nickname(entity.getNickname())
                 .content(entity.getContent())
         		.date(entity.getDate())
@@ -43,6 +45,7 @@ public class ChatMessageDTO {
 	        dto.setMessage_id(entity.getMessage_id());
 	        dto.setRoom_number(entity.getRoomNumber());
 	        dto.setNickname(entity.getNickname());
+	        dto.setProfile_img(entity.getProfile_img());
 	        dto.setId(entity.getId());
 	        dto.setContent(entity.getContent());
 	        dto.setDate(entity.getDate());

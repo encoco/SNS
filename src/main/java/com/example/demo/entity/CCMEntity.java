@@ -36,6 +36,7 @@ public class CCMEntity {
 	int id;
 	String nickname;
 	String content;
+	String profile_img;
 
 	@Builder.Default
 	private String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss"));

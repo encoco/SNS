@@ -32,7 +32,7 @@ public class ChatDTO {
                 .userchatId(entity.getUserchatId())
                 .roomNumber(entity.getRoomNumber())
                 .id(entity.getId())
-                .roomname(entity.getRoomname())
+                .roomname(entity.getNickname())
                 .joinId(entity.getJoinId())
                 .date(entity.getDate())
                 .build();
@@ -45,7 +45,7 @@ public class ChatDTO {
 	        dto.setUserchatId(entity.getUserchatId());
 	        dto.setRoomNumber(entity.getRoomNumber());
 	        dto.setId(entity.getId());
-	        dto.setRoomname(entity.getRoomname());
+	        dto.setRoomname(entity.getNickname());
 	        dto.setProfile_img(entity.getProfile_img());
 	        dto.setJoinId(entity.getJoinId());
 	        dto.setDate(entity.getDate());

@@ -70,6 +70,7 @@ function Search({ isOpen, onClose, onRoomCreated, roomList , RoomSelectChange}) 
 				RoomSelectChange(response.data["1"]);
 				handleOverlayClick(); // 모달 닫기 
 			} else if (response.data["0"]) {
+				console.log(response.data["0"]);
 				onRoomCreated(response.data["0"]); 
 				handleOverlayClick(); // 모달 닫기
 			} else {
