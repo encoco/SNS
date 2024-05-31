@@ -1,5 +1,4 @@
 /*BoardWrite*/
-
 import { useNavigate, useLocation } from 'react-router-dom'; // useNavigate 훅 임포트
 import styled from 'styled-components'; // styled-components import 추가
 import { Button } from "./ui/button"
@@ -23,16 +22,13 @@ const StyledTextarea = styled.textarea`
   /* 원하는 추가적인 스타일을 여기에 추가하세요 */
 `;
 
-
-function BoardWrite({ isOpen, onClose, onRequestClose }) {
+function BoardWrite({ isOpen, onClose, onRequestClose, post }) { // post 추가
    const navigate = useNavigate();
    const location = useLocation();
    const [content, setContent] = useState('');
    const [images, setImages] = useState([]);
    const fileInputRef = React.useRef(null);
    const fromPath = location.state?.from || '/';  // 이전 경로가 없다면 홈으로 설정
-   /*const post = location.state.post;*/
-   const [post] = useState(location.state?.post || null);
 
    useEffect(() => {
       console.log(post);
@@ -57,9 +53,10 @@ function BoardWrite({ isOpen, onClose, onRequestClose }) {
             </div>
          ));
       } else {
-         return /*<p>선택된 파일이 없습니다.</p>*/;
+         return null; /* 파일이 없을 때는 아무것도 반환하지 않음 */
       }
    };
+
    // 글 내용이 변경될 때마다 호출되는 함수
    const handleContentChange = (event) => {
       setContent(event.target.value); // 입력된 글 내용을 상태 변수에 반영합니다.
@@ -69,17 +66,20 @@ function BoardWrite({ isOpen, onClose, onRequestClose }) {
       onClose();
    };
 
-
-
    // '업로드' 버튼을 클릭시 호출
    const Write = async () => {
       const formData = new FormData(); // FormData 객체 생성
       
       formData.append('content', content); // 글 내용 추가
       formData.append('nickname', localStorage.getItem("nickname"));
-      images.forEach((image) => {
-         formData.append('img', image);
-      });
+
+      // 이미지가 있는 경우에만 폼 데이터에 추가
+      if (images.length > 0) {
+         images.forEach((image) => {
+            formData.append('img', image);
+         });
+      }
+      
       try {
          if (post) {
             // 수정 요청
@@ -112,16 +112,13 @@ function BoardWrite({ isOpen, onClose, onRequestClose }) {
    const handleButtonClick = () => {
       fileInputRef.current.click();
    };
-	const handleOverlayClick = () => {
-      onClose();
-   };
 
    return (
       <Modal
             isOpen={isOpen}
             onRequestClose={() => {
 			    onRequestClose(); // 기존 onRequestClose 호출
-			    handleOverlayClick(); // 추가적으로 handleOverlayClick 호출
+			    onClose(); // 추가적으로 onClose 호출
 			 }}
             className="fixed inset-0 bg-opacity-50 flex justify-center items-center " 
             overlayClassName="fixed inset-0 bg-opacity-50"
