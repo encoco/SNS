@@ -37,7 +37,7 @@ public class BoardLikeEntity {
 	private int boardId;
 
 	@Builder.Default
-	private String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm"));
+	private String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss"));
 
 	public static BoardLikeEntity toEntity(BoardLikeDTO dto) {
 		return BoardLikeEntity.builder().boardlike_id(dto.getBoardlike_id()).boardId(dto.getBoard_id()).userId(dto.getId())

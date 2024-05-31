@@ -5,8 +5,9 @@ class WebSocketService {
 
 	constructor() {
 		this.client = new Client({
-			//brokerURL: 'ws://13.125.161.122:8080/api/ws', // Spring Boot WebSocket 엔드포인트
-			brokerURL: 'ws://localhost:8080/api/ws', // Spring Boot WebSocket 엔드포인트
+			brokerURL: 'ws://13.125.161.122:8080/api/ws', // Spring Boot WebSocket 엔드포인트
+			//brokerURL: 'ws://localhost:8080/api/ws', // Spring Boot WebSocket 엔드포인트
+			//brokerURL: 'ws://192.168.200.158:8080/api/ws', // Spring Boot WebSocket 엔드포인트
 			reconnectDelay: 5000,
 			heartbeatIncoming: 4000,
 			heartbeatOutgoing: 4000,

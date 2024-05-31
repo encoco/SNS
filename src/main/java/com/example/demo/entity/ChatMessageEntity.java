@@ -35,7 +35,7 @@ public class ChatMessageEntity {
 	private Integer share_board_id;
 	
     @Builder.Default
-    private String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm"));
+    private String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss"));
 
     public static ChatMessageEntity toEntity(ChatMessageDTO dto) {
         return ChatMessageEntity.builder()

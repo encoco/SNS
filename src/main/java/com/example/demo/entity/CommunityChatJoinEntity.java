@@ -34,7 +34,7 @@ public class CommunityChatJoinEntity {
 	private String imgpath;
 	
 	@Builder.Default
-	private String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm"));
+	private String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss"));
 	
 	public static CommunityChatJoinEntity toEntity(CommunityChatDTO entity) {
         return CommunityChatJoinEntity.builder()

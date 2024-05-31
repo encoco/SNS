@@ -353,14 +353,16 @@ export default function Component() {
 											}}>
 											댓글
 										</button>
-										<button className="w-16 h-8">공유하기</button>
+										<button className="w-16 h-8" onClick={() => { setCurrentPost(post);  setShowShareModal(true);}}>공유</button>
 									</div>
 								</div>
 							))}
 						</div>
 					</div>
+					
 					{/* 댓글 모달과 최상단으로 이동하는 버튼 */}
 					<Comment isOpen={showModal} onClose={() => setShowModal(false)} comments={currentComments} boardId={selectedPostId} />
+					<Share isOpen={showShareModal} onClose={() => setShowShareModal(false)} post={currentPost}/>
 					{showTopBtn && (
 						<button
 							className="fixed bottom-20 right-10 bg-white hover:bg-gray-100 text-gray-900 font-bold rounded-full h-12 w-12 flex justify-center items-center border-4 border-gray-900 cursor-pointer"

@@ -32,39 +32,8 @@ function LoginPage() {
 			params.append('password', password);
 
 
-			const response = await axios.post('http://localhost:8080/api/Login', params, {
-				headers: {
-					'Content-Type': 'application/x-www-form-urlencoded'
-				},
-				withCredentials: true
-			});
-			localStorage.setItem('userInfo', response.data.accessToken);
-			localStorage.setItem('nickname', JSON.stringify(response.data.nickname));
-			alert('로그인 성공');
-			navigate('/index');
-		} catch (error) {
-			if (error.response) {
-				const status = error.response.status;
-				if (status === 401 || status === 403) {
-					alert('계정 정보를 확인해주세요.');
-				} else {
-					alert('로그인 중 문제가 발생했습니다. 다시 시도해주세요.');
-				}
-			} else {
-				alert('서버와의 연결에 문제가 발생했습니다.');
-			}
-		}
-	};
-
-	const test = async () => {
-		try {
-			const params = new URLSearchParams();
-			params.append('username', username);
-			params.append('password', password);
-
-
-//			const response = await axios.post('http://13.125.161.122:8080/api/Login', params, {
-				const response = await axios.post('http://localhost:8080/api/Login', params, {
+			const response = await axios.post('http://13.125.161.122:8080/api/Login', params, {
+				//const response = await axios.post('http://localhost:8080/api/Login', params, {
 				//const response = await axios.post('http://192.168.200.158:8080/api/Login', params, {
 				headers: {
 					'Content-Type': 'application/x-www-form-urlencoded'
@@ -84,7 +53,7 @@ function LoginPage() {
 					alert('로그인 중 문제가 발생했습니다. 다시 시도해주세요.');
 				}
 			} else {
-				alert('다시 시도해주세요.');
+				alert('서버와의 연결에 문제가 발생했습니다.');
 			}
 		}
 	};
@@ -129,10 +98,6 @@ function LoginPage() {
 				<br />
 
 				<div className="space-y-4">
-					<Button className="w-full" style={{ backgroundColor: '#03C75A' }} variant="outline"
-						onClick={test} >
-						ip주소로 로그인
-					</Button>
 					<Button className="w-full" style={{ backgroundColor: '#03C75A' }} variant="outline"
 						onClick={() => window.location.href = 'http://localhost:8080/oauth2/authorization/naver'} >
 						NAVER
