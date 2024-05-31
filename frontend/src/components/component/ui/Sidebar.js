@@ -14,7 +14,7 @@ function Sidebar() {
    const [nickname, setNickname] = useState(''); // 초기 상태를 빈 문자열로 설정
    const [img,setImg] = useState('');
    const [id,setId] = useState('');
-   const [isModalOpen, setIsModalOpen] = useState(false);
+   const [isModalOpen, setIsModalOpen] = useState(false); 
 
    
     useEffect(() => {

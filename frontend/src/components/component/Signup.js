@@ -17,6 +17,7 @@ import axios from 'axios';
 	  const [Nick, setNick] = useState('');
 	  const [phone, setPhone] = useState('');
 	  
+	  
 	  const validateForm = () => {
 	    // 필수 입력 값 확인
 	    if (!username || !password || !passwordCheck || !email || !phone) {
