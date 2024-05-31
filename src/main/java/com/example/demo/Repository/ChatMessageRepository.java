@@ -10,7 +10,7 @@ import com.example.demo.entity.ChatMessageEntity;
 
 public interface ChatMessageRepository extends JpaRepository<ChatMessageEntity, Integer>{
 
-	@Query(value = "SELECT um.message_id, um.room_number, um.id, um.nickname, um.content, um.date, u.profile_img "
+	@Query(value = "SELECT um.message_id, um.room_number, um.id, u.nickname, um.content, um.date, u.profile_img "
 			+ "FROM userchatmessage um JOIN users u ON um.id = u.id WHERE room_number = :room_number", nativeQuery = true)
 	List<ChatMessageEntity> findByroomNumber(@Param("room_number")String roomNumber);
 

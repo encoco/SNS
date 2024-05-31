@@ -6,9 +6,10 @@ function EditProfile({ Open, Close, userInfo }) {
 	const [profilePicPreview, setProfilePicPreview] = useState('');
 	const [nickname, setNickname] = useState("");
 	const [statusMessage, setStatusMessage] = useState("");
-	
+	const [newNickname, setNewNickname ] = useState(userInfo.nickname);
 	useEffect(() => {
 		setNickname(userInfo.nickname);
+		setNewNickname(userInfo.nickname);
 		setStatusMessage(userInfo.state_message);
 		if (userInfo.img) {
 			setProfilePicPreview(userInfo.img);
@@ -30,11 +31,13 @@ function EditProfile({ Open, Close, userInfo }) {
 
 	const handleClose = () => {
 		setProfilePicPreview('');
+		setNewNickname(userInfo.nickname);
 		Close();
 	};
 
 	const handleOverlayClick = () => {
 		setProfilePicPreview('');
+		setNewNickname(userInfo.nickname);
 		Close();
 	};
 
@@ -48,12 +51,13 @@ function EditProfile({ Open, Close, userInfo }) {
 
 	const handleSave = async () => {
 		const formData = new FormData();
-		formData.append('nickname', nickname);
+		formData.append('nickname', newNickname);
 		formData.append('state_message', statusMessage);
-		
+		formData.append('original', nickname);
 		if(profilePic){
-			formData.append('imgpath', profilePic);
+			formData.append('profile_img', profilePic);
 		}
+		console.log(formData.getAll);
 		try {
 			const response = await api.post(`/WriteProfile`, formData, {
 				headers: {
@@ -64,9 +68,10 @@ function EditProfile({ Open, Close, userInfo }) {
 			setProfilePicPreview('');
 			localStorage.setItem('nickname', JSON.stringify(response.data));
 			alert('프로필이 성공적으로 업데이트되었습니다.');
+			window.location.reload();
 			Close();
 		} catch (error) {
-			console.error('프로필 업데이트 실패:', error);
+			console.error('프로필 업데이트 실패:', error.response);
 			alert('프로필 업데이트에 실패했습니다.');
 		}
 	};
@@ -98,8 +103,8 @@ function EditProfile({ Open, Close, userInfo }) {
 						type="text"
 						placeholder="닉네임"
 						className="border border-gray-300 p-2 w-full"
-						value={nickname || ''}
-						onChange={(e) => setNickname(e.target.value)}
+						value={newNickname}
+						onChange={(e) => setNewNickname(e.target.value)}
 					/>
 				</div>
 				<div className="mb-4">
