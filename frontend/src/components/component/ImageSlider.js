@@ -19,9 +19,9 @@ export default function ImageSlider({ imgpath }) {
 			setCurrentIndex(newIndex);
 		}
 	};
-	console.log(images.length); // 이미지 개수 확인
+	
 	return (
-		<div className="relative w-full flex justify-center items-center overflow-hidden" style={{ zIndex: 2 }}> {/* z-index를 조정 */}
+		<div className="relative w-full flex justify-center items-center overflow-hidden" style={{ zIndex: 0 }}> {/* z-index를 조정 */}
 			{images.length > 1 && (
 				<button onClick={goToPrevious} className="absolute left-0 z-2 inset-y-0 m-auto  bg-opacity-75 text-black text-3xl p-2">
 					&#x276E; {/* 왼쪽 화살표 */}
