@@ -7,9 +7,10 @@ import { AvatarImage, AvatarFallback, Avatar } from "./ui/avatar";
 import React, { useState, useEffect, useRef } from 'react';
 import api from "../../api";
 import Search from './ui/search';
-import { Stomp } from "@stomp/stompjs";
-import webSocketService from '../../services/WebSocketService'; // WebSocketService 경로를 확인하세요
+import webSocketService from '../../services/WebSocketService'; 
 import { BrowserView, MobileView } from 'react-device-detect';
+import DetailModal from './ui/DetailModal';
+
 
 function Message() {
 	const [showTopBtn, setShowTopBtn] = useState(false);
@@ -19,10 +20,10 @@ function Message() {
 	const [messages, setMessages] = useState([]);
 	const [inputMessage, setInputMessage] = useState('');
 	const [showModal, setShowModal] = useState(false);
+	const [share_id, setShare_id] = useState('');
 	const [isChatOptionsVisible, setIsChatOptionsVisible] = useState(false);
-
+	const [isModalOpen, setModalOpen] = useState(false);
 	const [nickname, setNickname] = useState(''); // 초기 상태를 빈 문자열로 설정
-	const [img, setImg] = useState('');
 	const [id, setId] = useState('')
 	const messageEndRef = useRef(null);
 
@@ -41,7 +42,6 @@ function Message() {
 		if (userInfoJSON) {
 			const userInfo = JSON.parse(userInfoJSON);
 			setNickname(userInfo.nickname); // nickname 상태 업데이트
-			setImg(userInfo.img);
 			setId(userInfo.id);
 		}
 	}, []); // 의존성 배열을 빈 배열로 설정하여 컴포넌트 마운트 시에만 실행
@@ -65,7 +65,6 @@ function Message() {
 	useEffect(() => {
 		const connectWebSocket = () => {
 			webSocketService.connect(() => {
-				console.log("Connected to WebSocket server");
 				if (activeView == 'chat') {
 					webSocketService.subscribe(`/api/sub/chat/${selectedChat}`, (message) => {
 						setMessages(prevMessages => [...prevMessages, message]);
@@ -73,6 +72,7 @@ function Message() {
 				}
 				else if ('group') {
 					webSocketService.subscribe(`/api/sub/commChat/${selectedChat}`, (message) => {
+						console.log("grouop");
 						setMessages(prevMessages => [...prevMessages, message]);
 					});
 				}
@@ -192,12 +192,12 @@ function Message() {
 				params: { roomNumber: room.roomNumber },
 				withCredentials: true,
 			});
-			console.log(response.data);
 			setMessages(response.data);
 		} catch (error) {
 			console.error('Error fetching comments:', error);
 		}
 		setSelectedChat(room.roomNumber);
+		
 	};
 
 	const handleGroupSelect = async (room) => {
@@ -229,14 +229,21 @@ function Message() {
 	}
 
 	const handleChange = (room) => {
+		console.log("생성");
+		handleChatSelect(room);
 		setSelectedChat(room.roomNumber);
 	};
 
 	const handleNewRoomCreated = (newRoom) => {
 		handleChat();
-		setSelectedChat(newRoom.roomNumber); // 새 채팅방 선택
+		handleChatSelect(newRoom);
 	};
-
+	
+	const openModal = (message) => {
+        setModalOpen(true);  // Function to open the modal
+        setShare_id(message.share_board_id);  // Set the share_board_id when opening the modal
+    };
+    
 	return (
 		<div className="app">
 			<BrowserView>
@@ -286,9 +293,21 @@ function Message() {
 																<AvatarFallback>{message.id ? message.id[0] : '?'}</AvatarFallback>
 															</Avatar>
 															<div className="max-w-[40%]">
-																<p className={`flex items-start gap-4 ${message.id === id ? 'flex-row-reverse' : 'flex-row'}`}>{message.nickname}</p>
+																<p className={`flex items-start gap-4 ${message.id === id ? 'flex-row-reverse' : 'flex-row'}`}>
+																	<Link to={`/UserPage/${message.id}`}>	
+																		{message.nickname}
+																	</Link>
+																</p>
 																<div className={`rounded-lg p-4 text-sm ${message.id === id ? 'bg-blue-500 text-white' : 'bg-gray-100 dark:bg-gray-800'}`}>
-																	<p>{message.content}</p>
+																	{message.content ? (
+														                <p>{message.content}</p>
+														            ) : (
+														                  <button onClick={() => openModal(message)} 
+														                  className="bg-white text-black border border-black hover:bg-green-500 hover:text-white px-4 
+														                  													py-2 rounded transition duration-150 ease-in-out">
+														                    {message.nickname}님이 공유한 글이에요! 
+														                </button>
+														            )}
 																</div>
 																<div className="text-xs text-gray-500 dark:text-gray-400">{message.date}</div>
 															</div>
@@ -327,7 +346,11 @@ function Message() {
 																	<AvatarFallback>{message.communitychat_id}</AvatarFallback>
 																</Avatar>
 																<div className="max-w-[40%]">
-																	<p className={`flex items-start gap-4 ${message.id === id ? 'flex-row-reverse' : 'flex-row'}`}>{message.nickname}</p>
+																	<p className={`flex items-start gap-4 ${message.id === id ? 'flex-row-reverse' : 'flex-row'}`}>
+																	<Link to={`/UserPage/${message.id}`}>	
+																		{message.nickname}
+																	</Link>
+																	</p>
 																	<div className={`rounded-lg p-4 text-sm ${message.id === id ? 'bg-blue-500 text-white' : 'bg-gray-100 dark:bg-gray-800'}`}>
 																		<p>{message.content}</p>
 																	</div>
@@ -434,6 +457,7 @@ function Message() {
 
 						</main>
 					</div>
+					<DetailModal isOpen={isModalOpen} onClose={() => setModalOpen(false)}  boardId={share_id} />
 					{showTopBtn && (
 						<button
 							className="fixed bottom-10 right-10 bg-white hover:bg-gray-100 text-gray-900 font-bold rounded-full h-12 w-12 flex justify-center items-center border-4 border-gray-900 cursor-pointer"
@@ -450,91 +474,152 @@ function Message() {
 
 
 
-			{/*
+
+
+
+
+   		 {/* /////////////////////// 모바일 뷰 ////////////////////////////*/}
+   		 {/* /////////////////////// 모바일 뷰 ////////////////////////////*/}
+   		 {/* /////////////////////// 모바일 뷰 ////////////////////////////*/}
+   		 {/* /////////////////////// 모바일 뷰 ////////////////////////////*/}
+   		 {/* /////////////////////// 모바일 뷰 ////////////////////////////*/}
+
          <MobileView>
-
-            <div className="flex flex-col h-screen">
-               { Header }
-               <div className="flex h-[60px] items-center border-b px-6">
-                  <Link className="flex items-center gap-2 font-semibold" href="#">
-                     <MessageCircleIcon className="h-6 w-6" />
-                     <span className="">채팅방</span>
-                  </Link>
-
-                  { 오른쪽 탭 }
-                  <div className="ml-auto flex space-x-4">
-                     <Link
-                        className={`flex items-center gap-3 rounded-lg px-2 py-1 transition-all ${activeView === 'chat'
-                           ? 'bg-gray-200 text-gray-900 hover:text-gray-900 dark:bg-gray-800 dark:text-gray-50 dark:hover:text-gray-50'
-                           : 'text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50'
-                           }`}
-                        href="#"
-                        onClick={() => handleChat()}
-                     >
-                        <MessageCircleIcon className="h-3 w-3" />
-                        개인채팅방
-                     </Link>
-                     <Link
-                        className={`flex items-center gap-3 rounded-lg px-2 py-1 transition-all ${activeView === 'group'
-                           ? 'bg-gray-200 text-gray-900 hover:text-gray-900 dark:bg-gray-800 dark:text-gray-50 dark:hover:text-gray-50'
-                           : 'text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50'
-                           }`}
-                        href="#"
-                        onClick={() => handleGroup()}
-                     >
-                        <GroupIcon className="h-3 w-3" />
-                        함께해요
-                     </Link>
-                     <div className="flex justify-left items-left h-full">
-                        <button onClick={() => { setShowModal(true); }} className="px-2 py-1 mt-2 rounded bg-black text-white">
-                           +
-                        </button>
-                     </div>
-                     <hr className="mt-6 mb-2 border-gray-300 dark:border-gray-700" />
-                  </div>
-               </div>
-
-
-
-
-
-               { Chat messages }
-               <div className="flex items-center justify-center h-full">
-                  {selectedChat && messages.length > 0 ? (
-                     <div className="bg-white rounded-lg shadow-lg p-4 w-full max-w-lg h-full overflow-y-auto">
-                        {messages && messages.map(message => (
-                           <div key={message.message_id} className={`flex items-start gap-4 ${message.nickname === nickname ? 'justify-end' : ''}`}>
-                              <Avatar>
-                                 <AvatarImage alt={message.name} src="/placeholder-user.jpg" style={{ width: '50px', height: '50px', objectFit: 'cover' }} />
-                                 <AvatarFallback>{message.room_number[0]}</AvatarFallback>
-                              </Avatar>
-                              <div className="max-w-[40%]">
-                                 <div className={`rounded-lg p-4 text-sm ${message.nickname === nickname ? 'bg-blue-500 text-white' : 'bg-gray-100 dark:bg-gray-800'}`}>
-                                    <p>{message.content}</p>
-                                 </div>
-                                 <div className="text-xs text-gray-500 dark:text-gray-400 mb-4">{message.date}</div>
-                              </div>
-                           </div>
-                        ))}
-                     </div>
-                  ) : (
-                     <div className="flex justify-center items-center h-full">
-                        <p className="text-gray-500">채팅을 시작하세요</p>
-                     </div>
-                  )}
-               </div>
-
-               { Chat input }
-               { 채팅 입력창은 여기에 표시 }
-               <form className="flex items-center bg-gray-200 py-2 px-4" onSubmit={handleSendMessage}>
-                  <Input className="flex-1" placeholder="메세지를 입력하세요..." type="text" value={inputMessage} onChange={e => setInputMessage(e.target.value)} />
-                  <Button size="icon" type="submit" variant="ghost">
-                     <SendIcon className="h-5 w-5" />
-                  </Button>
-               </form>
-            </div>
-         </MobileView>
-*/}
+			<div className="flex flex-col h-screen" >
+			   <div className="flex h-[60px] items-center border-b px-6">
+				  <Link className="flex items-center gap-2 font-semibold" href="#">
+					 <MessageCircleIcon className="h-6 w-6" />
+					 <span className="">채팅방</span>
+				  </Link>
+				  <div className="ml-auto flex space-x-4">
+					 <Link
+						className={`flex items-center gap-3 rounded-lg px-2 py-1 transition-all ${activeView === 'chat'
+						   ? 'bg-gray-200 text-gray-900 hover:text-gray-900 dark:bg-gray-800 dark:text-gray-50 dark:hover:text-gray-50'
+						   : 'text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50'
+						   }`}
+						href="#"
+						onClick={() => handleChat()}
+					 >
+						<MessageCircleIcon className="h-3 w-3" />
+						개인
+					 </Link>
+					 <Link
+						className={`flex items-center gap-3 rounded-lg px-2 py-1 transition-all ${activeView === 'group'
+						   ? 'bg-gray-200 text-gray-900 hover:text-gray-900 dark:bg-gray-800 dark:text-gray-50 dark:hover:text-gray-50'
+						   : 'text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50'
+						   }`}
+						href="#"
+						onClick={() => handleGroup()}
+					 >
+						<GroupIcon className="h-3 w-3" />
+						함께해요
+					 </Link>
+					 <div className="flex justify-left items-left h-full">
+						<button onClick={() => { setShowModal(true); }} className="px-2 py-1 mt-2 rounded bg-black text-white">
+						   +
+						</button>
+					 </div>
+					 <hr className="mt-6 mb-2 border-gray-300 dark:border-gray-700" />
+				  </div>
+			   </div>
+				<div className="overflow-y-auto">
+				  {chatroom && chatroom.length > 0 ? (
+						chatroom.map((room, index) => (
+						  <div key={`${activeView === 'group' ? room.ccjId : room.userchatId}_${index}`} className="p-2">
+							<button
+							  onClick={() => {
+								if (activeView === 'group') {
+								  handleCommChat(room, 'group');  // 그룹 채팅방 선택 처리
+								} else {
+								  handleChatSelect(room, 'private');  // 개인 채팅방 선택 처리
+								}
+							  }}
+							  className={`flex items-center space-x-3 p-2 rounded-lg transition-colors w-full text-left 
+								${selectedChat === room.roomNumber ? 'bg-gray-200' : 'hover:bg-gray-100 dark:hover:bg-gray-800'}`}>
+							  <div className="w-12 h-12 rounded-full overflow-hidden shrink-0">
+								<img src={room.imgpath || room.profile_img || "/placeholder.svg"} alt={room.name} className="w-full h-full object-cover" />
+							  </div>
+							  <span className="text-sm font-medium text-gray-800 dark:text-white">
+								{truncateString(room.roomname, 20)}
+							  </span>
+							</button>
+						  </div>
+						))
+						) : (
+							<div className="flex justify-center items-center h-full">
+								<p className="text-gray-500">채팅방이 없습니다.</p>
+							</div>
+						)
+			} 
+					</div>
+			
+					<div className="flex items-center justify-center h-full">
+						{selectedChat && messages.length > 0 ? (
+							<div className="bg-white rounded-lg shadow-lg p-4 w-full max-w-lg h-full overflow-y-auto">
+								{messages && messages.map((message, index) => (
+									<div key={`${message.message_id}_${index}`}
+										className={`flex items-start gap-4 ${message.id === id ? 'flex-row-reverse' : 'flex-row'}`}>
+										<Avatar>
+											<AvatarImage alt={message.nickname} src={message.profile_img || "/placeholder-user.jpg"}
+												className={`rounded-full ${message.id === id ? 'order-1' : ''}`}
+												style={{
+													width: '50px',
+													height: '50px',
+													objectFit: 'cover'
+												}}
+											/>
+											<AvatarFallback>{message.id ? message.id[0] : '?'}</AvatarFallback>
+										</Avatar>
+										<div className="max-w-[40%]">
+										<p className={`flex items-start gap-4 ${message.id === id ? 'flex-row-reverse' : 'flex-row'}`}>
+											<Link to={`/UserPage/${message.id}`}>	
+												{message.nickname}
+											</Link>
+										</p>
+										<div className={`rounded-lg p-4 text-sm ${message.id === id ? 'bg-blue-500 text-white' : 'bg-gray-100 dark:bg-gray-800'}`}>
+											{message.content ? (
+												<p>{message.content}</p>
+											) : (
+												  <button onClick={() => openModal(message)} 
+												  className="bg-white text-black border border-black hover:bg-green-500 hover:text-white px-4 
+																									  py-2 rounded transition duration-150 ease-in-out">
+													{message.nickname}님이 공유한 글이에요! 
+												</button>
+											)}
+										</div>
+										<div className="text-xs text-gray-500 dark:text-gray-400 mb-4">{message.date}</div>
+									</div>
+								</div>
+								))}
+					 </div>
+				  ) : (
+					 <div className="flex justify-center items-center h-full">
+						<p className="text-gray-500">채팅을 시작하세요</p>
+					 </div>
+				  )}
+				  
+			   </div>
+			
+			   <form className="flex items-center bg-gray-200 py-2 px-4" onSubmit={handleSendMessage}>
+				  <Input className="flex-1" placeholder="메세지를 입력하세요..." type="text" value={inputMessage} onChange={e => setInputMessage(e.target.value)} />
+				  <Button size="icon" type="submit" variant="ghost">
+					 <SendIcon className="h-5 w-5" />
+				  </Button>
+			   </form>
+			   <DetailModal isOpen={isModalOpen} onClose={() => setModalOpen(false)}  boardId={share_id} />
+					{showTopBtn && (
+						<button
+							className="fixed bottom-10 right-10 bg-white hover:bg-gray-100 text-gray-900 font-bold rounded-full h-12 w-12 flex justify-center items-center border-4 border-gray-900 cursor-pointer"
+							onClick={scrollToTop}
+							style={{ width: '50px', height: '50px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}
+						>
+							▲
+						</button>
+					)}
+				<Search isOpen={showModal} onClose={() => setShowModal(false)} onRoomCreated={handleNewRoomCreated} roomList={chatroom} RoomSelectChange={handleChange} />
+			</div>
+			
+			</MobileView>
 
 
 		</div>

@@ -11,7 +11,7 @@ export default function ImageSlider({ imgpath }) {
 			setCurrentIndex(newIndex);
 		}
 	};
-
+	
 	const goToNext = () => {
 		if (images.length > 1) {
 			const isLastImage = currentIndex === images.length - 1;
@@ -19,15 +19,15 @@ export default function ImageSlider({ imgpath }) {
 			setCurrentIndex(newIndex);
 		}
 	};
-
+	console.log(images.length); // 이미지 개수 확인
 	return (
-		<div className="relative w-full flex justify-center items-center overflow-hidden" style={{ zIndex: 1 }}> {/* z-index를 조정 */}
+		<div className="relative w-full flex justify-center items-center overflow-hidden" style={{ zIndex: 2 }}> {/* z-index를 조정 */}
 			{images.length > 1 && (
-				<button onClick={goToPrevious} className="absolute left-0 z-10 inset-y-0 m-auto bg-transparent text-black text-3xl">
-					&#x276E; {/* Left Arrow */}
+				<button onClick={goToPrevious} className="absolute left-0 z-2 inset-y-0 m-auto  bg-opacity-75 text-black text-3xl p-2">
+					&#x276E; {/* 왼쪽 화살표 */}
 				</button>
 			)}
-			<div className="w-full h-auto z-20 flex justify-center items-center">
+			<div className="w-full h-auto z-1 flex justify-center items-center">
 				<img
 					src={images[currentIndex]}
 					alt={`Slide ${currentIndex + 1}`}
@@ -36,8 +36,8 @@ export default function ImageSlider({ imgpath }) {
 				/>
 			</div>
 			{images.length > 1 && (
-				<button onClick={goToNext} className="absolute right-0 z-10 inset-y-0 m-auto bg-transparent text-black text-3xl">
-					&#x276F; {/* Right Arrow */}
+				<button onClick={goToNext} className="absolute right-0 z-2 inset-y-0 m-auto bg-opacity-75 text-black text-3xl p-2">
+					&#x276F; {/* 오른쪽 화살표 */}
 				</button>
 			)}
 		</div>

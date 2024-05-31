@@ -35,7 +35,6 @@ import lombok.RequiredArgsConstructor;
 public class ChatService {
 	private final ChatRepository chatRepository;
 	private final ChatMessageRepository messageRepository;
-	private final UsersRepository uRepository;
 	private final CommuChatRepository commuRepository;
 	private final CommuChatJoinRepository CCJRepository;
 	private final CCMRepository ccmrepository;
@@ -44,7 +43,6 @@ public class ChatService {
 
 	public List<ChatDTO> selectRoom(int userId) {
 		List<ChatEntity> entity = chatRepository.CustomfindById(userId);
-		System.out.println(entity);
 		if (entity != null) {
 			List<ChatDTO> dto = ChatDTO.ToDtoList(entity);
 			return dto;
@@ -64,18 +62,18 @@ public class ChatService {
 
 		for (Integer userId : userIds) {
 			ChatEntity chatUser = new ChatEntity();
-			name = "";
-			for (Integer id : userIds) {
-				if (userId == id)
-					continue;
-				if (name.length() > 0)
-					name += ",";
-				name += uRepository.findNicknameById(id);
-			}
+//			name = "";
+//			for (Integer id : userIds) {
+//				if (userId == id)
+//					continue;
+//				if (name.length() > 0)
+//					name += ",";
+//				name += uRepository.findNicknameById(id);
+//			}
 			chatUser.setRoomNumber(roomNumber);
 			chatUser.setId(userId);
 			chatUser.setJoinId(ids);
-			System.out.println("chatUser : " + chatUser);
+			
 			chatRepository.save(chatUser);
 		}
 		ChatEntity create = chatRepository.findByJoinIdAndId(ids, myId);
@@ -85,7 +83,6 @@ public class ChatService {
 	public ChatDTO findRoom(List<Integer> userIds, int myId) {
 		Collections.sort(userIds);
 		String userIdsString = userIds.stream().map(String::valueOf).collect(Collectors.joining(","));
-		System.out.println(chatRepository.findByJoinIdAndId(userIdsString, myId));
 		ChatEntity selectE = chatRepository.findByJoinIdAndId(userIdsString, myId);
 		if (selectE != null)
 			return ChatDTO.toDTO(selectE);
@@ -109,7 +106,6 @@ public class ChatService {
 
 	public List<ChatMessageDTO> getMessage(String roomNumber) {
 		List<ChatMessageEntity> entity = messageRepository.findByroomNumber(roomNumber);
-		System.out.println(entity);
 		return ChatMessageDTO.ToDtoList(entity);
 	}
 
@@ -147,7 +143,6 @@ public class ChatService {
 
 	public List<CCMDTO> getCommMessage(int communitychat_id) {
 		List<CCMEntity> entity = ccmrepository.findBycommunitychatId(communitychat_id);
-		System.out.println("getCommMessage : " + entity);
 		return CCMDTO.ToDtoList(entity);
 	}
 

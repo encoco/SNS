@@ -4,13 +4,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.hibernate.internal.build.AllowSysOut;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -38,7 +41,7 @@ import lombok.RequiredArgsConstructor;
 public class ChatController {
 	private final JwtUtil jwtUtil;
 	private final ChatService chatService;
-	private final SimpMessageSendingOperations template;
+	private final SimpMessagingTemplate messagingTemplate;
 
 	// 채팅 리스트 반환
 	@MessageMapping("/chat/{roomNumber}")
@@ -55,21 +58,21 @@ public class ChatController {
 
 	@MessageMapping("/commChat/{roomNumber}")
 	@SendTo("/api/sub/commChat/{roomNumber}")
-	public CCMDTO handleCommChatMessage(@DestinationVariable("roomNumber") int roomNumber,
-			@Payload CCMDTO message) {
+	public CCMDTO handleCommChatMessage(@DestinationVariable("roomNumber") int roomNumber, @Payload CCMDTO message) {
 		String token = message.getNickname();
 		message.setCommunitychat_id(roomNumber);
 		message.setId(jwtUtil.getUserIdFromToken(token));
 		message.setNickname(jwtUtil.getNickFromToken(token));
 		return chatService.saveCommChat(message);
 	}
-
+	
 	@GetMapping("/getMessage")
-	public ResponseEntity<?> getMessage(@RequestParam(value = "roomNumber") String roomNumber, HttpServletRequest request) {
+	public ResponseEntity<?> getMessage(@RequestParam(value = "roomNumber") String roomNumber,
+			HttpServletRequest request) {
 		List<ChatMessageDTO> dto = chatService.getMessage(roomNumber);
 		return ResponseEntity.ok(dto);
 	}
-	
+
 	@GetMapping("/getCommMessage")
 	public ResponseEntity<?> getCommMessage(@RequestParam(value = "communitychat_id") String communitychat_id) {
 		List<CCMDTO> dto = chatService.getCommMessage(Integer.parseInt(communitychat_id));
@@ -165,5 +168,34 @@ public class ChatController {
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("selectRoom error");
 		}
+	}
+
+	@PostMapping("/SharePost")
+	public ResponseEntity<?> sharePost(@RequestBody Map<String, Object> requestData, HttpServletRequest request) {
+	    String token = jwtUtil.token(request.getHeader("Authorization"));
+		int userId = jwtUtil.getUserIdFromToken(token);
+		List<Integer> userIds = (List<Integer>) requestData.get("Ids");
+		int board_id = (Integer)requestData.get("board_id");
+		
+		userIds.add(userId);
+		ChatMessageDTO dto = new ChatMessageDTO();
+		dto.setId(userId);
+		dto.setShare_board_id(board_id);
+		ChatDTO cdto = chatService.findRoom(userIds, userId);
+		
+		if (cdto != null) { // 찾아서 있으면 이미 있으니까 그 방으로 넘기기
+			dto.setRoom_number(cdto.getRoomNumber());
+			chatService.saveChat(dto);
+			messagingTemplate.convertAndSend("/api/sub/chat/" + cdto.getRoomNumber(), dto);
+			return ResponseEntity.ok(null);
+		}
+	
+		// 위에서 return 안되면 없으니까 생성하고 생성한 정보 넘기기
+		ChatDTO Chat_DTO = chatService.CreateRoom(userIds, userId); 
+		dto.setRoom_number(Chat_DTO.getRoomNumber());
+		chatService.saveChat(dto);
+		messagingTemplate.convertAndSend("/api/sub/chat/" + Chat_DTO.getRoomNumber(), dto);
+		
+	    return ResponseEntity.ok(null);
 	}
 }

@@ -63,9 +63,9 @@ function LoginPage() {
 			params.append('password', password);
 
 
-			const response = await axios.post('http://13.125.161.122:8080/api/Login', params, {
-				//const response = await axios.post('http://localhost:8080/api/Login', params, {
-				//const response = await axios.post('http://192.168.200.143:8080/api/Login', params, {
+//			const response = await axios.post('http://13.125.161.122:8080/api/Login', params, {
+				const response = await axios.post('http://localhost:8080/api/Login', params, {
+				//const response = await axios.post('http://192.168.200.158:8080/api/Login', params, {
 				headers: {
 					'Content-Type': 'application/x-www-form-urlencoded'
 				},
@@ -84,7 +84,7 @@ function LoginPage() {
 					alert('로그인 중 문제가 발생했습니다. 다시 시도해주세요.');
 				}
 			} else {
-				alert('서버와의 연결에 문제가 발생했습니다.');
+				alert('다시 시도해주세요.');
 			}
 		}
 	};

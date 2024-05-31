@@ -60,10 +60,10 @@ function Sidebar() {
 			</BrowserView>
 			<MobileView>
 				{ /* 모바일 화면에서는 네비게이션 바를 렌더링 */}
-				<div className="fixed bottom-0 left-0 w-full bg-white border-t border-gray-200 flex justify-around p-4" style={{ zIndex: '2' }}>
+				<div className="fixed bottom-0 left-0 w-full bg-white border-t border-gray-200 flex justify-around p-4" style={{ zIndex: '5' }}>
 					<Link className="text-gray-600 hover:bg-gray-200 p-2 rounded text-sm" to="/index">홈</Link>
 					<Link className="text-gray-600 hover:bg-gray-200 p-2 rounded text-sm" state={{ from: location.pathname }} to="/BoardWrite">글쓰기</Link>
-					<Link className="text-gray-600 hover:bg-gray-200 p-2 rounded text-sm" to="/mypage">마이페이지</Link>
+					<Link className="text-gray-600 hover:bg-gray-200 p-2 rounded text-sm" to={`/UserPage/${id}`} >마이페이지</Link>
 					<Link className="text-gray-600 hover:bg-gray-200 p-2 rounded text-sm" to="/Message">메세지</Link>
 					<Link className="text-gray-600 hover:bg-gray-200 p-2 rounded text-sm">환경 설정</Link>
 					<button className="text-gray-600 hover:bg-gray-200 p-2 rounded text-sm" onClick={handleLogout}>로그아웃</button>

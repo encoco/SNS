@@ -161,10 +161,10 @@ public class BoardService {
 	public List<BoardLikeDTO> getfollowLike(List<BoardDTO> posts) {
 		// posts에 있는 게시글들의 ID 목록 가져오기
 		List<Integer> postIds = posts.stream().map(BoardDTO::getBoard_id).collect(Collectors.toList());
-
+		
 		// 가져온 게시글들에 대한 좋아요 정보 조회
 		List<BoardLikeEntity> likeEntities = boardlike.findByBoardIds(postIds);
-
+		
 		// DTO로 변환
 		List<BoardLikeDTO> likeDTOs = BoardLikeDTO.ToDtoList(likeEntities);
 
@@ -173,7 +173,6 @@ public class BoardService {
 
 	// 댓글 조회
 	public List<CommentDTO> getComments(int boardId) {
-		System.out.println(boardId);
 		List<CommentEntity> commentEntities = boardCommentRepository.findByBoardIdOrderByDateDesc(boardId);
 		return CommentEntity.ToDtoList(commentEntities);
 	}
@@ -184,4 +183,16 @@ public class BoardService {
 		boardCommentRepository.delete(board);
 	}
 
+	public BoardDTO getSharePost(int board_id) {
+		BoardEntity entity = boardRepository.findByBoardId(board_id);
+		return BoardDTO.toDTO(entity);
+	}
+
+	public List<BoardLikeDTO> getShareLike(int boardId) {
+			// 해당 userId에 해당하는 글을 찾습니다.
+			List<BoardLikeEntity> likesForPost = boardlike.findByboardId(boardId);
+
+			return BoardLikeDTO.ToDtoList(likesForPost);
+		
+	}
 }

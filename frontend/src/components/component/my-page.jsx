@@ -103,9 +103,7 @@ function Mypage() {
 		<div className='app'>
 			<BrowserView>
 				<div className="flex min-h-screen bg-gray-100">
-
 					<Sidebar />
-
 					<div className="flex flex-col w-full ml-10">
 						<h1 className="text-3xl font-bold mb-5">마이페이지</h1>
 						<div className="grid grid-cols-2 gap-4">

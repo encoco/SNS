@@ -18,4 +18,7 @@ public interface BoardRepository extends JpaRepository<BoardEntity, Integer> {
 								+ "FROM board b JOIN users u ON b.id = u.id WHERE u.id IN :ids ORDER BY b.date DESC", nativeQuery = true)
 	List<BoardEntity> findByIds(@Param("ids") List<Integer> ids);
 
+	@Query(value = "SELECT * FROM board WHERE board_id = :board_id", nativeQuery = true)
+	public BoardEntity findByBoardId(@Param("board_id") int board_id);
+
 }

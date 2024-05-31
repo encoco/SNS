@@ -32,7 +32,8 @@ public class ChatMessageEntity {
 	private String content;
 	private String nickname;
 	private String profile_img;
-
+	private Integer share_board_id;
+	
     @Builder.Default
     private String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm"));
 
@@ -40,6 +41,7 @@ public class ChatMessageEntity {
         return ChatMessageEntity.builder()
         		.message_id(dto.getMessage_id())
                 .roomNumber(dto.getRoom_number())
+                .share_board_id(dto.getShare_board_id())
                 .id(dto.getId())
                 .nickname(dto.getNickname())
                 .content(dto.getContent())
