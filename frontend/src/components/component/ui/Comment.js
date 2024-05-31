@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import api from "../../../api";
-
+import { Link } from "react-router-dom";
+import { BrowserView, MobileView } from "react-device-detect";
 function Comment({ isOpen, onClose, boardId }) {
    const [commentText, setCommentText] = useState('');
    const [commentText2, setCommentText2] = useState('');
@@ -179,7 +180,9 @@ function Comment({ isOpen, onClose, boardId }) {
                            ) : (
                               <>
                                  <div className="flex items-center mb-1">
-                                    <strong>{comment.nickname}</strong>
+								<Link to={`/UserPage/${comment.id}`}>
+										<div className="font-semibold"><strong>{comment.nickname}</strong></div>
+								</Link>
                                     
                                  </div>
                                  <span className="text-gray-600 ">{comment.comment}</span>

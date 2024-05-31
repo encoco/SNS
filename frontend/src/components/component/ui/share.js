@@ -1,22 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import api from "../../../api";
+import webSocketService from '../../../services/WebSocketService';
 
-function Search({ isOpen, onClose, onRoomCreated, roomList , RoomSelectChange}) {
+function Share({ isOpen, onClose, post}) {
 	const [searchTerm, setSearchTerm] = useState('');
 	const [searchResults, setSearchResults] = useState([]);
 	const [selectedUsers, setSelectedUsers] = useState([]);
 
-	
-	const handleSelect = (user) => {
-		setSelectedUsers(prevUsers => {
-			if (prevUsers.includes(user.id)) {
-				return prevUsers.filter(id => id !== user.id);
-			} else {
-				return [...prevUsers, user.id];
-			}
-		});
-	};
+	useEffect(() => {
+        webSocketService.connect(() => {
+            console.log("접속");
+        });
 
+        return () => {
+            webSocketService.client.deactivate(); // 컴포넌트 언마운트시 웹소켓 연결 해제
+        };
+    }, []);
+    
 	useEffect(() => {
 		const fetchSearchResults = async () => {
 			try {
@@ -42,6 +42,16 @@ function Search({ isOpen, onClose, onRoomCreated, roomList , RoomSelectChange}) 
 	if (!isOpen) {
 		return null;
 	}
+	
+	const handleSelect = (user) => {
+		setSelectedUsers(prevUsers => {
+			if (prevUsers.includes(user.id)) {
+				return prevUsers.filter(id => id !== user.id);
+			} else {
+				return [...prevUsers, user.id];
+			}
+		});
+	};
 
 	const handleOverlayClick = () => {
 		setSearchResults(null);
@@ -55,7 +65,8 @@ function Search({ isOpen, onClose, onRoomCreated, roomList , RoomSelectChange}) 
 	};
 
 	const requestData = {
-		id: selectedUsers
+		board_id : post.board_id,
+		Ids : selectedUsers 
 	};
 
 	const handleMake = async () => {
@@ -64,19 +75,11 @@ function Search({ isOpen, onClose, onRoomCreated, roomList , RoomSelectChange}) 
 				alert('유저를 선택해주세요');
 				return;
 			}
-			const response = await api.post(`/CreateRoom`, requestData, {
-				withCredentials: true,
+	        const response = await api.post(`/SharePost`, requestData , {
+			    withCredentials: true
 			});
-			if (response.data["1"]) {		//있을때
-				RoomSelectChange(response.data["1"]);
-				handleOverlayClick(); // 모달 닫기 
-			} else if (response.data["0"]) {//없을때
-				onRoomCreated(response.data["0"]); 
-				handleOverlayClick(); // 모달 닫기
-			} else {
-				alert('다시 시도해주세요.');
-			}
-
+			alert('공유 완료');
+			onClose(); // 모달 닫는 로직
 		} catch (error) {
 			console.log(error);
 		}
@@ -85,7 +88,7 @@ function Search({ isOpen, onClose, onRoomCreated, roomList , RoomSelectChange}) 
 	return (
 		<div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50" onClick={handleOverlayClick}>
 			<div className="bg-white p-6 rounded-lg shadow-lg max-w-lg w-full m-4 z-50 relative overflow-hidden" onClick={handleModalContentClick}>
-				<h2 className="text-xl font-bold mb-4">채팅방 생성</h2>
+				<h2 className="text-xl font-bold mb-4">공유하기</h2>
 				<div className="mb-4 flex">
 					<input
 						type="text"
@@ -95,7 +98,7 @@ function Search({ isOpen, onClose, onRoomCreated, roomList , RoomSelectChange}) 
 						onChange={(e) => setSearchTerm(e.target.value)}
 					/>
 					<button onClick={handleMake} className="bg-black hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
-						생성
+						공유
 					</button>
 				</div>
 				<div className="overflow-y-auto max-h-96">
@@ -128,4 +131,4 @@ function Search({ isOpen, onClose, onRoomCreated, roomList , RoomSelectChange}) 
 	);
 }
 
-export default Search;
+export default Share;

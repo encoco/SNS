@@ -19,4 +19,7 @@ public interface BoardLikeRepository extends JpaRepository<BoardLikeEntity, Inte
 	@Query(value = "SELECT * FROM boardlike WHERE board_id in :ids", nativeQuery = true)
     public List<BoardLikeEntity> findByBoardIds(@Param("ids") List<Integer> ids);
 
+	@Query(value = "SELECT * FROM boardlike WHERE board_id = :board_id", nativeQuery = true)
+	public BoardLikeEntity findByBoardId(@Param("board_id")int boardId);
+
 }

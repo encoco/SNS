@@ -104,8 +104,11 @@ public class TestController {
 		try {
 			String token = jwtutil.token(request.getHeader("Authorization"));
 			profile.setId(jwtutil.getUserIdFromToken(token));
-			String original = jwtutil.getNickFromToken(token); 
-			UsersInfoDTO updatedProfile = Uservice.updateUserProfile(profile, original);
+			System.out.println("넘어온 프로필 : " + profile);
+			if(repository.existsByNickname(profile.getNickname())) {
+				return ResponseEntity.internalServerError().body("닉네임 중복");
+			}
+			UsersInfoDTO updatedProfile = Uservice.updateUserProfile(profile);
 			return ResponseEntity.ok(updatedProfile);
 		} catch (Exception e) {
 			return ResponseEntity.internalServerError().body("프로필 업데이트 실패: " + e.getMessage());

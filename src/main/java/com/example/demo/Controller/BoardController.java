@@ -40,15 +40,13 @@ public class BoardController {
 			String token = jwtUtil.token(request.getHeader("Authorization"));
 			int userId = jwtUtil.getUserIdFromToken(token);
 			List<BoardDTO> posts = boardService.getfollowPost(userId);
-			System.out.println(posts);
 			List<BoardLikeDTO> like = boardService.getfollowLike(posts);
-
 			Map<String, Object> response = new HashMap<>();
 			response.put("posts", posts);
 			response.put("likes", like);
 			return ResponseEntity.ok(response);
 		} catch (Exception e) {
-			System.out.println("서버 오류");
+			System.out.println("mainboardList error");
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("/boardList");
 		}
 	}
@@ -65,7 +63,7 @@ public class BoardController {
 			response.put("userInfo", user);
 			return ResponseEntity.ok(response);
 		} catch (Exception e) {
-			System.out.println("서버 오류");
+			System.out.println("userPosts error");
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("/userPosts");
 		}
 	}
@@ -111,7 +109,7 @@ public class BoardController {
 				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unexpected result");
 			}
 		} catch (Exception e) {
-			System.out.println("error : " + e);
+			System.out.println("boardLike error : " + e);
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("boardLIke");
 		}
 	}
@@ -192,5 +190,24 @@ public class BoardController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("글 삭제 중 오류가 발생했습니다.");
 		}
 	}
-
+	
+	@GetMapping("/findPost")
+	public ResponseEntity<?> findPost(@RequestParam(value = "boardId") int boardId,HttpServletRequest request) {
+		try {
+			String token = jwtUtil.token(request.getHeader("Authorization"));
+			int id = jwtUtil.getUserIdFromToken(token);
+			
+			BoardDTO post = boardService.getSharePost(boardId);
+			List<BoardLikeDTO> like  = boardService.getShareLike(boardId);
+			
+			Map<String, Object> response = new HashMap<>();
+			response.put("posts", post);
+			response.put("likes", like);
+			
+			return ResponseEntity.ok(response);
+			
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("댓글 불러오기 중 오류가 발생했습니다.");
+		}
+	}
 }

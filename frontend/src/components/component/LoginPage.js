@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom'; // useNavigate 훅 임포트
-import { useAuth } from '../../contexts/AuthContext';
 import { Label } from "./ui/label"
 import { Input } from "./ui/input"
 import { Button } from "./ui/button"
@@ -9,7 +8,6 @@ import axios from 'axios';
 function LoginPage() {
 	const [username, setUsername] = useState('');
 	const [password, setPassword] = useState('');
-	const { login } = useAuth();
 	const navigate = useNavigate();
 
 
@@ -20,9 +18,9 @@ function LoginPage() {
 		if (tokensJson) {
 			// 문자열 형태의 JSON을 JavaScript 객체로 파싱
 			const tokenObj = JSON.parse(tokensJson);
-			localStorage.setItem('accesstoken', tokenObj.accessToken);
-			localStorage.setItem('userInfo', JSON.stringify(tokenObj.nickname));
-			const a = JSON.parse(localStorage.getItem('userInfo'));
+			console.log(tokenObj);
+			localStorage.setItem('userInfo', tokenObj.accessToken);
+			localStorage.setItem('nickname', JSON.stringify(tokenObj.nickname));
 			navigate('/index');
 		}
 	}, []);
@@ -42,7 +40,6 @@ function LoginPage() {
 			});
 			localStorage.setItem('userInfo', response.data.accessToken);
 			localStorage.setItem('nickname', JSON.stringify(response.data.nickname));
-			await login(username, password); // 예시 로그인 함수	    
 			alert('로그인 성공');
 			navigate('/index');
 		} catch (error) {
@@ -66,9 +63,9 @@ function LoginPage() {
 			params.append('password', password);
 
 
-			const response = await axios.post('http://13.125.161.122:8080/api/Login', params, {
-				//const response = await axios.post('http://localhost:8080/api/Login', params, {
-				//const response = await axios.post('http://192.168.200.143:8080/api/Login', params, {
+//			const response = await axios.post('http://13.125.161.122:8080/api/Login', params, {
+				const response = await axios.post('http://localhost:8080/api/Login', params, {
+				//const response = await axios.post('http://192.168.200.158:8080/api/Login', params, {
 				headers: {
 					'Content-Type': 'application/x-www-form-urlencoded'
 				},
@@ -76,7 +73,6 @@ function LoginPage() {
 			});
 			localStorage.setItem('userInfo', response.data.accessToken);
 			localStorage.setItem('nickname', JSON.stringify(response.data.nickname));
-			await login(username, password); // 예시 로그인 함수	    
 			alert('로그인 성공');
 			navigate('/index');
 		} catch (error) {
@@ -88,7 +84,7 @@ function LoginPage() {
 					alert('로그인 중 문제가 발생했습니다. 다시 시도해주세요.');
 				}
 			} else {
-				alert('서버와의 연결에 문제가 발생했습니다.');
+				alert('다시 시도해주세요.');
 			}
 		}
 	};

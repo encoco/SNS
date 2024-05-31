@@ -24,7 +24,7 @@ const StyledTextarea = styled.textarea`
 `;
 
 
-function BoardWrite({ isOpen, onRequestClose }) {
+function BoardWrite({ isOpen, onClose, onRequestClose }) {
    const navigate = useNavigate();
    const location = useLocation();
    const [content, setContent] = useState('');
@@ -63,6 +63,10 @@ function BoardWrite({ isOpen, onRequestClose }) {
    // 글 내용이 변경될 때마다 호출되는 함수
    const handleContentChange = (event) => {
       setContent(event.target.value); // 입력된 글 내용을 상태 변수에 반영합니다.
+   };
+	
+	const handleClose = () => {
+      onClose();
    };
 
 
@@ -108,21 +112,29 @@ function BoardWrite({ isOpen, onRequestClose }) {
    const handleButtonClick = () => {
       fileInputRef.current.click();
    };
-
+	const handleOverlayClick = () => {
+      onClose();
+   };
 
    return (
       <Modal
             isOpen={isOpen}
-            onRequestClose={onRequestClose}
+            onRequestClose={() => {
+			    onRequestClose(); // 기존 onRequestClose 호출
+			    handleOverlayClick(); // 추가적으로 handleOverlayClick 호출
+			 }}
             className="fixed inset-0 bg-opacity-50 flex justify-center items-center " 
             overlayClassName="fixed inset-0 bg-opacity-50"
             style={{ zIndex: 50 }}
         >
 
-      <Card className="w-[75vw] max-w-sm mx-auto " style={{ zIndex: 3 }}>
-         <CardHeader>
-            <CardTitle className="text-xl">{post ? '게시글 수정하기' : '새 게시물 만들기'}</CardTitle>
-         </CardHeader>
+	 <Card className="w-[75vw] max-w-sm mx-auto relative" style={{ zIndex: 10 }}> {/* relative 포지셔닝 추가 */}
+	    <CardHeader>
+	        <CardTitle className="text-xl">
+	        {post ? '게시글 수정하기' : '새 게시물 만들기'}     
+	        <button onClick={handleClose} className="absolute top-2 mr-2 right-2 text-2xl font-bold text-gray-800">&times;</button>       
+	        </CardTitle>
+	    </CardHeader>
          <CardContent className="grid gap-4">
             <StyledTextarea className="flex-1" placeholder="게시물 내용을 작성해주세요." value={content} onChange={handleContentChange} />
             <div className="flex flex-col gap-2">
@@ -130,10 +142,6 @@ function BoardWrite({ isOpen, onRequestClose }) {
                <Button size="sm" onClick={handleButtonClick}>
                   <UploadIcon className="h-4 w-4 mr-2" />
                   Add images
-               </Button>
-               <Button size="sm">
-                  <UploadIcon className="h-4 w-4 mr-2" />
-                  Add videos
                </Button>
                {post ? (
                   <>
@@ -160,7 +168,7 @@ function BoardWrite({ isOpen, onRequestClose }) {
          </CardFooter>
       </Card>
       </Modal>
-
+	
    );
 }
 

@@ -1,68 +1,66 @@
-import { Button } from "./ui/button"
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from "react-router-dom";
-import { Input } from "./ui/input"
-import axios from 'axios';
-import { useAuth } from '../../contexts/AuthContext'; // 경로는 실제 구조에 맞게 조정해야 함
+import { Link } from "react-router-dom";
 import api from "../../api";
 import ImageSlider from './ImageSlider'; // ImageSlider 컴포넌트를 import
-import { AvatarImage, AvatarFallback, Avatar } from "./ui/avatar"
 import Sidebar from "./ui/Sidebar";
 import DropdownMenu from './ui/DropdownMenu';
 import Comment from './ui/Comment';
 import { BrowserView, MobileView } from 'react-device-detect';
+import Share from './ui/share';
 
 export default function Component() {
 	const [showTopBtn, setShowTopBtn] = useState(false);
-	const navigate = useNavigate();
-	const { logout } = useAuth();
 	const [posts, setPosts] = useState([]);
 	const [searchTerm, setSearchTerm] = useState('');
 	const [searchResults, setSearchResults] = useState([]);
 	const [likesCount, setLikesCount] = useState([]);
 	const [showModal, setShowModal] = useState(false);
+	const [showShareModal, setShowShareModal] = useState(false);
 	const [currentComments, setCurrentComments] = useState([]);
+	const [currentPost, setCurrentPost] = useState();
 	const [selectedPostId, setSelectedPostId] = useState(null);
 	const [userLikes, setUserLikes] = useState(new Set()); 
 	const [profile, setProfile] = useState('');
-	
-	
-	useEffect(() => {
-		// userInfo에서 nickname을 추출하여 상태에 저장
-		const userInfoJSON = localStorage.getItem('nickname');
-		if (userInfoJSON) {
-			const userInfo = JSON.parse(userInfoJSON);
-			setProfile(userInfo);
-		}
-	}, []); 
+	const [isModalOpen, setModalOpen] = useState(false);
+    const [selectedImageUrl, setSelectedImageUrl] = useState('');
+    
+    
 	
 	// 글 목록 받아오기
 	useEffect(() => {
-		const fetchPosts = async () => {
-			try {
-				// userId를 사용하여 사용자의 게시물을 가져옴
-				const response = await api.get(`/mainboardList`, {
-					withCredentials: true,
-				});
-				setPosts(response.data.posts);
-
-				const likesCount = response.data.likes.reduce((acc, like) => {
-					acc[like.board_id] = (acc[like.board_id] || 0) + 1;
-					return acc;
-				}, {});
-
-				setLikesCount(likesCount);
-
-				// 사용자가 좋아요를 누른 게시물 ID를 Set으로 저장
-				const userLikes = new Set(response.data.likes.filter(like => like.id === parseInt(profile.id)).map(like => like.board_id));
-				setUserLikes(userLikes);
-
-			} catch (error) {
-				console.log(error);
-			}
-		};
-		fetchPosts();
-	}, []);
+	  // profile 상태가 설정된 후 실행되도록 useEffect를 조정
+		 if (!profile) {
+		    const userInfoJSON = localStorage.getItem('nickname');
+		    if (userInfoJSON) {
+		      const userInfo = JSON.parse(userInfoJSON);
+		      setProfile(userInfo);
+		    }
+		  } 
+		else {
+	    const fetchPosts = async () => {
+		      try {
+		        const response = await api.get(`/mainboardList`, {
+		          withCredentials: true,
+		        });
+		        setPosts(response.data.posts);
+		
+		        const likesCount = response.data.likes.reduce((acc, like) => {
+		          acc[like.board_id] = (acc[like.board_id] || 0) + 1;
+		          return acc;
+		        }, {});
+		        setLikesCount(likesCount);
+		
+		        // profile.id를 활용하여 사용자가 좋아요를 누른 게시물 ID를 계산
+		        const userLikes = new Set(response.data.likes.filter(like => like.id === parseInt(profile.id)).map(like => like.board_id));
+		        setUserLikes(userLikes);
+		
+		      } catch (error) {
+		        console.log(error);
+		      }
+		    };
+		    fetchPosts();
+		  }
+	}, [profile]);
 	
 	useEffect(() => {
 		const fetchSearchResults = async () => {
@@ -103,7 +101,7 @@ export default function Component() {
 			console.error('Error fetching comments:', error);
 		}
 	};
-
+	
 	// 스크롤 이벤트 리스너 설정 및 정리
 	useEffect(() => {
 		const handleScroll = () => {
@@ -132,7 +130,6 @@ export default function Component() {
 				withCredentials: true,
 			});
 			if (response.data === "success") {
-				alert('좋아요 추가');
 				setLikesCount(prevLikesCount => ({
 					...prevLikesCount,
 					[boardId]: Math.max((prevLikesCount[boardId] || 0) + 1, 0)
@@ -140,7 +137,6 @@ export default function Component() {
 				setUserLikes(prevLikes => new Set(prevLikes).add(boardId)); // 좋아요 추가
 			}
 			else if (response.data === "fail") {
-				alert('좋아요 삭제');
 				setLikesCount(prevLikesCount => ({
 					...prevLikesCount,
 					[boardId]: Math.max((prevLikesCount[boardId] || 0) - 1, 0)
@@ -222,7 +218,9 @@ export default function Component() {
 														width="40"
 													/>
 													<div className="grid gap-1">
-														<div className="font-semibold">{post.nickname}</div>
+														<Link to={`/UserPage/${post.id}`}>
+															<div className="font-semibold">{post.nickname}</div>
+														</Link>
 														<div className="text-xs text-gray-500 dark:text-gray-400">{post.date}</div>
 													</div>
 												</div>
@@ -249,7 +247,7 @@ export default function Component() {
 													}}>
 													댓글
 												</button>
-												<button className="w-16 h-8">공유하기</button>
+												<button className="w-16 h-8" onClick={() => { setCurrentPost(post);  setShowShareModal(true);}}>공유</button>
 											</div>
 										</div>
 									))}
@@ -258,6 +256,7 @@ export default function Component() {
 						</div>
 
 						<Comment isOpen={showModal} onClose={() => setShowModal(false)} comments={currentComments} boardId={selectedPostId} />
+						<Share isOpen={showShareModal} onClose={() => setShowShareModal(false)} post={currentPost}/>
 						{showTopBtn && (
 							<button
 								className="fixed bottom-10 right-10 bg-white hover:bg-gray-100 text-gray-900 font-bold rounded-full h-12 w-12 flex justify-center items-center border-4 border-gray-900 cursor-pointer"
@@ -327,7 +326,7 @@ export default function Component() {
 												width="40"
 											/>
 											<div className="grid gap-1">
-												<div className="font-semibold">{post.nickname}</div>
+												<Link to={`/UserPage/${post.id}`} key={post.id} className="font-semibold">{post.nickname}</Link>
 												<div className="text-xs text-gray-500 dark:text-gray-400">{post.date}</div>
 											</div>
 										</div>
@@ -362,7 +361,17 @@ export default function Component() {
 					</div>
 					{/* 댓글 모달과 최상단으로 이동하는 버튼 */}
 					<Comment isOpen={showModal} onClose={() => setShowModal(false)} comments={currentComments} boardId={selectedPostId} />
+					{showTopBtn && (
+						<button
+							className="fixed bottom-20 right-10 bg-white hover:bg-gray-100 text-gray-900 font-bold rounded-full h-12 w-12 flex justify-center items-center border-4 border-gray-900 cursor-pointer"
+							onClick={scrollToTop}
+							style={{ width: '50px', height: '50px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}
+						>
+							▲
+						</button>
+					)}
 				</div>
+				
 			</MobileView>
 		</div >
 	);

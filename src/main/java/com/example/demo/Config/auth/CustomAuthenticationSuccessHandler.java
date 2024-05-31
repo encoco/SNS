@@ -1,6 +1,8 @@
 package com.example.demo.Config.auth;
 
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,37 +29,35 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 
 	private final JwtUtil jwtUtil;
 	@Value("${jwt.expirationTime.access}")
-    private long accessExpirationTime;
+	private long accessExpirationTime;
 	@Value("${jwt.expirationTime.refresh}")
-    private long refreshExpirationTime;
+	private long refreshExpirationTime;
 
-    @Override
-    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
-                                        Authentication authentication) throws IOException, ServletException {
-    	Object principal = authentication.getPrincipal();
-        if (principal instanceof PrincipalDetails) {
-        	PrincipalDetails userDetails = (PrincipalDetails) principal;
-        	String accessToken = jwtUtil.generateToken(userDetails,accessExpirationTime); // Access Token ª˝º∫
-            String refreshToken = jwtUtil.generateToken(userDetails,refreshExpirationTime); // Refresh Token ª˝º∫
-            UsersDTO userDTO = userDetails.getUsersDTO();
-            UsersInfoDTO dto = UsersInfoDTO.toInfoDTO(userDTO);
-            
-            ResponseCookie cookie = ResponseCookie.from("refreshToken", refreshToken)
-    	            .httpOnly(true)
-    	            .path("/")
-    	            .build();
-    	    response.setHeader(HttpHeaders.SET_COOKIE, cookie.toString());
-            // Access Token∏∏ JSON ¿¿¥‰¿∏∑Œ π›»Ø
-    	    Map<String, Object> tokenMap = new HashMap<>();
-    	    tokenMap.put("accessToken", accessToken);
-    	    tokenMap.put("nickname", dto); // UsersDTO ∞¥√º∏¶ ±◊¥Î∑Œ √ﬂ∞°
-    	    
-            String tokensJson = new ObjectMapper().writeValueAsString(tokenMap);
-            response.setContentType("application/json;charset=UTF-8");
-            response.getWriter().write(tokensJson); // ≈¨∂Û¿Ãæ∆Æ∑Œ ¿¿¥‰ ¿¸º€
-            if(userDTO.getRole().equals("ROLE_USER_SNS")) {
-            	response.sendRedirect("http://localhost:3000/?tokensJson=" + tokensJson);
-            }
-        }
-    }
+	@Override
+	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
+			Authentication authentication) throws IOException, ServletException {
+		Object principal = authentication.getPrincipal();
+		if (principal instanceof PrincipalDetails) {
+			PrincipalDetails userDetails = (PrincipalDetails) principal;
+			String accessToken = jwtUtil.generateToken(userDetails, accessExpirationTime); // Access Token ÏÉùÏÑ±
+			String refreshToken = jwtUtil.generateToken(userDetails, refreshExpirationTime); // Refresh Token ÏÉùÏÑ±
+			UsersDTO userDTO = userDetails.getUsersDTO();
+			UsersInfoDTO dto = UsersInfoDTO.toInfoDTO(userDTO);
+
+			ResponseCookie cookie = ResponseCookie.from("refreshToken", refreshToken).httpOnly(true).path("/").build();
+			response.setHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+			// Access TokenÎßå JSON ÏùëÎãµÏúºÎ°ú Î∞òÌôò
+			Map<String, Object> tokenMap = new HashMap<>();
+			tokenMap.put("accessToken", accessToken);
+			tokenMap.put("nickname", dto); // UsersDTO Í∞ùÏ≤¥Î•º Í∑∏ÎåÄÎ°ú Ï∂îÍ∞Ä
+
+			String tokensJson = new ObjectMapper().writeValueAsString(tokenMap);
+			response.setContentType("application/json;charset=UTF-8");
+			response.getWriter().write(tokensJson); // ÌÅ¥ÎùºÏù¥Ïñ∏Ìä∏Î°ú ÏùëÎãµ Ï†ÑÏÜ°
+			if (userDTO.getRole().equals("ROLE_USER_SNS")) {
+				String encodedTokensJson = URLEncoder.encode(tokensJson, StandardCharsets.UTF_8.toString());
+				response.sendRedirect("http://localhost:3000/?tokensJson=" + encodedTokensJson);
+			}
+		}
+	}
 }
