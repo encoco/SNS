@@ -12,7 +12,7 @@ public interface BoardRepository extends JpaRepository<BoardEntity, Integer> {
 	
 	public List<BoardEntity> findByidOrderByDateDesc(int id);
 
-	@Query(value = "SELECT b.board_id, b.id, b.nickname, u.profile_img, b.img, b.video, b.content, b.date  "
+	@Query(value = "SELECT b.board_id, b.id, u.nickname, u.profile_img, b.img, b.video, b.content, b.date  "
 								+ "FROM board b JOIN users u ON b.id = u.id WHERE u.id IN :ids ORDER BY b.date DESC", nativeQuery = true)
 	List<BoardEntity> findByIds(@Param("ids") List<Integer> ids);
 

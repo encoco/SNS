@@ -26,19 +26,14 @@ export default function Component() {
 	const [userLikes, setUserLikes] = useState(new Set()); 
 	const [profile, setProfile] = useState('');
 	
-	
-	useEffect(() => {
-		// userInfo에서 nickname을 추출하여 상태에 저장
-		const userInfoJSON = localStorage.getItem('nickname');
-		if (userInfoJSON) {
-			const userInfo = JSON.parse(userInfoJSON);
-			setProfile(userInfo);
-		}
-	}, []); 
-	
 	// 글 목록 받아오기
 	useEffect(() => {
-		const fetchPosts = async () => {
+			const fetchPosts = async () => {
+				const userInfoJSON = localStorage.getItem('nickname');
+			if (userInfoJSON) {
+				const userInfo = JSON.parse(userInfoJSON);
+				setProfile(userInfo);
+			}
 			try {
 				// userId를 사용하여 사용자의 게시물을 가져옴
 				const response = await api.get(`/mainboardList`, {
@@ -52,7 +47,6 @@ export default function Component() {
 				}, {});
 
 				setLikesCount(likesCount);
-
 				// 사용자가 좋아요를 누른 게시물 ID를 Set으로 저장
 				const userLikes = new Set(response.data.likes.filter(like => like.id === parseInt(profile.id)).map(like => like.board_id));
 				setUserLikes(userLikes);

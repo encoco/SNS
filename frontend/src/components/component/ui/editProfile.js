@@ -6,7 +6,7 @@ function EditProfile({ Open, Close, userInfo }) {
 	const [profilePicPreview, setProfilePicPreview] = useState('');
 	const [nickname, setNickname] = useState("");
 	const [statusMessage, setStatusMessage] = useState("");
-
+	
 	useEffect(() => {
 		setNickname(userInfo.nickname);
 		setStatusMessage(userInfo.state_message);
