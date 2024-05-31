@@ -22,66 +22,62 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class UsersService {
-	 private final UsersRepository usersRepository;
-	 private final followRepository fRepository;
-	 private final PasswordEncoder passwordEncoder;
-	 private final BoardService bservice;
-	 
-	 
-    public boolean isUserIdDuplicate(String username) {
-        return usersRepository.existsByUsername(username);
-    }
+	private final UsersRepository usersRepository;
+	private final followRepository fRepository;
+	private final PasswordEncoder passwordEncoder;
+	private final BoardService bservice;
 
-    public String registerUser(UsersDTO user) {
-        // 비밀번호 암호화
-        String encodedPassword = passwordEncoder.encode(user.getPassword());
-        user.setPassword(encodedPassword);
-        UsersEntity entity = UsersEntity.toEntity(user);
-        // 암호화된 비밀번호와 함께 사용자 정보 저장
-        UsersEntity savedEntity = usersRepository.save(entity);
-        // 저장된 엔티티의 ID 반환
-        return String.valueOf(savedEntity.getUsername()); // getUserId()가 사용자 ID를 반환한다고 가정
-    }
+	public boolean isUserIdDuplicate(String username) {
+		return usersRepository.existsByUsername(username);
+	}
 
-    public String findbyId(UsersDTO user) {
-        UsersEntity foundUser = usersRepository.findByUsername(user.getUsername());
+	public String registerUser(UsersDTO user) {
+		// 비밀번호 암호화
+		String encodedPassword = passwordEncoder.encode(user.getPassword());
+		user.setPassword(encodedPassword);
+		UsersEntity entity = UsersEntity.toEntity(user);
+		// 암호화된 비밀번호와 함께 사용자 정보 저장
+		UsersEntity savedEntity = usersRepository.save(entity);
+		// 저장된 엔티티의 ID 반환
+		return String.valueOf(savedEntity.getUsername()); // getUserId()가 사용자 ID를 반환한다고 가정
+	}
 
-        if (foundUser != null) {
-            String encodedPassword = foundUser.getPassword(); // 데이터베이스에서 가져온 인코딩된 비밀번호
-            if (passwordEncoder.matches(user.getPassword(), encodedPassword)) {
-                return foundUser.getUsername(); //성공
-            }
-			else {
-				return null; //비번 틀림
+	public String findbyId(UsersDTO user) {
+		UsersEntity foundUser = usersRepository.findByUsername(user.getUsername());
+
+		if (foundUser != null) {
+			String encodedPassword = foundUser.getPassword(); // 데이터베이스에서 가져온 인코딩된 비밀번호
+			if (passwordEncoder.matches(user.getPassword(), encodedPassword)) {
+				return foundUser.getUsername(); // 성공
+			} else {
+				return null; // 비번 틀림
 			}
-        }
-		else {
-			return null;//계정 없음
+		} else {
+			return null;// 계정 없음
 		}
-    }
+	}
 
-    public List<SearchDTO> searchUsers(String searchTerm){
-    	List<UsersEntity> entity = usersRepository.findBynicknameContaining(searchTerm);
-    	List<SearchDTO> dto = SearchDTO.toSearchDTO(entity);
+	public List<SearchDTO> searchUsers(String searchTerm) {
+		List<UsersEntity> entity = usersRepository.findBynicknameContaining(searchTerm);
+		List<SearchDTO> dto = SearchDTO.toSearchDTO(entity);
 
-    	return dto;
-    }
+		return dto;
+	}
 
 	public SearchDTO userInfo(int userId) {
 		UsersEntity entity = usersRepository.findById(userId)
-											.orElseThrow(() -> new RuntimeException("User not found with ID: " + userId));
-    	SearchDTO dto = SearchDTO.toDTO(entity);
+				.orElseThrow(() -> new RuntimeException("User not found with ID: " + userId));
+		SearchDTO dto = SearchDTO.toDTO(entity);
 
-    	return dto;
+		return dto;
 	}
 
 	public String followUser(int userId, int myId) {
-		followEntity entity = fRepository.findByFollowerIdAndFollowingId(myId,userId);
-		if(entity != null) {
-			fRepository.delete(entity);			
+		followEntity entity = fRepository.findByFollowerIdAndFollowingId(myId, userId);
+		if (entity != null) {
+			fRepository.delete(entity);
 			return "del";
-		}
-		else {
+		} else {
 			followDTO dto = new followDTO();
 			dto.setFollowerId(myId);
 			dto.setFollowingId(userId);
@@ -92,16 +88,21 @@ public class UsersService {
 	}
 
 	@Transactional
-	public UsersInfoDTO updateUserProfile(UsersDTO profile, String nickname) {
-		UsersEntity entity = usersRepository.findByNickname(nickname);
-		entity.setNickname(profile.getNickname());
-		entity.setState_message(profile.getState_message());
-		if(profile.getImgpath() != null) {
-			entity.setProfile_img(bservice.uploadFile(profile.getImgpath(), "userProfile"));
+	public UsersInfoDTO updateUserProfile(UsersDTO profile) {
+		try {
+			UsersEntity entity = usersRepository.findByNickname(profile.getOriginal());
+			entity.setNickname(profile.getNickname());
+			entity.setState_message(profile.getState_message());
+			if (profile.getImgpath() != null) {
+				entity.setProfile_img(bservice.uploadFile(profile.getImgpath(), "userProfile"));
+			}
+			usersRepository.save(entity);
+			UsersInfoDTO dto = UsersInfoDTO.toInfoDTO(entity);
+			return dto;
+
+		} catch (Exception e) {
+			System.out.println(e);
 		}
-		usersRepository.save(entity);
-		
-		UsersInfoDTO dto = UsersInfoDTO.toInfoDTO(entity);
-		return dto;
+		return null;
 	}
 }
