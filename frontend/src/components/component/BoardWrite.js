@@ -35,7 +35,6 @@ function BoardWrite({ isOpen, onClose, onRequestClose }) {
    const [post] = useState(location.state?.post || null);
 
    useEffect(() => {
-      console.log(post);
       if (post) {
          setContent(post.content || '');
       } else {
@@ -123,12 +122,12 @@ function BoardWrite({ isOpen, onClose, onRequestClose }) {
 			    onRequestClose(); // 기존 onRequestClose 호출
 			    handleOverlayClick(); // 추가적으로 handleOverlayClick 호출
 			 }}
-            className="fixed inset-0 bg-opacity-50 flex justify-center items-center " 
+            className="fixed inset-0 bg-opacity-50 flex justify-center items-center z-10" 
             overlayClassName="fixed inset-0 bg-opacity-50"
-            style={{ zIndex: 50 }}
+            style={{ zIndex: 12 }}
         >
 
-	 <Card className="w-[75vw] max-w-sm mx-auto relative" style={{ zIndex: 10 }}> {/* relative 포지셔닝 추가 */}
+	 <Card className="w-[75vw] max-w-sm mx-auto relative" style={{ zIndex: 50 }}> {/* relative 포지셔닝 추가 */}
 	    <CardHeader>
 	        <CardTitle className="text-xl">
 	        {post ? '게시글 수정하기' : '새 게시물 만들기'}     

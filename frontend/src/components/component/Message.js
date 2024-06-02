@@ -54,7 +54,6 @@ function Message() {
 				const response = await api.get(`/selectRoom`, {
 					withCredentials: true,
 				});
-				console.log(response.data);
 				setChatRoom(response.data === "채팅방 없음" ? [] : response.data);
 			} catch (error) {
 				console.log(error);
@@ -73,7 +72,6 @@ function Message() {
 				}
 				else if ('group') {
 					webSocketService.subscribe(`/api/sub/commChat/${selectedChat}`, (message) => {
-						console.log("grouop");
 						setMessages(prevMessages => [...prevMessages, message]);
 					});
 				}
@@ -152,7 +150,6 @@ function Message() {
 				params: { communitychat_id: room.roomNumber },
 				withCredentials: true,
 			});
-			console.log(response.data);
 			setMessages(response.data);
 		} catch (error) {
 			console.error('Error fetching comments:', error);
@@ -180,7 +177,6 @@ function Message() {
 			const response = await api.get(`/selectCommuRoom`, {
 				withCredentials: true,
 			});
-			console.log("탭선탟  ", response.data);
 			setChatRoom(response.data);
 		} catch (error) {
 			setChatRoom([]); // 오류 시 빈 배열로 초기화
@@ -209,7 +205,6 @@ function Message() {
 		try {
 			setActiveView('group');
 			setMessages([]);// 채팅방 변경 시 메시지 초기화
-			console.log(room);
 			const response = await api.get(`/getCommMessage`, {
 				params: { communitychat_id: room.communitychatId },
 				withCredentials: true,
@@ -233,8 +228,7 @@ function Message() {
 
 	}
 
-	const handleChange = (room) => {
-		console.log("생성");
+	const handleChange = (room) => {		
 		handleChatSelect(room);
 		setSelectedChat(room.roomNumber);
 	};

@@ -1,21 +1,20 @@
 import { AvatarImage, AvatarFallback, Avatar } from "./avatar"
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from '../../../contexts/AuthContext'; // 경로는 실제 구조에 맞게 조정해야 함
 import React, { useState, useEffect } from 'react';
 import { BrowserView, MobileView } from "react-device-detect";
 import BoardWrite from '../BoardWrite'; 
-
+import Alarm from "./alarm.js";
 
 // Define the Sidebar component
 function Sidebar() {
    const navigate = useNavigate();
-   const location = useLocation();
    const { logout } = useAuth();
    const [nickname, setNickname] = useState(''); // 초기 상태를 빈 문자열로 설정
    const [img,setImg] = useState('');
    const [id,setId] = useState('');
    const [isModalOpen, setIsModalOpen] = useState(false); 
-
+   const [alarmModal,setAlarmModal] = useState(false);
    
     useEffect(() => {
         // userInfo에서 nickname을 추출하여 상태에 저장
@@ -37,7 +36,11 @@ function Sidebar() {
          alert('다시 시도해주세요.');
       }
    };
+	
 
+	const openAlarmModal = () => setAlarmModal(true);
+    const closeAlarmModal = () => setAlarmModal(false);
+	
    const openModal = () => setIsModalOpen(true);
     const closeModal = () => setIsModalOpen(false);
 
@@ -55,15 +58,17 @@ function Sidebar() {
                   <p className="text-sm text-gray-600">팔로워: 123 · 팔로잉: 123</p>
                </div>
                <div className="mt-10 flex flex-col">
-                  <Link className="text-gray-600 hover:bg-gray-200 p-2 rounded" to="/index">홈</Link>
-                  <Link className="text-gray-600 hover:bg-gray-200 p-2 rounded" onClick={openModal}>글쓰기</Link>
-                  <Link className="text-gray-600 hover:bg-gray-200 p-2 rounded" to={`/UserPage/${id}`} >마이페이지</Link>
-                  <Link className="text-gray-600 hover:bg-gray-200 p-2 rounded" to="/Message">메세지</Link>
-                  <Link className="text-gray-600 hover:bg-gray-200 p-2 rounded">환경 설정</Link>
-                  <button className="text-gray-600 hover:bg-gray-200 p-2 rounded" onClick={handleLogout}>로그아웃</button>
+                  <Link className="text-gray-600 hover:bg-gray-200 p-2 rounded mb-2" to="/index">홈</Link>
+                  <Link className="text-gray-600 hover:bg-gray-200 p-2 rounded mb-2" onClick={openModal}>글쓰기</Link>
+                  <Link className="text-gray-600 hover:bg-gray-200 p-2 rounded mb-2" to={`/UserPage/${id}`} >마이페이지</Link>
+                  <Link className="text-gray-600 hover:bg-gray-200 p-2 rounded mb-2" to="/Message">메세지</Link>
+                  <button className="text-gray-600 hover:bg-gray-200 p-2 mb-2 rounded flex justify-start" onClick={() =>{openAlarmModal();}}>알림</button>
+                  <Link className="text-gray-600 hover:bg-gray-200 p-2 rounded mb-2">환경 설정</Link>
+                  <button className="text-gray-600 hover:bg-gray-200 p-2 mb-2 rounded flex justify-start" onClick={handleLogout}>로그아웃</button>
                </div>
             </div>
             <BoardWrite isOpen={isModalOpen} onRequestClose={closeModal} onClose={closeModal} />
+            {alarmModal && <Alarm isOpen={alarmModal} onClose={closeAlarmModal} />}
          </BrowserView>
          
          

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import api from "../../../api";
 import { Link } from "react-router-dom";
 import { BrowserView, MobileView } from "react-device-detect";
+
 function Comment({ isOpen, onClose, boardId }) {
    const [commentText, setCommentText] = useState('');
    const [commentText2, setCommentText2] = useState('');
@@ -18,12 +19,10 @@ function Comment({ isOpen, onClose, boardId }) {
 
    const fetchComments = async () => {
       try {
-		  console.log(boardId);
          const response = await api.get(`/getComments`, {
             params: { boardId },
             withCredentials: true,
          });
-         console.log(response.data);
          setComments(response.data);
       } catch (error) {
          console.error('Error fetching comments:', error);
@@ -114,7 +113,7 @@ function Comment({ isOpen, onClose, boardId }) {
       }
    };
 
-   const handleEditCancel = (commentId) => {
+   const handleEditCancel = () => {
       setEditCommentId(null);
       setCommentText2(originalCommentText); // 이전에 저장한 댓글 내용으로 복구
    };
@@ -168,7 +167,7 @@ function Comment({ isOpen, onClose, boardId }) {
                <ul>
                   {comments && Array.isArray(comments) && comments.map(comment => (
                      <li key={comment.comment_id} className="mt-1 flex items-center relative">
-                        <img src={comment.profile_img} alt="Profile" className="w-10 h-10 rounded-full mr-3" />
+                        <img src={comment.profile_img ? comment.profile_img : "/placeholder.svg"} alt="Profile" className="w-10 h-10 rounded-full mr-3" />
                         <div className="flex flex-col flex-grow">
                            {editCommentId === comment.comment_id ? (
                               <input
@@ -197,7 +196,7 @@ function Comment({ isOpen, onClose, boardId }) {
                               <button onClick={() => handleEditConfirm(comment)} className="ml-2 text-gray-500">
                                  확인
                               </button>
-                              <button onClick={() => handleEditCancel(comment.comment_id)} className="ml-2 text-gray-500">
+                              <button onClick={() => handleEditCancel()} className="ml-2 text-gray-500">
                                  취소
                               </button>
                            </>

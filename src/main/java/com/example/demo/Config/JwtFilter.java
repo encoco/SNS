@@ -22,11 +22,10 @@ public class JwtFilter extends GenericFilterBean {
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
-		System.out.println("filter in");
 		HttpServletResponse httpResponse = (HttpServletResponse) response;
 		HttpServletRequest httpRequest = (HttpServletRequest) request;
 		String requestURI = httpRequest.getRequestURI();
-		if (requestURI.startsWith("/api/Login") || requestURI.startsWith("/api/Logout") || requestURI.startsWith("/") 
+		if (requestURI.startsWith("/api/Login") || requestURI.startsWith("/api/Logout") //|| requestURI.startWith("/") 
 				|| requestURI.startsWith("/api/checkId") ||   requestURI.startsWith("/api/Signup") || requestURI.startsWith("/api/ws")) {
 			chain.doFilter(request, response);
 			return;

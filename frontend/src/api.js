@@ -1,8 +1,8 @@
 import axios from 'axios'
 
 const api = axios.create({ //기본 요청 주소
-	//baseURL: 'http://localhost:8080/api', 
-	baseURL: 'http://13.125.161.122:8080/api',
+	baseURL: 'http://localhost:8080/api', 
+	//baseURL: 'http://13.125.161.122:8080/api',
 	//baseURL: 'http://192.168.200.158:8080/api',
 	headers: {
 		"Content-Type": "application/json",
@@ -26,8 +26,8 @@ api.interceptors.response.use( //맨처음 요청에서 오류나면 실행되�
 			originalRequest._retry = true; // 재시도 플래그를 설정하여 무한 반복 방지
 			try {
 				// '/api/refresh' 엔드포인트를 호출하여 새 액세스 토큰을 요청
-				//const { data } = await axios.post('http://localhost:8080/api/refresh', {}, { withCredentials: true });
-				const { data } = await axios.post('http://13.125.161.122:8080/api/refresh', {}, { withCredentials: true });
+				const { data } = await axios.post('http://localhost:8080/api/refresh', {}, { withCredentials: true });
+				//const { data } = await axios.post('http://13.125.161.122:8080/api/refresh', {}, { withCredentials: true });
 				localStorage.setItem('userInfo', data);
 				// 오리지널 요청에 새 토큰을 설정하고 요청을 다시 시도
 				originalRequest.headers['Authorization'] = `Bearer ${data}`;
@@ -35,9 +35,8 @@ api.interceptors.response.use( //맨처음 요청에서 오류나면 실행되�
 			} catch (refreshError) {
 				console.log('refreshError', refreshError);
 				try {
-					axios.get('http://localhost:8080/api/Logout', {
-						withCredentials: true
-					});
+					axios.get('http://localhost:8080/api/Logout', {withCredentials: true});
+					//axios.get('http://13.125.161.122:8080/api/Logout', {}, { withCredentials: true });
 					// 여기서 응답 처리
 					localStorage.removeItem('userInfo'); // 세션 스토리지에서 사용자 정보 제거
 					alert("다시 로그인해주세요.");

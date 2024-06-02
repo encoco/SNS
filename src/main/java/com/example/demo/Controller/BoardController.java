@@ -92,14 +92,15 @@ public class BoardController {
 	}
 
 	@GetMapping("/boardLike")
-	public ResponseEntity<?> boardLike(@RequestParam(value = "boardId") int boardId, HttpServletRequest request) {
+	public ResponseEntity<?> boardLike(@RequestParam(value = "boardId") int boardId,
+			@RequestParam(value = "writerId") int writerId, HttpServletRequest request) {
 		try {
 			String token = jwtUtil.token(request.getHeader("Authorization"));
 			int userId = jwtUtil.getUserIdFromToken(token);
 			BoardLikeDTO dto = new BoardLikeDTO();
 			dto.setBoard_id(boardId);
 			dto.setId(userId);
-			int result = boardService.boardLike(dto);
+			int result = boardService.boardLike(dto,writerId);
 
 			if (result == 0) {
 				return ResponseEntity.ok("fail");

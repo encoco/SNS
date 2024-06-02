@@ -17,7 +17,6 @@ const DetailModal = ({ isOpen, onClose, boardId }) => {
 		if (!isOpen) {
 			return;
 		}
-
 		const fetchPosts = async () => {
 			try {
 				const response = await api.get(`/findPost?boardId=${boardId}`, {
@@ -45,36 +44,34 @@ const DetailModal = ({ isOpen, onClose, boardId }) => {
 	const handleOverlayClick = () => onClose();
 	const handleModalContentClick = (e) => e.stopPropagation();
 	
-	const LikeHandler = async (boardId) => {
-      try {
-         const response = await api.get(`/boardLike?boardId=${boardId}`, {
-            withCredentials: true,
-         });
-         if (response.data === "success") {
-            alert('좋아요 추가');
-            setLikesCount(prevLikesCount => ({
-               ...prevLikesCount,
-               [boardId]: Math.max((prevLikesCount[boardId] || 0) + 1, 0)
-            }));
-            setUserLikes(prevLikes => new Set(prevLikes).add(boardId)); // 좋아요 추가
-         }
-         else if (response.data === "fail") {
-            alert('좋아요 삭제');
-            setLikesCount(prevLikesCount => ({
-               ...prevLikesCount,
-               [boardId]: Math.max((prevLikesCount[boardId] || 0) - 1, 0)
-            }));
-            setUserLikes(prevLikes => {
-               const newLikes = new Set(prevLikes);
-               newLikes.delete(boardId); // 좋아요 삭제
-               return newLikes;
-            });
-         }
-      } catch (error) {
-         console.log(error);
-         alert('다시 시도해주세요');
-      }
-   };
+	const LikeHandler = async (boardId,writerId) => {
+		try {
+			const response = await api.get(`/boardLike?boardId=${boardId}&writerId=${writerId}`, {
+				withCredentials: true,
+			});
+			if (response.data === "success") {
+				setLikesCount(prevLikesCount => ({
+					...prevLikesCount,
+					[boardId]: Math.max((prevLikesCount[boardId] || 0) + 1, 0)
+				}));
+				setUserLikes(prevLikes => new Set(prevLikes).add(boardId)); // 좋아요 추가
+			}
+			else if (response.data === "fail") {
+				setLikesCount(prevLikesCount => ({
+					...prevLikesCount,
+					[boardId]: Math.max((prevLikesCount[boardId] || 0) - 1, 0)
+				}));
+				setUserLikes(prevLikes => {
+					const newLikes = new Set(prevLikes);
+					newLikes.delete(boardId); // 좋아요 삭제
+					return newLikes;
+				});
+			}
+		} catch (error) {
+			console.log(error);
+			alert('다시 시도해주세요');
+		}
+	};
    
 	if (!isOpen) {
 		return null;
@@ -113,7 +110,7 @@ const DetailModal = ({ isOpen, onClose, boardId }) => {
 								<button
 									className="w-10 h-8"
 									style={{ color: userLikes.has(post.board_id) ? "red" : "inherit" }} // 좋아요 상태에 따라 색상 변경
-									onClick={() => LikeHandler(post.board_id)}
+									onClick={() => LikeHandler(post.board_id,post.id)}
 								>
 									{likesCount[post.board_id] > 0 ? `${likesCount[post.board_id]} ❤` : '0 ❤'}
 								</button>

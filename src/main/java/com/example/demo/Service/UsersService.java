@@ -6,13 +6,16 @@ import java.util.Optional;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.example.demo.DTO.AlarmDTO;
 import com.example.demo.DTO.SearchDTO;
 import com.example.demo.DTO.UsersDTO;
 import com.example.demo.DTO.UsersInfoDTO;
 import com.example.demo.DTO.followDTO;
+import com.example.demo.Repository.AlarmRepository;
 import com.example.demo.Repository.BoardRepository;
 import com.example.demo.Repository.UsersRepository;
 import com.example.demo.Repository.followRepository;
+import com.example.demo.entity.AlarmEntity;
 import com.example.demo.entity.UsersEntity;
 import com.example.demo.entity.followEntity;
 
@@ -24,6 +27,7 @@ import lombok.RequiredArgsConstructor;
 public class UsersService {
 	private final UsersRepository usersRepository;
 	private final followRepository fRepository;
+	private final AlarmRepository alarmRepository;
 	private final PasswordEncoder passwordEncoder;
 	private final BoardService bservice;
 
@@ -72,6 +76,7 @@ public class UsersService {
 		return dto;
 	}
 
+	@Transactional
 	public String followUser(int userId, int myId) {
 		followEntity entity = fRepository.findByFollowerIdAndFollowingId(myId, userId);
 		if (entity != null) {
@@ -82,6 +87,17 @@ public class UsersService {
 			dto.setFollowerId(myId);
 			dto.setFollowingId(userId);
 			entity = followEntity.toEntity(dto);
+			Optional<AlarmEntity> existingAlarm = alarmRepository.findByCriteria(userId, myId,"님이 팔로우하셨습니다.",0);
+			if (!existingAlarm.isPresent()  && userId != myId ) {
+	            AlarmEntity alarmEntity = new AlarmEntity();
+	            UsersEntity recipient = new UsersEntity();
+	            recipient.setId(myId);
+	            alarmEntity.setRecipientId(userId);
+	            alarmEntity.setSender(recipient);
+	            alarmEntity.setContent("님이 팔로우하셨습니다.");
+
+	            alarmRepository.save(alarmEntity);
+			}
 			fRepository.save(entity);
 			return "add";
 		}
@@ -105,4 +121,15 @@ public class UsersService {
 		}
 		return null;
 	}
+
+	public List<AlarmDTO> getAlarm(int id) {
+		List<AlarmEntity> entity = alarmRepository.findByRecipientIdOrderByDateDesc(id);
+		return AlarmDTO.toDtoList(entity);
+	}
+
+	public void delAllAlarm(int id) {
+		List<AlarmEntity> entity = alarmRepository.findByRecipientId(id);
+		alarmRepository.deleteAll(entity);
+	}
 }
+
