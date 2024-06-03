@@ -75,6 +75,7 @@ public class BoardController {
 			String token = jwtUtil.token(request.getHeader("Authorization"));
 			int userId = jwtUtil.getUserIdFromToken(token);
 			String nickname = jwtUtil.getNickFromToken(token);
+			
 			BoardDTO boardDTO = new BoardDTO();
 			boardDTO.setId(userId);
 			boardDTO.setNickname(nickname);
@@ -144,27 +145,36 @@ public class BoardController {
 
 	@PostMapping("/boardUpdate")
 	public ResponseEntity<?> UpdateBoard(@RequestParam("content") String content,
-			@RequestParam(value = "img", required = false) List<MultipartFile> imgs,
-			@RequestParam(value = "imgpath", required = false) String imgpath, @RequestParam("board_id") int board_id,
-			HttpServletRequest request) {
-		try {
-			BoardDTO boardDTO = new BoardDTO();
-			boardDTO.setBoard_id(board_id);
-			boardDTO.setContent(content);
-			if(imgpath != null && !imgpath.isEmpty()) {
-				boardDTO.setImgpath(imgpath);
-			}
-			if (imgs != null && !imgs.isEmpty()) {
-				boardDTO.setImg(imgs); // 여러 이미지 파일 설정
-			}
-			System.out.println(boardDTO);
-			boardService.updatePost(boardDTO);
-			return ResponseEntity.ok("수정 완료");
-		} catch (Exception e) {
-			System.out.println(e);
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("글 update.");
-		}
+	                                     @RequestParam(value = "img", required = false) List<MultipartFile> imgs,
+	                                     @RequestParam(value = "imgpath", required = false) String imgpath, 
+	                                     @RequestParam("board_id") int board_id,
+	                                     HttpServletRequest request) {
+	    try {
+	        BoardDTO boardDTO = new BoardDTO();
+	        boardDTO.setBoard_id(board_id);
+	        boardDTO.setContent(content);
+	        
+	        if (imgpath != null && !imgpath.isEmpty()) {
+	            boardDTO.setImgpath(imgpath);
+	        } else if (imgs != null && !imgs.isEmpty()) {
+	            // 새로운 이미지가 첨부된 경우 기존 imgpath가 없더라도 처리
+	            boardDTO.setImgpath(""); // 새 이미지 경로를 설정할 수 있도록 빈 문자열 할당
+	        } else {
+	            boardDTO.setImgpath(null); // 기존 이미지 경로를 null로 설정
+	        }
+	        
+	        if (imgs != null && !imgs.isEmpty()) {
+	            boardDTO.setImg(imgs); // 새로운 이미지 파일 설정
+	        }
+	        
+	        boardService.updatePost(boardDTO);
+	        return ResponseEntity.ok("수정 완료");
+	    } catch (Exception e) {
+	        System.out.println(e);
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("글 update 실패.");
+	    }
 	}
+
 
 	@PostMapping("/EditComment")
 	public ResponseEntity<?> UpdateComment(@RequestBody CommentDTO commentDTO) {
