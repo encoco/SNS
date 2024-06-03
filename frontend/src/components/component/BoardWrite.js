@@ -84,7 +84,9 @@ function BoardWrite({ isOpen, onClose, onRequestClose, post }) { // post 추가
          if (post) {
             // 수정 요청
             formData.append('board_id', post.board_id);
-            formData.append('imgpath', post.imgpath);
+            if(post.imgpath){
+				formData.append('imgpath', post.imgpath);	
+			}
             await api.post(`/boardUpdate`, formData, {
                headers: {
                   'Content-Type': 'multipart/form-data',
@@ -92,6 +94,7 @@ function BoardWrite({ isOpen, onClose, onRequestClose, post }) { // post 추가
                withCredentials: true,
             });
             alert('게시물이 수정되었습니다.');
+            window.location.reload();
          } else {
             // 새 게시물 생성 요청
             await api.post('/boardWrite', formData, {
@@ -101,8 +104,8 @@ function BoardWrite({ isOpen, onClose, onRequestClose, post }) { // post 추가
                withCredentials: true,
             });
             alert('게시물이 업로드 되었습니다.');
+            navigate(fromPath);
          }
-         navigate(fromPath);
       } catch (error) {
          console.log(error);
          alert('글쓰기에 실패했습니다. 다시 시도해주세요.');
@@ -145,7 +148,7 @@ function BoardWrite({ isOpen, onClose, onRequestClose, post }) { // post 추가
                      {post.imgpath && (
                         <div>
                            <p>게시물 이미지:</p>
-                           <img src={post.imgpath} alt="게시물 이미지" />
+                           <img className="mt-4 w-32 h-32" src={post.imgpath} alt="게시물 이미지" />
                         </div>
                      )}
                      {post.video && <video src={post.video} controls />}
