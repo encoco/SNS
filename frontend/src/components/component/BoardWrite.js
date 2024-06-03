@@ -163,7 +163,7 @@ function BoardWrite({ isOpen, onClose, onRequestClose, post }) {
         onClose();
       }}
       className="fixed inset-0 bg-opacity-50 flex justify-center items-center z-10"
-      overlayClassName="fixed inset-0 bg-opacity-50"
+      overlayClassName="fixed inset-0 bg-black bg-opacity-5 "
       style={{ zIndex: 12 }}
     >
       <Card className="w-[75vw] max-w-sm mx-auto relative" style={{ zIndex: 50 }}>
