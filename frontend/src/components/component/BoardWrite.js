@@ -49,6 +49,7 @@ function BoardWrite({ isOpen, onClose, onRequestClose, post }) { // post 추가
 			return images.map((file, index) => (
 				<div key={index}>
 					<p>파일 이름: {file.name}</p>
+
 				</div>
 			));
 		} else {
@@ -153,11 +154,12 @@ function BoardWrite({ isOpen, onClose, onRequestClose, post }) { // post 추가
 							<>
 								{post.imgpath && (
 									<div>
-										<p>게시물 이미지:</p>
-										<img src={post.imgpath} alt="게시물 이미지" />
+										<p>기존 이미지:</p>
+										{post.imgpath.split('|').map((path, index) => (
+											<img key={index} className="mt-4 w-32 h-32 rounded-full mr-2" src={path} alt={`미리보기 ${index + 1}`} />
+										))}
 									</div>
 								)}
-								{post.video && <video src={post.video} controls />}
 								{!post.img && displayFileInfo()}
 							</>
 						) : (

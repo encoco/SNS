@@ -57,7 +57,11 @@ function Comment({ isOpen, onClose, boardId }) {
    };
 
    const handleCommentWrite = async () => {
-      if (isOpen) {
+		 if(commentText.length === 0){
+			alert("내용을 입력해주세요.");
+			return 0;
+		 }
+         if (isOpen) {
          const requestData = {
             comment: commentText,
             board_id: boardId
@@ -95,12 +99,15 @@ function Comment({ isOpen, onClose, boardId }) {
    const handleEditConfirm = async (comment) => {
       try {
          comment.comment = commentText2;
-
+		 if(comment.comment.length === 0){
+			alert("내용을 입력해주세요.");
+			return;
+		 }
          const response = await api.post(`/EditComment`, comment, {
             withCredentials: true,
          });
 
-         if (response.data === "success") {
+        if (response.data === "success") {
             alert('댓글 수정 성공');
             setEditCommentId(null);
             fetchComments();  // 댓글 수정 후 댓글 목록 새로고침
