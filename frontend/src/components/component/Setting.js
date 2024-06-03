@@ -1,13 +1,16 @@
 import React from 'react';
 import Modal from 'react-modal';
 
-function Setting({ isOpen, onRequestClose }) {
+function Setting({ isOpen, onRequestClose, onClose }) { // onClose를 props로 추가
   return (
     <Modal
       isOpen={isOpen}
-      onRequestClose={onRequestClose}
       className="fixed inset-0 bg-opacity-50 flex justify-center items-center z-10"
       overlayClassName="fixed inset-0 bg-opacity-50"
+      onRequestClose={() => {
+        onRequestClose();
+        onClose(); // onClose 함수 호출
+      }}
       style={{ zIndex: 12 }}
     >
       {/* 환경 설정 모달 */}

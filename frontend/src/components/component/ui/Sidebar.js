@@ -5,7 +5,7 @@ import React, { useState, useEffect } from 'react';
 import { BrowserView, MobileView } from "react-device-detect";
 import BoardWrite from '../BoardWrite';
 import Alarm from "./alarm.js";
-import SettingModal from '../Setting.js'; // setting.js 모달 import
+import Setting from '../Setting.js'; // setting.js 모달 import
 
 // Define the Sidebar component
 function Sidebar() {
@@ -74,7 +74,7 @@ function Sidebar() {
 				</div>
 				<BoardWrite isOpen={isModalOpen} onRequestClose={closeModal} onClose={closeModal} />
 				{alarmModal && <Alarm isOpen={alarmModal} onClose={closeAlarmModal} />}
-				{settingModal && <SettingModal isOpen={settingModal} onClose={closeSettingModal} />} {/* 환경 설정 모달 */}
+				<Setting isOpen={settingModal} onRequestClose={closeSettingModal} onClose={closeSettingModal} />
 			</BrowserView>
 
 
