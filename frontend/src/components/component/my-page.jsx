@@ -98,7 +98,7 @@ function Mypage() {
 		});
 	};
 
-
+	
 	return (
 		<div className='app'>
 			<BrowserView>
@@ -238,9 +238,9 @@ function Mypage() {
 					</div>
 					{/* 댓글 모달 */}
 					<Comment isOpen={showModal} onClose={() => setShowModal(false)} comments={currentComments} boardId={selectedPostId} />
-					
+
 					{/* 내 정보 수정 */}
-					<editProfile isOpen={showModal} onClose={() => setShowModal(false)}/>
+					<editProfile isOpen={showModal} onClose={() => setShowModal(false)} />
 				</div>
 			</MobileView>
 		</div>

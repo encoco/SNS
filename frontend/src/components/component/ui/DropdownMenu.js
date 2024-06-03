@@ -1,16 +1,20 @@
 import React, { useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import api from "../../../api";
+import BoardWrite from '../BoardWrite';
 
 function DropdownMenu({ post }) {
 	const [isOpen, setIsOpen] = useState(false);
 	const navigate = useNavigate();
-	const userNickname = localStorage.getItem("nickname");
+	const userNickname = JSON.parse(localStorage.getItem("nickname")).nickname;
 	const toggleDropdown = () => setIsOpen(!isOpen);
 	const [showModal, setShowModal] = useState(false);
 
+	const [isEditModalOpen, setIsEditModalOpen] = useState(false); // 수정 모달 상태 추가
+
 	const editPost = (post) => {
-		navigate('/boardWrite', { state: { post } });
+		setIsEditModalOpen(true); // 수정 모달 열기
+		setIsOpen(false); // 드롭다운 메뉴 닫기
 	};
 
 	const deletePost = (post) => {
@@ -20,7 +24,7 @@ function DropdownMenu({ post }) {
 	const confirmDelete = async () => {
 		try {
 			const board_id = post.board_id;
-			await api.post(`/boardDelete`, board_id,{
+			await api.post(`/boardDelete`, board_id, {
 				withCredentials: true,
 			});
 			alert("게시물이 삭제되었습니다.");
@@ -32,12 +36,12 @@ function DropdownMenu({ post }) {
 			window.location.reload();
 		}
 	};
-	
+
+	// 조건부 렌더링 로직
 	if (post.nickname !== userNickname) {
 		return null;
 	}
 	return (
-		
 		<div className="relative">
 			<button onClick={toggleDropdown} className="p-2">
 				<MoreHorizontalIcon className="h-5 w-5 text-gray-700" />
@@ -63,13 +67,18 @@ function DropdownMenu({ post }) {
 					</div>
 				</div>
 			)}
+			{/* BoardWrite 컴포넌트를 수정 모달로 사용 */}
+			<BoardWrite 
+				isOpen={isEditModalOpen} 
+				onClose={() => setIsEditModalOpen(false)} 
+				onRequestClose={() => setIsEditModalOpen(false)} 
+				post={post}
+			/>
 		</div>
 	);
-
 }
 
 export default DropdownMenu;
-
 
 function MoreHorizontalIcon(props) {
 	return (

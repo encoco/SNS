@@ -159,6 +159,7 @@ public class ChatController {
 	public ResponseEntity<?> selCommuRoom(HttpServletRequest request) {
 		String token = jwtUtil.token(request.getHeader("Authorization"));
 		List<CCJDTO> dto = chatService.selectCommuRoom(jwtUtil.getUserIdFromToken(token));
+		System.out.println(dto);
 		try {
 			if (dto != null) {
 				return ResponseEntity.ok(dto);

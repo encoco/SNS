@@ -124,7 +124,9 @@ public class ChatService {
 	}
 
 	public void joinCommunity(CommunityChatDTO dto) {
+		System.out.println("dto : " + dto);
 		CommunityChatJoinEntity entity = CommunityChatJoinEntity.toEntity(dto);
+		System.out.println("entity : " + entity);
 		CCJRepository.save(entity);
 	}
 

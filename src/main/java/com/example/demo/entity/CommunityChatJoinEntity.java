@@ -30,8 +30,8 @@ public class CommunityChatJoinEntity {
 	@Column(name="communitychat_id")
 	private int communitychatId;
 	private String title;
-	private int id;
 	private String imgpath;
+	private int id;
 	
 	@Builder.Default
 	private String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss"));

@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.example.demo.Config.JwtUtil;
 import com.example.demo.DTO.AlarmDTO;
 import com.example.demo.DTO.SearchDTO;
@@ -20,9 +19,7 @@ import com.example.demo.DTO.UsersDTO;
 import com.example.demo.DTO.UsersInfoDTO;
 import com.example.demo.Repository.UsersRepository;
 import com.example.demo.Service.UsersService;
-
 import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -117,6 +114,7 @@ public class TestController {
 			return ResponseEntity.internalServerError().body("프로필 업데이트 실패: " + e.getMessage());
 		}
 	}
+	
 	@GetMapping("/getAlarm")
 	public ResponseEntity<?> getAlarm(HttpServletRequest request){
 		String token = jwtutil.token(request.getHeader("Authorization"));
@@ -132,3 +130,4 @@ public class TestController {
 	}
 		
 }
+

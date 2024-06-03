@@ -37,13 +37,13 @@ public class JwtChannelInterceptor implements ChannelInterceptor {
 
                     System.out.println("jwtinterceptor id : " + userId);
                     System.out.println("jwtinterceptor nn : " + nickname);
-                    // ÏÇ¨Ïö©Ïûê Ï†ïÎ≥¥Î•º ÏÑ§Ï†ï
+                    // ªÁøÎ¿⁄ ¡§∫∏∏¶ º≥¡§
                     UsernamePasswordAuthenticationToken authentication =
                         new UsernamePasswordAuthenticationToken(nickname, null, Collections.emptyList());
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                     accessor.setUser(authentication);
                 } else {
-                    // JWT Í≤ÄÏ¶ù Ïã§Ìå® Ï≤òÎ¶¨
+                    // JWT ∞À¡ı Ω«∆– √≥∏Æ
                     SecurityContextHolder.clearContext();
                 }
             }
