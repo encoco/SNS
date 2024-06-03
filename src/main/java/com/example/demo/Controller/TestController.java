@@ -12,14 +12,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.example.demo.Config.JwtUtil;
+import com.example.demo.DTO.AlarmDTO;
 import com.example.demo.DTO.SearchDTO;
 import com.example.demo.DTO.UsersDTO;
 import com.example.demo.DTO.UsersInfoDTO;
 import com.example.demo.Repository.UsersRepository;
 import com.example.demo.Service.UsersService;
-
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -92,8 +91,9 @@ public class TestController {
 			int myId = jwtutil.getUserIdFromToken(token);
 			if (Uservice.followUser(userId, myId).equals("del")) {
 				return ResponseEntity.ok("삭제");
-			} else
+			} else {
 				return ResponseEntity.ok("추가");
+			}
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("error");
 		}
@@ -104,7 +104,7 @@ public class TestController {
 		try {
 			String token = jwtutil.token(request.getHeader("Authorization"));
 			profile.setId(jwtutil.getUserIdFromToken(token));
-			System.out.println("넘어온 프로필 : " + profile);
+			
 			if(repository.existsByNickname(profile.getNickname())) {
 				return ResponseEntity.internalServerError().body("닉네임 중복");
 			}
@@ -114,4 +114,20 @@ public class TestController {
 			return ResponseEntity.internalServerError().body("프로필 업데이트 실패: " + e.getMessage());
 		}
 	}
+	
+	@GetMapping("/getAlarm")
+	public ResponseEntity<?> getAlarm(HttpServletRequest request){
+		String token = jwtutil.token(request.getHeader("Authorization"));
+		List<AlarmDTO> dto = Uservice.getAlarm(jwtutil.getUserIdFromToken(token));
+		System.out.println("dto : " + dto);
+		return ResponseEntity.ok(dto);
+	}
+	@PostMapping("delAllAlarm")
+	public ResponseEntity<?> delAllAlarm(HttpServletRequest request){
+		String token = jwtutil.token(request.getHeader("Authorization"));
+		Uservice.delAllAlarm(jwtutil.getUserIdFromToken(token));
+		return ResponseEntity.ok("삭제완료");
+	}
+		
 }
+

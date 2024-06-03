@@ -21,4 +21,7 @@ public interface BoardRepository extends JpaRepository<BoardEntity, Integer> {
 	@Query(value = "SELECT * FROM board WHERE board_id = :board_id", nativeQuery = true)
 	public BoardEntity findByBoardId(@Param("board_id") int board_id);
 
+	@Query(value = "SELECT id FROM board WHERE board_id = :board_id", nativeQuery = true)
+	public int findIdByboardId(@Param("board_id")int board_id);
+
 }

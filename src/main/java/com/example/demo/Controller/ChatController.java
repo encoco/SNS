@@ -70,13 +70,14 @@ public class ChatController {
 	public ResponseEntity<?> getMessage(@RequestParam(value = "roomNumber") String roomNumber,
 			HttpServletRequest request) {
 		List<ChatMessageDTO> dto = chatService.getMessage(roomNumber);
+		System.out.println("userchat : " + dto);
 		return ResponseEntity.ok(dto);
 	}
 
 	@GetMapping("/getCommMessage")
 	public ResponseEntity<?> getCommMessage(@RequestParam(value = "communitychat_id") String communitychat_id) {
 		List<CCMDTO> dto = chatService.getCommMessage(Integer.parseInt(communitychat_id));
-		System.out.println(dto);
+		System.out.println("Commmessage : " + dto);
 		return ResponseEntity.ok(dto);
 	}
 
@@ -103,7 +104,6 @@ public class ChatController {
 			List<Integer> userIds = (List<Integer>) requestData.get("id");
 			userIds.add(userId);
 			Map<String, Object> response = new HashMap<>();
-
 			ChatDTO dto = chatService.findRoom(userIds, userId);
 			if (dto != null) { // 찾아서 있으면 이미 있으니까 그 방으로 넘기기
 				response.put("1", dto);
@@ -151,7 +151,6 @@ public class ChatController {
 	public ResponseEntity<?> JoinCommuRoom(@RequestBody CommunityChatDTO dto, HttpServletRequest request) {
 		String token = jwtUtil.token(request.getHeader("Authorization"));
 		dto.setId(jwtUtil.getUserIdFromToken(token));
-		System.out.println(dto);
 		chatService.joinCommunity(dto);
 		return ResponseEntity.ok(null);
 	}

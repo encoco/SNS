@@ -35,7 +35,7 @@ public class ChatEntity {
 	private String profile_img;
 	private String nickname;
     @Builder.Default
-    private String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm"));
+    private String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss"));
     
 
     public static ChatEntity toEntity(ChatDTO dto) {

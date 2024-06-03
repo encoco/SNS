@@ -21,10 +21,6 @@ export default function Component() {
 	const [selectedPostId, setSelectedPostId] = useState(null);
 	const [userLikes, setUserLikes] = useState(new Set()); 
 	const [profile, setProfile] = useState('');
-	const [isModalOpen, setModalOpen] = useState(false);
-    const [selectedImageUrl, setSelectedImageUrl] = useState('');
-    
-    
 	
 	// 글 목록 받아오기
 	useEffect(() => {
@@ -71,7 +67,7 @@ export default function Component() {
 					},
 					withCredentials: true
 				});
-				console.log(response.data);
+
 				setSearchResults(response.data);
 			} catch (error) {
 				console.error('Error fetching search results:', error);
@@ -95,7 +91,6 @@ export default function Component() {
 				params: { boardId },
 				withCredentials: true,
 			});
-			console.log(response.data);
 			setCurrentComments(response.data);
 		} catch (error) {
 			console.error('Error fetching comments:', error);
@@ -124,9 +119,9 @@ export default function Component() {
 		event.preventDefault(); // 폼 제출을 방지하여 엔터키로 검색이 실행되지 않도록 합니다.
 	};
 
-	const LikeHandler = async (boardId) => {
+	const LikeHandler = async (boardId,writerId) => {
 		try {
-			const response = await api.get(`/boardLike?boardId=${boardId}`, {
+			const response = await api.get(`/boardLike?boardId=${boardId}&writerId=${writerId}`, {
 				withCredentials: true,
 			});
 			if (response.data === "success") {
@@ -187,7 +182,7 @@ export default function Component() {
 												<img
 													alt="s"
 													className="w-8 h-8 rounded-full"
-													src={user.profile_img || "/placeholder.svg"}
+													src={user.img || "/placeholder.svg"}
 												/>
 												<span>{user.nickname}</span>
 											</div>
@@ -209,7 +204,7 @@ export default function Component() {
 												<div className="flex items-center space-x-2">
 													<img
 														alt="Avatar"
-														className="rounded-full"
+														className="rounded-full z-1"
 														  src={post.profile_img ? post.profile_img : "/placeholder.svg"} 
 														style={{
 															aspectRatio: "1 / 1",
@@ -235,7 +230,7 @@ export default function Component() {
 												<button
 													className="w-10 h-8"
 													style={{ color: userLikes.has(post.board_id) ? "red" : "inherit" }} // 좋아요 상태에 따라 색상 변경
-													onClick={() => LikeHandler(post.board_id)}
+													onClick={() => LikeHandler(post.board_id,post.id)}
 												>
 													{likesCount[post.board_id] > 0 ? `${likesCount[post.board_id]} ❤` : '0 ❤'}
 												</button>
@@ -314,17 +309,8 @@ export default function Component() {
 								<div key={post.board_id} className="rounded-xl bg-white p-4 border border-gray-100 dark:border-gray-800 mb-4 relative">
 									<div className="flex justify-between items-start mb-2">
 										<div className="flex items-center space-x-2">
-											<img
-												alt="Avatar"
-												className="rounded-full"
-												src="/placeholder.svg"
-												style={{
-													aspectRatio: "1 / 1",
-													objectFit: "cover",
-													zIndex: "1" // 이미지의 z-index 설정
-												}}
-												width="40"
-											/>
+											<img alt="Avatar" className="rounded-full z-0" src={post.profile_img ? post.profile_img : "/placeholder.svg"} 
+     																		style={{ aspectRatio: "1 / 1", objectFit: "cover" }} width="40" />
 											<div className="grid gap-1">
 												<Link to={`/UserPage/${post.id}`} key={post.id} className="font-semibold">{post.nickname}</Link>
 												<div className="text-xs text-gray-500 dark:text-gray-400">{post.date}</div>
@@ -353,14 +339,16 @@ export default function Component() {
 											}}>
 											댓글
 										</button>
-										<button className="w-16 h-8">공유하기</button>
+										<button className="w-16 h-8" onClick={() => { setCurrentPost(post);  setShowShareModal(true);}}>공유</button>
 									</div>
 								</div>
 							))}
 						</div>
 					</div>
+					
 					{/* 댓글 모달과 최상단으로 이동하는 버튼 */}
 					<Comment isOpen={showModal} onClose={() => setShowModal(false)} comments={currentComments} boardId={selectedPostId} />
+					<Share isOpen={showShareModal} onClose={() => setShowShareModal(false)} post={currentPost}/>
 					{showTopBtn && (
 						<button
 							className="fixed bottom-20 right-10 bg-white hover:bg-gray-100 text-gray-900 font-bold rounded-full h-12 w-12 flex justify-center items-center border-4 border-gray-900 cursor-pointer"

@@ -17,13 +17,16 @@ import com.example.demo.Config.S3Config;
 import com.example.demo.DTO.BoardDTO;
 import com.example.demo.DTO.BoardLikeDTO;
 import com.example.demo.DTO.CommentDTO;
+import com.example.demo.Repository.AlarmRepository;
 import com.example.demo.Repository.BoardCommentRepository;
 import com.example.demo.Repository.BoardLikeRepository;
 import com.example.demo.Repository.BoardRepository;
 import com.example.demo.Repository.followRepository;
+import com.example.demo.entity.AlarmEntity;
 import com.example.demo.entity.BoardEntity;
 import com.example.demo.entity.BoardLikeEntity;
 import com.example.demo.entity.CommentEntity;
+import com.example.demo.entity.UsersEntity;
 
 import io.jsonwebtoken.io.IOException;
 import jakarta.transaction.Transactional;
@@ -35,6 +38,7 @@ public class BoardService {
 
 	public final BoardRepository boardRepository;
 	public final BoardCommentRepository boardCommentRepository;
+	public final AlarmRepository alarmRepository;
 	public final BoardLikeRepository boardlike;
 	public final followRepository fRepository;
 	private final S3Config s3Config;
@@ -105,10 +109,26 @@ public class BoardService {
 
 	public void writeComment(CommentDTO commentDTO) {
 		CommentEntity commentEntity = CommentEntity.toEntity(commentDTO);
+		int writerId = boardRepository.findIdByboardId(commentDTO.getBoard_id());
+
+		Optional<AlarmEntity> existingAlarm = alarmRepository.findByCriteria(writerId, commentDTO.getId(),
+																			"",commentDTO.getBoard_id());
+		if (!existingAlarm.isPresent() && commentDTO.getId() != writerId) {
+			AlarmEntity alarmEntity = new AlarmEntity();
+			UsersEntity recipient = new UsersEntity();
+			recipient.setId(commentDTO.getId());
+			alarmEntity .setRecipientId(writerId);
+			alarmEntity .setSender(recipient);
+			alarmEntity.setBoard_id(commentDTO.getBoard_id());
+			alarmEntity .setContent("님이 댓글을 달았습니다." + "(" +commentDTO.getComment()+ ")");
+			
+			alarmRepository.save(alarmEntity);
+		}
+		
 		boardCommentRepository.save(commentEntity);
 	}
 
-	public int boardLike(BoardLikeDTO dto) {
+	public int boardLike(BoardLikeDTO dto,int writerId) {
 		BoardLikeEntity entity = BoardLikeEntity.toEntity(dto);
 		Optional<BoardLikeEntity> existingLike = boardlike.findByBoardIdAndUserId(dto.getBoard_id(), dto.getId());
 
@@ -117,7 +137,18 @@ public class BoardService {
 			boardlike.delete(existingLike.get());
 			return 0;
 		} else {
-			// "좋아요"가 없다면 새로 저장
+			Optional<AlarmEntity> existingAlarm = alarmRepository.findByCriteria(writerId, dto.getId(),"님이 글을 좋아합니다.",dto.getBoard_id());
+			if (!existingAlarm.isPresent() && dto.getId() != writerId) {
+				AlarmEntity alarmEntity = new AlarmEntity();
+				UsersEntity recipient = new UsersEntity();
+				recipient.setId(dto.getId());
+				alarmEntity .setRecipientId(writerId);
+				alarmEntity .setSender(recipient);
+				alarmEntity.setBoard_id(dto.getBoard_id());
+				alarmEntity .setContent("님이 글을 좋아합니다.");
+				
+				alarmRepository.save(alarmEntity);
+			}
 			boardlike.save(entity);
 			return 1;
 		}
@@ -142,6 +173,7 @@ public class BoardService {
 	@Transactional
 	public void updateComment(CommentDTO commentDTO) {
 		CommentEntity board = CommentEntity.toEntity(commentDTO);
+		
 		boardCommentRepository.save(board);
 	}
 
@@ -152,6 +184,7 @@ public class BoardService {
 
 	public List<BoardDTO> getfollowPost(int userId) {
 		List<Integer> followIds = fRepository.findFollowingIdByFollowerId(userId);
+		followIds.add(userId);
 		List<BoardEntity> entity = boardRepository.findByIds(followIds);
 		List<BoardDTO> dto = BoardDTO.ToDtoList(entity);
 

@@ -9,7 +9,6 @@ function Share({ isOpen, onClose, post}) {
 
 	useEffect(() => {
         webSocketService.connect(() => {
-            console.log("접속");
         });
 
         return () => {

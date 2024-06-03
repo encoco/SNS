@@ -1,27 +1,15 @@
 package com.example.demo.DTO;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.springframework.web.multipart.MultipartFile;
-
-import com.example.demo.entity.CCMEntity;
-import com.example.demo.entity.CommunityChatEntity;
 import com.example.demo.entity.CommunityChatJoinEntity;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
 
-@Getter
-@Setter
+@Data
 @Builder
-@ToString
 @AllArgsConstructor
 @NoArgsConstructor
 public class CCJDTO {

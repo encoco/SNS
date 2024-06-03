@@ -41,7 +41,7 @@ public class CommentEntity {
 	private String profile_img;
 	
 	@Builder.Default
-	private String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm"));
+	private String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss"));
 
 	public static CommentEntity toEntity(CommentDTO dto) {
 		return CommentEntity.builder()
