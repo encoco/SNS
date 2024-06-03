@@ -150,13 +150,17 @@ public class BoardController {
 			BoardDTO boardDTO = new BoardDTO();
 			boardDTO.setBoard_id(board_id);
 			boardDTO.setContent(content);
-			boardDTO.setImgpath(imgpath);
+			if(imgpath != null && !imgpath.isEmpty()) {
+				boardDTO.setImgpath(imgpath);
+			}
 			if (imgs != null && !imgs.isEmpty()) {
 				boardDTO.setImg(imgs); // 여러 이미지 파일 설정
 			}
+			System.out.println(boardDTO);
 			boardService.updatePost(boardDTO);
 			return ResponseEntity.ok("수정 완료");
 		} catch (Exception e) {
+			System.out.println(e);
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("글 update.");
 		}
 	}
