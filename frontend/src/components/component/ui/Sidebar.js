@@ -82,14 +82,14 @@ function Sidebar() {
 				{ /* 모바일 화면에서는 네비게이션 바를 렌더링 */}
 				<div className="fixed bottom-0 left-0 w-full bg-white border-t border-gray-200 flex justify-around p-4" style={{ zIndex: '2' }}>
 					<Link className="text-gray-600 hover:bg-gray-200 p-2 rounded text-sm" to="/index">홈</Link>
-					<Link className="text-gray-600 hover:bg-gray-200 p-2 rounded" onClick={openModal}>글쓰기</Link>
+					<Link className="text-gray-600 hover:bg-gray-200 p-2 rounded text-sm" onClick={openModal}>글쓰기</Link>
 					<Link className="text-gray-600 hover:bg-gray-200 p-2 rounded text-sm" to={`/UserPage/${id}`} >마이페이지</Link>
 					<Link className="text-gray-600 hover:bg-gray-200 p-2 rounded text-sm" to="/Message">메세지</Link>
 					<Link className="text-gray-600 hover:bg-gray-200 p-2 rounded text-sm" onClick={openSettingModal}>환경 설정</Link>
 					<button className="text-gray-600 hover:bg-gray-200 p-2 rounded text-sm" onClick={handleLogout}>로그아웃</button>
 				</div>
 				<BoardWrite isOpen={isModalOpen} onRequestClose={closeModal} onClose={closeModal} />
-				<BoardWrite isOpen={isModalOpen} onRequestClose={closeModal} onClose={closeModal} />
+				<Setting isOpen={settingModal} onRequestClose={closeSettingModal} onClose={closeSettingModal} />
 			</MobileView>
 		</>
 	);

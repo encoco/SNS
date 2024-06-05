@@ -228,4 +228,8 @@ public class BoardService {
 			return BoardLikeDTO.ToDtoList(likesForPost);
 		
 	}
+
+	public boolean existFollow(int userId, int myId) {
+		return fRepository.existsByFollowerIdAndFollowingId(myId, userId);
+	}
 }

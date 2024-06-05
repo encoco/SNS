@@ -55,9 +55,8 @@ function EditProfile({ Open, Close, userInfo }) {
 		formData.append('state_message', statusMessage);
 		formData.append('original', nickname);
 		if(profilePic){
-			formData.append('profile_img', profilePic);
+			formData.append('imgpath', profilePic);
 		}
-		console.log(formData.getAll);
 		try {
 			const response = await api.post(`/WriteProfile`, formData, {
 				headers: {

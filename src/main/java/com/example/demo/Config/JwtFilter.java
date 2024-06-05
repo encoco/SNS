@@ -25,11 +25,18 @@ public class JwtFilter extends GenericFilterBean {
 		HttpServletResponse httpResponse = (HttpServletResponse) response;
 		HttpServletRequest httpRequest = (HttpServletRequest) request;
 		String requestURI = httpRequest.getRequestURI();
-		if (requestURI.startsWith("/api/Login") || requestURI.startsWith("/api/Logout") //|| requestURI.startWith("/") 
-				|| requestURI.startsWith("/api/checkId") ||   requestURI.startsWith("/api/Signup") || requestURI.startsWith("/api/ws")) {
-			chain.doFilter(request, response);
-			return;
-		}
+		String contextPath = httpRequest.getContextPath();
+	    String test = httpRequest.getRequestURI().substring(contextPath.length());
+
+	    System.out.println("Request URI: " + test);
+		System.out.println("URI : " + requestURI);
+		
+		if (requestURI.startsWith("/api/Login") || requestURI.startsWith("/api/Logout") || requestURI.startsWith("/")
+	            || requestURI.equals("/index.html") || requestURI.startsWith("/api/checkId")
+	            || requestURI.startsWith("/api/Signup") || requestURI.startsWith("/api/ws")) {
+	        chain.doFilter(request, response);
+	        return;
+	    }
 		String refreshToken = null;
 		String accessToken = getTokenFromRequest(httpRequest);
 		Cookie[] cookies = httpRequest.getCookies();

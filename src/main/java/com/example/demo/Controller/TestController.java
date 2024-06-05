@@ -18,7 +18,7 @@ import com.example.demo.DTO.SearchDTO;
 import com.example.demo.DTO.UsersDTO;
 import com.example.demo.DTO.UsersInfoDTO;
 import com.example.demo.Repository.UsersRepository;
-import com.example.demo.Service.UsersService;
+import com.example.demo.Service.UsersService;import ch.qos.logback.classic.pattern.ExtendedThrowableProxyConverter;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -99,13 +99,28 @@ public class TestController {
 		}
 	}
 
+	@GetMapping("/findFollow")
+	public ResponseEntity<?> findfollowUser(@RequestParam("userId") int userId, HttpServletRequest request) {
+		try {
+			String token = jwtutil.token(request.getHeader("Authorization"));
+			int myId = jwtutil.getUserIdFromToken(token);
+			if (Uservice.followUser(userId, myId).equals("del")) {
+				return ResponseEntity.ok("삭제");
+			} else {
+				return ResponseEntity.ok("추가");
+			}
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("error");
+		}
+	}
+	
 	@PostMapping("/WriteProfile")
 	public ResponseEntity<?> updateProfile(@ModelAttribute UsersDTO profile, HttpServletRequest request) {
 		try {
 			String token = jwtutil.token(request.getHeader("Authorization"));
 			profile.setId(jwtutil.getUserIdFromToken(token));
 			
-			if(repository.existsByNickname(profile.getNickname())) {
+			if(!profile.getNickname().equals(profile.getOriginal()) && repository.existsByNickname(profile.getNickname())) {
 				return ResponseEntity.internalServerError().body("닉네임 중복");
 			}
 			UsersInfoDTO updatedProfile = Uservice.updateUserProfile(profile);
@@ -128,6 +143,28 @@ public class TestController {
 		Uservice.delAllAlarm(jwtutil.getUserIdFromToken(token));
 		return ResponseEntity.ok("삭제완료");
 	}
-		
+	
+	@PostMapping("/checkPassword")
+	public ResponseEntity<?> checkPassword(@RequestBody UsersDTO dto,HttpServletRequest request){
+		String token = jwtutil.token(request.getHeader("Authorization"));
+		boolean checked = Uservice.updatePassword(dto,jwtutil.getUserIdFromToken(token));
+		if(checked) {
+			return ResponseEntity.ok("완료");
+		}
+		else {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("비밀번호 확인");
+		}
+	}
+	@PostMapping("/DeleteUser")
+	public ResponseEntity<?> DeleteUser(HttpServletRequest request){
+		try {
+			String token = jwtutil.token(request.getHeader("Authorization"));
+			Uservice.DeleteUser(jwtutil.getUserIdFromToken(token));
+			return ResponseEntity.ok(null);
+		}catch(Exception e) {
+			System.out.println(e);
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("탈퇴 실패");
+		}
+	}
 }
 

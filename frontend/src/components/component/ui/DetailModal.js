@@ -5,6 +5,8 @@ import ImageSlider from '../ImageSlider';
 import DropdownMenu from './DropdownMenu';
 import Comment from './Comment';
 import { Link } from "react-router-dom";
+import Share from './share';
+
 
 const DetailModal = ({ isOpen, onClose, boardId }) => {
 	const [post, setPost] = useState('');
@@ -12,6 +14,8 @@ const DetailModal = ({ isOpen, onClose, boardId }) => {
 	const [userLikes, setUserLikes] = useState(new Set());
 	const [currentComments, setCurrentComments] = useState([]);
 	const [showModal, setShowModal] = useState(false);
+	const [showShareModal, setShowShareModal] = useState(false);
+	const [currentPost, setCurrentPost] = useState();
 	
 	useEffect(() => {
 		if (!isOpen) {
@@ -123,7 +127,7 @@ const DetailModal = ({ isOpen, onClose, boardId }) => {
 								>
 									댓글
 								</button>
-								<button className="w-16 h-8">공유</button>
+								<button className="w-16 h-8" onClick={() => { setCurrentPost(post); setShowShareModal(true); }}>공유</button>
 							</div>
 						</CardFooter>
 					</Card>
@@ -131,6 +135,7 @@ const DetailModal = ({ isOpen, onClose, boardId }) => {
 					<p>Loading...</p> // Display a loading text or spinner
 				)}
 			</div>
+			<Share isOpen={showShareModal} onClose={() => setShowShareModal(false)} post={currentPost} />
 			<Comment isOpen={showModal} onClose={() => setShowModal(false)} boardId={currentComments} />
 		</div>
 	);

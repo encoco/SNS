@@ -52,15 +52,21 @@ public class BoardController {
 	}
 
 	@GetMapping("/userPosts")
-	public ResponseEntity<?> userPosts(@RequestParam("userId") int userId) {
+	public ResponseEntity<?> userPosts(@RequestParam("userId") int userId,HttpServletRequest request) {
 		try {
+			String token = jwtUtil.token(request.getHeader("Authorization"));
+			int myId = jwtUtil.getUserIdFromToken(token);
+			
 			List<BoardDTO> posts = boardService.getPost(userId);
 			List<BoardLikeDTO> like = boardService.getLike(userId);
+			boolean follow = boardService.existFollow(userId,myId);
 			SearchDTO user = userService.userInfo(userId);
 			Map<String, Object> response = new HashMap<>();
+			
 			response.put("posts", posts);
 			response.put("likes", like);
 			response.put("userInfo", user);
+			response.put("follow", follow);
 			return ResponseEntity.ok(response);
 		} catch (Exception e) {
 			System.out.println("userPosts error");

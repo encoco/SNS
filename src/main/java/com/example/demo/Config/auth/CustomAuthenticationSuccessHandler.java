@@ -56,7 +56,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 			response.getWriter().write(tokensJson); // 클라이언트로 응답 전송
 			if (userDTO.getRole().equals("ROLE_USER_SNS")) {
 				String encodedTokensJson = URLEncoder.encode(tokensJson, StandardCharsets.UTF_8.toString());
-				response.sendRedirect("http://localhost:3000/?tokensJson=" + encodedTokensJson);
+				response.sendRedirect("http://www.grooo.kro.kr/?tokensJson=" + encodedTokensJson);
 			}
 		}
 	}

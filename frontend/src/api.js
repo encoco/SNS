@@ -3,7 +3,7 @@ import axios from 'axios'
 const api = axios.create({ //기본 요청 주소
 	baseURL: 'http://localhost:8080/api', 
 	//baseURL: 'http://13.125.161.122:8080/api',
-	//baseURL: 'http://192.168.200.158:8080/api',
+	//baseURL: 'http://192.168.0.10:8080/api',
 	headers: {
 		"Content-Type": "application/json",
 		withCredentials: true

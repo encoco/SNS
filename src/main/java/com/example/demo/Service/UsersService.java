@@ -131,5 +131,27 @@ public class UsersService {
 		List<AlarmEntity> entity = alarmRepository.findByRecipientId(id);
 		alarmRepository.deleteAll(entity);
 	}
+
+	@Transactional
+	public boolean updatePassword(UsersDTO dto, int userId) {
+	    Optional<UsersEntity> userOptional = usersRepository.findById(userId);
+	    return userOptional.map(user -> {
+	        if (passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
+	            user.setPassword(passwordEncoder.encode(dto.getChangePassword()));
+	            usersRepository.save(user);
+	            return true;
+	        } else {
+	            return false;
+	        }
+	    }).orElseGet(() -> {
+	        System.out.println("사용자를 찾을 수 없음");
+	        return false;
+	    });
+	}
+
+	public void DeleteUser(int userIdFromToken) {
+		usersRepository.deleteById(userIdFromToken);
+	}
+	
 }
 

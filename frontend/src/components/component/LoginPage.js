@@ -32,12 +32,12 @@ function LoginPage() {
 		params.append('password', password);
 		const response = await axios.post('http://localhost:8080/api/Login', params, {
 		//const response = await axios.post('http://13.125.161.122:8080/api/Login', params, {
+		//const response = await axios.post('http://192.168.0.10:8080/api/Login', params, {
 			headers: {
 				'Content-Type': 'application/x-www-form-urlencoded'
 			},
 			withCredentials: true
 		});
-
 		localStorage.setItem('userInfo', response.data.accessToken);
 		localStorage.setItem('nickname', JSON.stringify(response.data.nickname));
 		alert('로그인 성공');
@@ -100,16 +100,15 @@ function LoginPage() {
 
 				<div className="space-y-4">
 					<Button className="w-full" style={{ backgroundColor: '#03C75A' }} variant="outline"
-						onClick={() => window.location.href = 'http://localhost:8080/oauth2/authorization/naver'} >
+						onClick={() => window.location.href = 'http://www.grooo.kro.kr/oauth2/authorization/naver'} >
 						NAVER
 					</Button>
 					<Button className="w-full" variant="outline"
-						onClick={() => window.location.href = 'http://localhost:8080/oauth2/authorization/google'} >
+						onClick={() => window.location.href = 'http://www.grooo.kro.kr/oauth2/authorization/google'} >
 						GOOGLE
 					</Button>
-
 					<Button className="w-full" style={{ backgroundColor: '#FEE500' }} variant="outline"
-						onClick={() => window.location.href = 'http://localhost:8080/oauth2/authorization/kakao'} >
+						onClick={() => window.location.href = 'http://www.grooo.kro.kr/oauth2/authorization/kakao'} >
 						KAKAO
 					</Button>
 				</div>

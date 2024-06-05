@@ -24,6 +24,7 @@ public class UsersDTO {
     private MultipartFile imgpath;
     private String phone;
 	private String email;
+	private String changePassword;
 	private String original;
 	@Builder.Default
     private String role = "ROLE_USER";

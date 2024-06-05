@@ -58,6 +58,7 @@ function Signup() {
 	const checkIdDuplicate = async () => {
 		try {
 			const response = await axios.post('http://localhost:8080/api/checkId', {
+				//const response = await axios.post('http://13.125.161.122:8080/api/checkId', {
 				username: username,
 				nickname: Nick
 			});
@@ -84,7 +85,7 @@ function Signup() {
 		if (isDuplicate) return; // ID가 중복되었으면 여기서 처리 중단
 		// 비밀번호 확인 로직 추가
 		try {
-			await axios.post('http://localhost:8080/api/Signup', {
+			await axios.post('http://13.125.161.122:8080/api/Signup', {
 				username: username,
 				password: password,
 				nickname: Nick,

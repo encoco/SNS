@@ -109,10 +109,14 @@ function AddCommuChat({ Open, Close }) {
 						accept="image/*"
 					/>
 					{profilePicPreview && (
-						<div>
-							<img src={profilePicPreview} alt="프로필 미리보기" className="mt-4 w-32 h-32 rounded-full" />
-							<button onClick={handleClearImage} className="mt-2 bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded">
-								이미지 제거
+						<div className="relative mt-4 inline-block">
+							<img src={profilePicPreview} alt="프로필 미리보기" className="w-32 h-32 rounded-full shadow-lg" />
+							<button
+								onClick={handleClearImage}
+								className="absolute top-0 right-0 bg-red-500 hover:bg-red-700 text-white font-bold p-1 rounded-full shadow transition duration-150 ease-in-out transform hover:-translate-y-1 hover:scale-110"
+								style={{ marginTop: '-8px', marginRight: '-8px' }}
+							>
+								<svg className="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M14.348 14.849a1 1 0 000-1.414L10.707 10l3.641-3.641a1 1 0 10-1.414-1.414L9.293 8.586 5.652 4.945A1 1 0 104.238 6.359l3.641 3.641-3.641 3.641a1 1 0 101.414 1.414l3.641-3.641 3.641 3.641a1 1 0 001.414 0z" /></svg>
 							</button>
 						</div>
 					)}

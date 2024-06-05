@@ -56,10 +56,10 @@ function Alarm({ isOpen, onClose }) {
                 <div className="overflow-y-auto max-h-96">
                     {alarmData && alarmData.map((alarm, index) => (
 					    <div key={index} className="flex items-center mb-4">
-					        <img src={alarm.profile_img} alt="Profile" className="w-10 h-10 rounded-full mr-3" />
+					        <img src={alarm.profile_img ? alarm.profile_img : "/placeholder.svg"} alt="Profile" className="w-10 h-10 rounded-full mr-3" />
 					        <div className="flex-grow">
 					            <div className="flex justify-between items-center">
-					                <Link to={`/UserPage/${alarm.recipient_id}`} className="font-semibold"><strong>{alarm.nickname}</strong></Link>
+					                <Link to={`/UserPage/${alarm.sender_id}`} className="font-semibold"><strong>{alarm.nickname}</strong></Link>
 					                {alarm.board_id != 0 && (
 					                    <button 
 					                        onClick={() => openModal(alarm.board_id)}

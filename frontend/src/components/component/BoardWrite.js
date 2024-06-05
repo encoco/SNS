@@ -130,7 +130,7 @@ function BoardWrite({ isOpen, onClose, onRequestClose, post }) {
           withCredentials: true,
         });
         alert('게시물이 수정되었습니다.');
-        window.location.reload();
+        navigate("/");
       } else {
         if (content.length === 0 && mergedImages.length === 0) {
           alert("내용을 입력해주세요");
