@@ -24,7 +24,7 @@ function LoginPage() {
 			navigate('/index');
 		}
 	}, []);
-
+	
 	const handleLogin = async () => {
 	try {
 		const params = new URLSearchParams();
@@ -40,14 +40,13 @@ function LoginPage() {
 		});
 		localStorage.setItem('userInfo', response.data.accessToken);
 		localStorage.setItem('nickname', JSON.stringify(response.data.nickname));
-		alert('로그인 성공');
+		alert('로그인되었습니다.');
 		navigate('/index');
 	} catch (error) {
 		if (error.response) {
 			const status = error.response.status;
-			const data = error.response.data;
 			if (status === 401 || status === 403) {
-				alert(data.message || '계정 정보를 확인해주세요.');
+				alert('계정 정보를 확인해주세요.');
 			} else {
 				alert('다시 시도해주세요.');
 			}
@@ -70,7 +69,7 @@ function LoginPage() {
 			<div className="w-full max-w-[400px]">
 
 				<div className="text-center py-6">
-					<h1 className="text-3xl font-bold">SNS</h1>
+					<h1 className="text-3xl font-bold">grooo</h1>
 					<p className="text-gray-500 dark:text-gray-400">환영합니다!</p>
 				</div>
 
@@ -78,19 +77,15 @@ function LoginPage() {
 					<div className="space-y-4">
 						<div className="space-y-2">
 							<Label htmlFor="username">아이디</Label>
-							<Input id="username" placeholder="r___k18" value={username} onChange={(e) => setUsername(e.target.value)} />
+							<Input id="username" placeholder="아이디를 입력해주세요." value={username} onChange={(e) => setUsername(e.target.value)} />
 						</div>
 						<div className="space-y-2">
 							<Label htmlFor="password">비밀번호</Label>
-							<Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+							<Input id="password" type="password" placeholder="비밀번호를 입력해주세요."value={password} onChange={(e) => setPassword(e.target.value)} />
 						</div>
 						<div className="mt-4 space-y-2 text-center">
 						</div>
 						<div style={{ textAlign: 'center' }} >
-							<Link className="text-sm underline" to="#">
-								비밀번호 찾기
-							</Link>
-							<span style={{ margin: '0 10px' }}>|</span>{" "}
 							<Link className="text-sm underline" to="/Signup">회원가입</Link>
 						</div>
 						<Button type="submit" className="w-full mb-2" variant="outline" style={{ backgroundColor: 'black', borderColor: 'black', borderWidth: '2px', color: 'white' }}>로그인</Button>

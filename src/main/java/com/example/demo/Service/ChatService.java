@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import java.util.ArrayList;
 import java.util.Arrays;
 import org.springframework.stereotype.Service;
 
@@ -53,23 +54,14 @@ public class ChatService {
 	@Transactional
 	public ChatDTO CreateRoom(List<Integer> userIds, int myId) {
 		String roomNumber = UUID.randomUUID().toString();
-		String name = "";
 		String ids = makeIds(userIds);
-
 		while (chatRepository.existsByRoomNumber(roomNumber)) {
 			roomNumber = UUID.randomUUID().toString();
 		}
 
 		for (Integer userId : userIds) {
 			ChatEntity chatUser = new ChatEntity();
-//			name = "";
-//			for (Integer id : userIds) {
-//				if (userId == id)
-//					continue;
-//				if (name.length() > 0)
-//					name += ",";
-//				name += uRepository.findNicknameById(id);
-//			}
+
 			chatUser.setRoomNumber(roomNumber);
 			chatUser.setId(userId);
 			chatUser.setJoinId(ids);
@@ -146,6 +138,37 @@ public class ChatService {
 	public List<CCMDTO> getCommMessage(int communitychat_id) {
 		List<CCMEntity> entity = ccmrepository.findBycommunitychatId(communitychat_id);
 		return CCMDTO.ToDtoList(entity);
+	}
+
+	public ChatDTO findRoom(int id, int myId) {
+		List<Integer> userIds = new ArrayList<>(List.of(id, myId)); // 변경 가능한 리스트로 변환
+		String ids = makeIds(userIds);
+		try {
+			ChatEntity entity = chatRepository.findRoomNumberByJoinIdAndId(ids,myId);
+			if(entity == null) {
+				String roomNumber = UUID.randomUUID().toString();
+				while (chatRepository.existsByRoomNumber(roomNumber)) {
+					roomNumber = UUID.randomUUID().toString();
+				}
+				for (Integer userId : userIds) {
+					ChatEntity chatUser = new ChatEntity();
+
+					chatUser.setRoomNumber(roomNumber);
+					chatUser.setId(userId);
+					chatUser.setJoinId(ids);
+					
+					chatRepository.save(chatUser);
+				}
+				ChatEntity create = chatRepository.findByJoinIdAndId(ids, myId);
+				System.out.println(create);
+				return ChatDTO.toDTO(create);
+			}
+			else {
+				System.out.println(entity);
+				return ChatDTO.toDTO(entity);
+			}
+		}catch(Exception e) { System.out.println(e);}
+		return null;
 	}
 
 }

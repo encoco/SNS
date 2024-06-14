@@ -85,7 +85,8 @@ function Signup() {
 		if (isDuplicate) return; // ID가 중복되었으면 여기서 처리 중단
 		// 비밀번호 확인 로직 추가
 		try {
-			await axios.post('http://13.125.161.122:8080/api/Signup', {
+			await axios.post('http://localhost:8080/api/Signup', {
+			//await axios.post('http://13.125.161.122:8080/api/Signup', {
 				username: username,
 				password: password,
 				nickname: Nick,
@@ -101,7 +102,7 @@ function Signup() {
 
 	return (
 		<div className="flex flex-col gap-6 p-4 sm:p-6 items-center justify-center min-h-screen">
-			<div className="absolute top-4 left-4">
+			<div className="absolute top-10 left-24">
 				<Button onClick={() => navigate(-1)}>뒤로가기</Button>
 			</div>
 			<div className="w-full max-w-[400px]">
@@ -112,32 +113,32 @@ function Signup() {
 				<div className="space-y-4">
 					<div className="space-y-2">
 						<Label htmlFor="username">아이디</Label>
-						<Input id="username" placeholder="r___k18" value={username} onChange={(e) => setusername(e.target.value)} />
+						<Input id="username" placeholder="아이디를 입력해주세요." value={username} onChange={(e) => setusername(e.target.value)} />
 					</div>
 
 					<div className="space-y-2">
 						<Label htmlFor="Nick">닉네임</Label>
-						<Input id="Nick" value={Nick} onChange={(e) => setNick(e.target.value)} />
+						<Input id="Nick" placeholder="닉네임을 입력해주세요." value={Nick} onChange={(e) => setNick(e.target.value)} />
 					</div>
 
 					<div className="space-y-2">
 						<Label htmlFor="password">비밀번호</Label>
-						<Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+						<Input id="password" type="password" placeholder="비밀번호를 입력해주세요." value={password} onChange={(e) => setPassword(e.target.value)} />
 						<i className={`password-icon ${passwordValid ? 'text-green-500' : 'text-red-500'} text-sm mt-3`}>
 							비밀번호는 8자 이상 20자 미만이며, 소문자, 숫자, 특수기호를 각각 하나 이상 포함해야 합니다.
 						</i>
 					</div>
 					<div className="space-y-2">
 						<Label htmlFor="passwordck">비밀번호 확인</Label>
-						<Input id="passwordck" type="password" value={passwordCheck} onChange={(e) => setPasswordCheck(e.target.value)} />
+						<Input id="passwordck" type="password" placeholder="비밀번호를 확인해주세요." value={passwordCheck} onChange={(e) => setPasswordCheck(e.target.value)} />
 					</div>
 					<div className="space-y-2">
 						<Label htmlFor="phone">휴대폰 번호</Label>
-						<Input id="phone" value={phone} onChange={(e) => setPhone(e.target.value)} />
+						<Input id="phone" value={phone} placeholder="'-'을 빼고 입력해주세요." onChange={(e) => setPhone(e.target.value)} />
 					</div>
 					<div className="space-y-2">
 						<Label htmlFor="email">이메일</Label>
-						<Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+						<Input id="email" type="email" placeholder="이메일을 입력해주세요."value={email} onChange={(e) => setEmail(e.target.value)} />
 					</div>
 
 					<Button className="w-full" onClick={handleSignup}>회원가입</Button>

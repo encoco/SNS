@@ -104,7 +104,7 @@ function Setting({ isOpen, onRequestClose, onClose }) {
 							type="password"
 							id="new-password"
 							name="new-password"
-							className="border border-gray-300 rounded-md p-2 mt-1 ml-8"
+							className="border border-gray-300 rounded-md p-2 mt-1 ml-4 md:ml-8"
 							style={{
 								borderColor: passwordValidity.isValid ? 'green' : 'red',
 								outlineColor: passwordValidity.isValid ? 'green' : 'red' // 추가된 부분

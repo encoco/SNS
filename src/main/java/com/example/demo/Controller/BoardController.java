@@ -40,6 +40,11 @@ public class BoardController {
 			String token = jwtUtil.token(request.getHeader("Authorization"));
 			int userId = jwtUtil.getUserIdFromToken(token);
 			List<BoardDTO> posts = boardService.getfollowPost(userId);
+			if(posts == null || posts.isEmpty()) {
+				System.out.println("들어옴?");
+				posts = boardService.getRandomPost();
+				System.out.println("나옴?");
+			}
 			List<BoardLikeDTO> like = boardService.getfollowLike(posts);
 			Map<String, Object> response = new HashMap<>();
 			response.put("posts", posts);

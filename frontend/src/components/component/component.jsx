@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from "react-router-dom";
+import { Link, useNavigate} from "react-router-dom";
 import api from "../../api";
 import ImageSlider from './ImageSlider'; // ImageSlider 컴포넌트를 import
 import Sidebar from "./ui/Sidebar";
@@ -8,6 +8,8 @@ import Comment from './ui/Comment';
 import { BrowserView, MobileView } from 'react-device-detect';
 import Share from './ui/share';
 import Alarm from "./ui/alarm";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 
 export default function Component() {
 	const [showTopBtn, setShowTopBtn] = useState(false);
@@ -23,6 +25,8 @@ export default function Component() {
 	const [userLikes, setUserLikes] = useState(new Set());
 	const [profile, setProfile] = useState('');
 	const [alarmModal, setAlarmModal] = useState(false);
+	
+	const navigate = useNavigate();
 
 	// 글 목록 받아오기
 	useEffect(() => {
@@ -160,7 +164,22 @@ export default function Component() {
 			behavior: 'smooth' // 부드러운 스크롤
 		});
 	};
-
+	
+	const handleNavigateToMessage = async(id) => {
+		try {
+			const response = await api.get(`/findRoom`, {
+            params: { id: id }, // 이 부분에서 id를 쿼리 파라미터로 전달
+            withCredentials: true,
+        });
+		console.log(response.data);
+		navigate(`/Message`, { state: { room: response.data } });
+		}catch (error) {
+			console.log(error);
+			alert('다시 시도해주세요');
+		}
+        
+    };
+    
 	return (
 		<div className="app">
 			{/* 데스크톱 화면 */}
@@ -248,6 +267,14 @@ export default function Component() {
 													댓글
 												</button>
 												<button className="w-16 h-8" onClick={() => { setCurrentPost(post); setShowShareModal(true); }}>공유</button>
+												{profile.id !== post.id && (
+													<button
+														className="w-10 h-8"
+														onClick={() => handleNavigateToMessage(post.id)} // 'messages'는 메시지 페이지의 경로
+													>
+														<FontAwesomeIcon icon={faPaperPlane} />
+													</button>
+												)}
 											</div>
 										</div>
 									))}

@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link,useLocation ,useParams} from "react-router-dom";
 import Sidebar from "./ui/Sidebar";
 import Together from "./Together";
 import { Button } from "./ui/button";
@@ -28,15 +28,23 @@ function Message() {
 	const messageEndRef = useRef(null);
 	const [isListExpanded, setIsListExpanded] = useState(false);
 	const [room, setRoom] = useState('');
+	const location = useLocation();
+	const [componentroom, setComponentRoom] = useState(location.state?.room || {});
 	const scrollToBottom = () => {
 		if (messageEndRef.current) {
 			messageEndRef.current.scrollIntoView();
 		}
 	};
-
+    useEffect(() => {
+        if (componentroom.roomNumber) {
+            handleChatSelect(componentroom);
+        }
+    }, [componentroom]);
+    
 	useEffect(() => {
 		scrollToBottom();
 	}, [messages]);
+	
 	useEffect(() => {
 		// userInfo에서 nickname을 추출하여 상태에 저장
 		const userInfoJSON = localStorage.getItem('nickname');
@@ -191,7 +199,6 @@ function Message() {
 				params: { roomNumber: room.roomNumber },
 				withCredentials: true,
 			});
-
 			setMessages(response.data);
 		} catch (error) {
 			console.error('Error fetching comments:', error);

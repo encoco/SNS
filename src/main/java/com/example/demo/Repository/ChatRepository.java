@@ -22,4 +22,8 @@ public interface ChatRepository extends JpaRepository<ChatEntity, Integer> {
 	public ChatEntity findByJoinIdAndId(String joinId, int id);
 
 	ChatEntity findJoinIdByroomNumberAndId(String roomNumber, int id);
+
+	public ChatEntity findRoomNumberByJoinId(String ids);
+
+	public ChatEntity findRoomNumberByJoinIdAndId(@Param("JoinId")String ids, @Param("Id") int id);
 }

@@ -198,4 +198,11 @@ public class ChatController {
 		
 	    return ResponseEntity.ok(null);
 	}
+	
+	@GetMapping("/findRoom")
+	public ResponseEntity<?> findRoom(HttpServletRequest request,@RequestParam("id") int id){
+		String token = jwtUtil.token(request.getHeader("Authorization"));
+		int myId = jwtUtil.getUserIdFromToken(token);
+ 		return ResponseEntity.ok(chatService.findRoom(id, myId));
+	}
 }

@@ -5,7 +5,6 @@ import SignupPage from './components/component/Signup';
 import Component from './components/component/component';
 import BoardWrite from './components/component/BoardWrite';
 import Message from './components/component/Message';
-import Participate from './components/component/Participate';
 import Setting from './components/component/Setting';
 import Together from './components/component/Together';
 import UserPage from './components/component/UserPage';
@@ -31,7 +30,6 @@ function App() {
         <Route path="/BoardWrite" element={<PrivateRoute><BoardWrite /></PrivateRoute>} />
         <Route path="/UserPage/:userId" element={<PrivateRoute><UserPage/></PrivateRoute>} />
         <Route path="/Message" element={<PrivateRoute><Message/></PrivateRoute>} />
-        <Route path="/Participate" element={<PrivateRoute><Participate/></PrivateRoute>} />
         <Route path="/Setting" element={<PrivateRoute><Setting/></PrivateRoute>} />
         <Route path="/Together" element={<PrivateRoute><Together/></PrivateRoute>} />
       </Routes>

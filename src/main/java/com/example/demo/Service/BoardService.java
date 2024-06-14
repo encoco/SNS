@@ -232,4 +232,13 @@ public class BoardService {
 	public boolean existFollow(int userId, int myId) {
 		return fRepository.existsByFollowerIdAndFollowingId(myId, userId);
 	}
+
+	public List<BoardDTO> getRandomPost() {
+		try {
+			List<BoardEntity> test = boardRepository.findRandomBoards();
+			return BoardDTO.ToDtoList(test);
+				
+		}catch(Exception e) {System.out.println(e);}
+		return null;
+	}
 }

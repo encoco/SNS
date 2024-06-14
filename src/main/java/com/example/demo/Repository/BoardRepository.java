@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import com.example.demo.DTO.BoardDTO;
 import com.example.demo.entity.BoardEntity;
 
 public interface BoardRepository extends JpaRepository<BoardEntity, Integer> {
@@ -23,5 +24,8 @@ public interface BoardRepository extends JpaRepository<BoardEntity, Integer> {
 
 	@Query(value = "SELECT id FROM board WHERE board_id = :board_id", nativeQuery = true)
 	public int findIdByboardId(@Param("board_id")int board_id);
+	
+	@Query(value = "SELECT * FROM board ORDER BY RAND() LIMIT 20", nativeQuery = true)
+    List<BoardEntity> findRandomBoards();
 
 }
