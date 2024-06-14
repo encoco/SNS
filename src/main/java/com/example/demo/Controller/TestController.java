@@ -137,6 +137,14 @@ public class TestController {
 		System.out.println("dto : " + dto);
 		return ResponseEntity.ok(dto);
 	}
+	
+	@GetMapping("/CheckNewAlarm")
+	public ResponseEntity<?> CheckAlarm(HttpServletRequest request){
+		String token = jwtutil.token(request.getHeader("Authorization"));
+		boolean isRead = Uservice.getCheckAlarm(jwtutil.getUserIdFromToken(token));
+		return ResponseEntity.ok(isRead);
+	}
+	
 	@PostMapping("delAllAlarm")
 	public ResponseEntity<?> delAllAlarm(HttpServletRequest request){
 		String token = jwtutil.token(request.getHeader("Authorization"));

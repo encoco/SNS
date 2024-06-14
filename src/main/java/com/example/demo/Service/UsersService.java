@@ -122,9 +122,22 @@ public class UsersService {
 		return null;
 	}
 
-	public List<AlarmDTO> getAlarm(int id) {
-		List<AlarmEntity> entity = alarmRepository.findByRecipientIdOrderByDateDesc(id);
-		return AlarmDTO.toDtoList(entity);
+	@Transactional
+    public List<AlarmDTO> getAlarm(int id) {
+        List<AlarmEntity> entities = alarmRepository.findByRecipientIdOrderByDateDesc(id);
+        
+        // 모든 엔티티의 read 값을 true로 변경
+        entities.forEach(entity -> entity.setIsread(true));
+
+        // 변경된 엔티티들을 저장
+        alarmRepository.saveAll(entities);
+
+        return AlarmDTO.toDtoList(entities);
+    }
+	
+	public boolean getCheckAlarm(int id) {
+		if(alarmRepository.existsByRecipientIdAndReadFalse(id) > 0) return true;
+		else 														return false;
 	}
 
 	public void delAllAlarm(int id) {

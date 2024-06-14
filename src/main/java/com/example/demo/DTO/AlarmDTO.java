@@ -25,6 +25,7 @@ public class AlarmDTO {
     private String nickname;
     private int board_id;
     private String content;
+    private boolean isread;
     @Builder.Default
     private String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm"));
     
@@ -37,6 +38,7 @@ public class AlarmDTO {
             .board_id(entity.getBoard_id())
             .content(entity.getSender().getNickname() + entity.getContent())
             .date(entity.getDate())
+            .isread(entity.isIsread())
             .profile_img(entity.getSender().getProfile_img())
             .nickname(entity.getSender().getNickname())
             .build();

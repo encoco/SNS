@@ -18,6 +18,7 @@ function Alarm({ isOpen, onClose }) {
                withCredentials: true,
             });
             setAlarmData(response.data);
+            console.log(response.data);
          } catch (error) {
             console.log(error);
          }

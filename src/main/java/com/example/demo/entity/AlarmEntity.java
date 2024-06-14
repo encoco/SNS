@@ -33,13 +33,14 @@ public class AlarmEntity {
 	private int alarm_id;
 
     private int recipientId;
-    
     @ManyToOne
     @JoinColumn(name = "sender_id") // 외래 키 지정
 	private UsersEntity sender;
 	
 	private int board_id;
 	private String content;
+	private boolean isread;
+	
 	@Builder.Default
     private String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss"));
 	
@@ -51,8 +52,8 @@ public class AlarmEntity {
             .sender(UsersEntity.builder().id(dto.getRecipient_id()).build())
             .board_id(dto.getBoard_id())
             .content(dto.getContent())
+            .isread(dto.isIsread())
             .date(dto.getDate())
             .build();
 	}
-	
 }

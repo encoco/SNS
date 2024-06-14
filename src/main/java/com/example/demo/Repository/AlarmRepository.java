@@ -13,10 +13,13 @@ public interface AlarmRepository extends JpaRepository<AlarmEntity, Integer> {
 	
 	@Query(value = "SELECT * FROM alarm WHERE recipient_id = :recipient_id AND sender_id = :senderId " +
             "AND content = :content AND board_id = :boardId", nativeQuery = true)
-Optional<AlarmEntity> findByCriteria(@Param("recipient_id") int recipientId, 
+	Optional<AlarmEntity> findByCriteria(@Param("recipient_id") int recipientId, 
                                   @Param("senderId") int senderId, 
                                   @Param("content") String content, 
                                   @Param("boardId") int boardId);
 
 	List<AlarmEntity> findByRecipientId(int id);
+	
+	@Query(value = "SELECT COUNT(*) > 0 FROM alarm WHERE recipient_id = :recipient_id AND isread = 0", nativeQuery = true)
+    int existsByRecipientIdAndReadFalse(@Param("recipient_id") int recipientId);
 }

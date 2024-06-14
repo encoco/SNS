@@ -6,6 +6,8 @@ import { BrowserView, MobileView } from "react-device-detect";
 import BoardWrite from '../BoardWrite';
 import Alarm from "./alarm.js";
 import Setting from '../Setting.js'; // setting.js 모달 import
+import api from "../../../api";
+
 
 // Define the Sidebar component
 function Sidebar() {
@@ -17,7 +19,7 @@ function Sidebar() {
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [alarmModal, setAlarmModal] = useState(false);
 	const [settingModal, setSettingModal] = useState(false);
-
+	const [newAlarm, setNewAlarm] = useState(false);
 	useEffect(() => {
 		// userInfo에서 nickname을 추출하여 상태에 저장
 		const userInfoJSON = localStorage.getItem('nickname');
@@ -28,7 +30,21 @@ function Sidebar() {
 			setId(userInfo.id);
 		}
 	}, []); // 의존성 배열을 빈 배열로 설정하여 컴포넌트 마운트 시에만 실행
-
+	useEffect(() => {
+		const Alarm = async () => {
+         try {
+            // userId를 사용하여 사용자의 게시물을 가져옴
+            const response = await api.get(`/CheckNewAlarm`, {
+               withCredentials: true,
+            });
+            setNewAlarm(response.data);
+         } catch (error) {
+            console.log(error);
+         }
+      };
+      Alarm();
+	}, []);
+	
 	const handleLogout = async () => {
 		try {
 			logout();
@@ -38,7 +54,6 @@ function Sidebar() {
 			alert('다시 시도해주세요.');
 		}
 	};
-
 
 	const openAlarmModal = () => setAlarmModal(true);
 	const closeAlarmModal = () => setAlarmModal(false);
@@ -67,7 +82,16 @@ function Sidebar() {
 						<Link className="text-gray-600 hover:bg-gray-200 p-2 rounded mb-2" onClick={openModal}>글쓰기</Link>
 						<Link className="text-gray-600 hover:bg-gray-200 p-2 rounded mb-2" to={`/UserPage/${id}`} >마이페이지</Link>
 						<Link className="text-gray-600 hover:bg-gray-200 p-2 rounded mb-2" to="/Message">메세지</Link>
-						<button className="text-gray-600 hover:bg-gray-200 p-2 mb-2 rounded flex justify-start" onClick={() => { openAlarmModal(); }}>알림</button>
+						<button
+							className={`p-2 mb-2 rounded flex justify-start items-center ${newAlarm ? 'text-red-600' : 'text-gray-600'} hover:bg-gray-200`}
+							onClick={() => {
+								setNewAlarm(false);
+								openAlarmModal();
+							}}
+						>
+							{newAlarm && <span className="w-2 h-2 bg-red-600 rounded-full mr-2"></span>}
+							알림
+						</button>
 						<Link className="text-gray-600 hover:bg-gray-200 p-2 rounded mb-2" onClick={openSettingModal}>환경 설정</Link>
 						<button className="text-gray-600 hover:bg-gray-200 p-2 mb-2 rounded flex justify-start" onClick={handleLogout}>로그아웃</button>
 					</div>
