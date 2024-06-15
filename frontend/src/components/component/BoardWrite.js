@@ -16,7 +16,7 @@ const StyledTextarea = styled.textarea`
   border-radius: 8px;
   resize: none;
   width: 100%;
-  height: 200px;
+  height: 260px;
   overflow-y: auto;
 `;
 
@@ -166,7 +166,7 @@ function BoardWrite({ isOpen, onClose, onRequestClose, post }) {
       overlayClassName="fixed inset-0 bg-black bg-opacity-5 "
       style={{ zIndex: 12 }}
     >
-      <Card className="w-[75vw] max-w-sm mx-auto relative" style={{ zIndex: 50 }}>
+      <Card className="w-[90vw] max-w-2xl h-[50vh] min-h-[500px] mx-auto relative" style={{ zIndex: 50 }}>
         <CardHeader>
           <CardTitle className="text-xl">
             {post ? '게시글 수정하기' : '새 게시물 만들기'}

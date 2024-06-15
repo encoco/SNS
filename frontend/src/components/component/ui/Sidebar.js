@@ -75,7 +75,7 @@ function Sidebar() {
 							</div>
 						</Avatar>
 						<h2 className="mt-4 font-semibold text-xl">{nickname}</h2>
-						<p className="text-sm text-gray-600">팔로워: 123 · 팔로잉: 123</p>
+						<p className="text-sm text-gray-600">팔로워: 24 · 팔로잉: 38</p>
 					</div>
 					<div className="mt-10 flex flex-col">
 						<Link className="text-gray-600 hover:bg-gray-200 p-2 rounded mb-2" to="/index">홈</Link>
