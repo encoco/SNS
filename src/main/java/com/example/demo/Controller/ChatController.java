@@ -49,10 +49,9 @@ public class ChatController {
 	public ChatMessageDTO handleChatMessage(@DestinationVariable("roomNumber") String roomNumber,
 			@Payload ChatMessageDTO message) {
 		String token = message.getNickname();
-		// 오픈채팅은 1부터 AutoIncrement 설정이고 일반채팅은 UUID를 통한 값이기 때문에 parseInt에서 에러가 안뜨면 오픈채팅.
+		
 		message.setRoom_number(roomNumber);
 		message.setId(jwtUtil.getUserIdFromToken(token));
-		message.setNickname(jwtUtil.getNickFromToken(token));
 		return chatService.saveChat(message);
 	}
 
@@ -62,7 +61,6 @@ public class ChatController {
 		String token = message.getNickname();
 		message.setCommunitychat_id(roomNumber);
 		message.setId(jwtUtil.getUserIdFromToken(token));
-		message.setNickname(jwtUtil.getNickFromToken(token));
 		return chatService.saveCommChat(message);
 	}
 	

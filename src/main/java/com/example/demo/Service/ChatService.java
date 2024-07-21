@@ -88,6 +88,7 @@ public class ChatService {
 	}
 
 	public ChatMessageDTO saveChat(ChatMessageDTO message) {
+		message.setNickname(usersRepository.findNicknameById(message.getId()));
 		ChatMessageEntity entity = ChatMessageEntity.toEntity(message);
 		messageRepository.save(entity);
 
@@ -127,6 +128,7 @@ public class ChatService {
 	}
 
 	public CCMDTO saveCommChat(CCMDTO message) {
+		message.setNickname(usersRepository.findNicknameById(message.getId()));
 		CCMEntity entity = CCMEntity.toEntity(message);
 		ccmrepository.save(entity);
 		

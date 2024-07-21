@@ -53,6 +53,7 @@ function Message() {
 			setNickname(userInfo.nickname); // nickname 상태 업데이트
 			setId(userInfo.id);
 		}
+		console.log(nickname);
 	}, []); // 의존성 배열을 빈 배열로 설정하여 컴포넌트 마운트 시에만 실행
 
 
@@ -127,7 +128,8 @@ function Message() {
 			if (activeView == 'group') {
 				const message = {
 					content: inputMessage,
-					nickname: nickname
+					nickname: nickname,
+					room_number : nickname
 				};
 				webSocketService.send(`/api/pub/commChat/${selectedChat}`, message, localStorage.getItem("userInfo"));
 			}

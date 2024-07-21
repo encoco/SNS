@@ -18,7 +18,7 @@ import com.example.demo.DTO.SearchDTO;
 import com.example.demo.DTO.UsersDTO;
 import com.example.demo.DTO.UsersInfoDTO;
 import com.example.demo.Repository.UsersRepository;
-import com.example.demo.Service.UsersService;import ch.qos.logback.classic.pattern.ExtendedThrowableProxyConverter;
+import com.example.demo.Service.UsersService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -27,7 +27,7 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api")
-public class TestController {
+public class HomeController {
 	private final UsersRepository repository;
 	private final UsersService Uservice;
 	private final JwtUtil jwtutil;

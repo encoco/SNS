@@ -166,7 +166,7 @@ function BoardWrite({ isOpen, onClose, onRequestClose, post }) {
       overlayClassName="fixed inset-0 bg-black bg-opacity-5 "
       style={{ zIndex: 12 }}
     >
-      <Card className="w-[90vw] max-w-2xl h-[50vh] min-h-[500px] mx-auto relative" style={{ zIndex: 50 }}>
+      <Card className="w-[90vw] max-w-2xl h-[50vh] min-h-[620px] mx-auto relative" style={{ zIndex: 50 }}>
         <CardHeader>
           <CardTitle className="text-xl">
             {post ? '게시글 수정하기' : '새 게시물 만들기'}

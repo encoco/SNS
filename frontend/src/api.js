@@ -3,7 +3,6 @@ import axios from 'axios'
 const api = axios.create({ //기본 요청 주소
 	baseURL: 'http://localhost:8080/api', 
 	//baseURL: 'http://13.125.161.122:8080/api',
-	//baseURL: 'http://192.168.0.10:8080/api',
 	headers: {
 		"Content-Type": "application/json",
 		withCredentials: true
@@ -37,7 +36,6 @@ api.interceptors.response.use( //맨처음 요청에서 오류나면 실행되�
 				try {
 					axios.get('http://localhost:8080/api/Logout', {withCredentials: true});
 					//axios.get('http://13.125.161.122:8080/api/Logout', {}, { withCredentials: true });
-					// 여기서 응답 처리
 					localStorage.removeItem('userInfo'); // 세션 스토리지에서 사용자 정보 제거
 					alert("다시 로그인해주세요.");
 					window.location.reload();

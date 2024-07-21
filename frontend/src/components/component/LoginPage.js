@@ -32,7 +32,6 @@ function LoginPage() {
 		params.append('password', password);
 		const response = await axios.post('http://localhost:8080/api/Login', params, {
 		//const response = await axios.post('http://13.125.161.122:8080/api/Login', params, {
-		//const response = await axios.post('http://192.168.0.10:8080/api/Login', params, {
 			headers: {
 				'Content-Type': 'application/x-www-form-urlencoded'
 			},
