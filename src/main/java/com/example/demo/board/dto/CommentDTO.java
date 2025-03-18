@@ -1,0 +1,51 @@
+package com.example.demo.board.dto;
+
+import com.example.demo.board.entity.CommentEntity;
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.*;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
+@Getter
+@Setter
+@Builder
+@ToString
+@AllArgsConstructor
+@NoArgsConstructor
+@Schema(description = "댓글 DTO")
+public class CommentDTO {
+
+    @Schema(description = "댓글 ID", example = "1")
+    private int comment_id;
+
+    @Schema(description = "게시글 ID", example = "123")
+    private int board_id;
+
+    @Schema(description = "유저 ID", example = "100")
+    private int id;
+
+    @Schema(description = "댓글 내용", example = "이것은 댓글 내용입니다.")
+    private String comment;
+
+    @Schema(description = "사용자 닉네임", example = "홍길동")
+    private String nickname;
+
+    @Schema(description = "사용자 프로필 이미지 경로", example = "이미지 경로")
+    private String profile_img;
+
+    @Builder.Default
+    private String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss"));
+
+    public static CommentDTO toDTO(CommentEntity entity) {
+        return CommentDTO.builder()
+                .comment_id(entity.getComment_id())
+                .board_id(entity.getBoardId())
+                .id(entity.getId())
+                .nickname(entity.getNickname())
+                .comment(entity.getComment())
+                .profile_img(entity.getProfile_img())
+                .date(entity.getDate())
+                .build();
+    }
+}

@@ -3,9 +3,12 @@
 -- Model: New Model    Version: 1.0
 -- MySQL Workbench Forward Engineering
 
-SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
-SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
-SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
+SET
+@OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
+SET
+@OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
+SET
+@OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
 
 -- -----------------------------------------------------
 -- Schema mydb
@@ -17,409 +20,1023 @@ SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,N
 -- -----------------------------------------------------
 -- Schema SNS
 -- -----------------------------------------------------
-CREATE SCHEMA IF NOT EXISTS `SNS` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci ;
-USE `SNS` ;
+CREATE SCHEMA IF NOT EXISTS `SNS` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+USE
+`SNS` ;
 
 -- -----------------------------------------------------
 -- Table `SNS`.`users`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `SNS`.`users` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `username` VARCHAR(50) NOT NULL,
-  `PassWord` VARCHAR(300) NOT NULL,
-  `nickname` VARCHAR(50) NOT NULL,
-  `profile_img` VARCHAR(200) NULL DEFAULT NULL,
-  `state_message` VARCHAR(200) NULL DEFAULT NULL,
-  `Phone` VARCHAR(45) NULL DEFAULT NULL,
-  `Email` VARCHAR(45) NOT NULL,
-  `Role` VARCHAR(40) NOT NULL,
-  PRIMARY KEY (`id`),
-  INDEX `idx_nickname` (`nickname` ASC) VISIBLE,
-  INDEX `idx_user_img` (`profile_img` ASC) VISIBLE)
-ENGINE = InnoDB
-AUTO_INCREMENT = 75
-DEFAULT CHARACTER SET = utf8mb4
-COLLATE = utf8mb4_0900_ai_ci;
+CREATE TABLE IF NOT EXISTS `SNS`.`users`
+(
+    `id`
+    INT
+    NOT
+    NULL
+    AUTO_INCREMENT,
+    `username`
+    VARCHAR
+(
+    50
+) NOT NULL,
+    `PassWord` VARCHAR
+(
+    300
+) NOT NULL,
+    `nickname` VARCHAR
+(
+    50
+) NOT NULL,
+    `profile_img` VARCHAR
+(
+    200
+) NULL DEFAULT NULL,
+    `state_message` VARCHAR
+(
+    200
+) NULL DEFAULT NULL,
+    `Phone` VARCHAR
+(
+    45
+) NULL DEFAULT NULL,
+    `Email` VARCHAR
+(
+    45
+) NOT NULL,
+    `Role` VARCHAR
+(
+    40
+) NOT NULL,
+    PRIMARY KEY
+(
+    `id`
+),
+    INDEX `idx_nickname`
+(
+    `nickname`
+    ASC
+) VISIBLE,
+    INDEX `idx_user_img`
+(
+    `profile_img`
+    ASC
+) VISIBLE)
+    ENGINE = InnoDB
+    AUTO_INCREMENT = 75
+    DEFAULT CHARACTER SET = utf8mb4
+    COLLATE = utf8mb4_0900_ai_ci;
 
 
 -- -----------------------------------------------------
 -- Table `SNS`.`board`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `SNS`.`board` (
-  `board_id` INT NOT NULL AUTO_INCREMENT,
-  `nickname` VARCHAR(100) NOT NULL,
-  `profile_img` VARCHAR(200) NULL DEFAULT NULL,
-  `id` INT NOT NULL,
-  `img` VARCHAR(500) NULL DEFAULT NULL,
-  `video` VARCHAR(500) NULL DEFAULT NULL,
-  `content` VARCHAR(2000) NULL DEFAULT NULL,
-  `date` DATETIME NULL DEFAULT now(),
-  PRIMARY KEY (`board_id`),
-  INDEX `fk_id_user_id_idx` (`id` ASC) VISIBLE,
-  CONSTRAINT `fk_Board_user_id`
-    FOREIGN KEY (`id`)
-    REFERENCES `SNS`.`users` (`id`)
+CREATE TABLE IF NOT EXISTS `SNS`.`board`
+(
+    `board_id`
+    INT
+    NOT
+    NULL
+    AUTO_INCREMENT,
+    `nickname`
+    VARCHAR
+(
+    100
+) NOT NULL,
+    `profile_img` VARCHAR
+(
+    200
+) NULL DEFAULT NULL,
+    `id` INT NOT NULL,
+    `img` VARCHAR
+(
+    500
+) NULL DEFAULT NULL,
+    `video` VARCHAR
+(
+    500
+) NULL DEFAULT NULL,
+    `content` VARCHAR
+(
+    2000
+) NULL DEFAULT NULL,
+    `date` DATETIME NULL DEFAULT now
+(
+),
+    PRIMARY KEY
+(
+    `board_id`
+),
+    INDEX `fk_id_user_id_idx`
+(
+    `id`
+    ASC
+) VISIBLE,
+    CONSTRAINT `fk_Board_user_id`
+    FOREIGN KEY
+(
+    `id`
+)
+    REFERENCES `SNS`.`users`
+(
+    `id`
+)
     ON DELETE CASCADE)
-ENGINE = InnoDB
-AUTO_INCREMENT = 192
-DEFAULT CHARACTER SET = utf8mb4
-COLLATE = utf8mb4_0900_ai_ci;
+    ENGINE = InnoDB
+    AUTO_INCREMENT = 192
+    DEFAULT CHARACTER SET = utf8mb4
+    COLLATE = utf8mb4_0900_ai_ci;
 
 
 -- -----------------------------------------------------
 -- Table `SNS`.`BookMark`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `SNS`.`BookMark` (
-  `bookmark_id` INT NOT NULL AUTO_INCREMENT,
-  `id` INT NOT NULL,
-  `board_id` INT NOT NULL,
-  PRIMARY KEY (`bookmark_id`),
-  INDEX `fk_bookmark_userid_idx` (`id` ASC) VISIBLE,
-  INDEX `fk_bookmark_boardid_idx` (`board_id` ASC) VISIBLE,
-  CONSTRAINT `fk_bookmark_boardid`
-    FOREIGN KEY (`board_id`)
-    REFERENCES `SNS`.`board` (`board_id`),
-  CONSTRAINT `fk_bookmark_userid`
-    FOREIGN KEY (`id`)
-    REFERENCES `SNS`.`users` (`id`))
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8mb4
-COLLATE = utf8mb4_0900_ai_ci;
+CREATE TABLE IF NOT EXISTS `SNS`.`BookMark`
+(
+    `bookmark_id`
+    INT
+    NOT
+    NULL
+    AUTO_INCREMENT,
+    `id`
+    INT
+    NOT
+    NULL,
+    `board_id`
+    INT
+    NOT
+    NULL,
+    PRIMARY
+    KEY
+(
+    `bookmark_id`
+),
+    INDEX `fk_bookmark_userid_idx`
+(
+    `id`
+    ASC
+) VISIBLE,
+    INDEX `fk_bookmark_boardid_idx`
+(
+    `board_id`
+    ASC
+) VISIBLE,
+    CONSTRAINT `fk_bookmark_boardid`
+    FOREIGN KEY
+(
+    `board_id`
+)
+    REFERENCES `SNS`.`board`
+(
+    `board_id`
+),
+    CONSTRAINT `fk_bookmark_userid`
+    FOREIGN KEY
+(
+    `id`
+)
+    REFERENCES `SNS`.`users`
+(
+    `id`
+))
+    ENGINE = InnoDB
+    DEFAULT CHARACTER SET = utf8mb4
+    COLLATE = utf8mb4_0900_ai_ci;
 
 
 -- -----------------------------------------------------
 -- Table `SNS`.`comment`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `SNS`.`comment` (
-  `comment_id` INT NOT NULL AUTO_INCREMENT,
-  `board_id` INT NOT NULL,
-  `id` INT NOT NULL,
-  `profile_img` VARCHAR(100) NULL DEFAULT NULL,
-  `nickname` VARCHAR(50) NOT NULL,
-  `comment` VARCHAR(300) NOT NULL,
-  `date` DATETIME NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`comment_id`),
-  INDEX `fk_comment_idx` (`board_id` ASC) VISIBLE,
-  INDEX `fk_comment_idx1` (`id` ASC) VISIBLE,
-  INDEX `fk_comment_user_img_idx` (`profile_img` ASC) VISIBLE,
-  CONSTRAINT `fk_comment_board_id`
-    FOREIGN KEY (`board_id`)
-    REFERENCES `SNS`.`board` (`board_id`)
+CREATE TABLE IF NOT EXISTS `SNS`.`comment`
+(
+    `comment_id`
+    INT
+    NOT
+    NULL
+    AUTO_INCREMENT,
+    `board_id`
+    INT
+    NOT
+    NULL,
+    `id`
+    INT
+    NOT
+    NULL,
+    `profile_img`
+    VARCHAR
+(
+    100
+) NULL DEFAULT NULL,
+    `nickname` VARCHAR
+(
+    50
+) NOT NULL,
+    `comment` VARCHAR
+(
+    300
+) NOT NULL,
+    `date` DATETIME NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY
+(
+    `comment_id`
+),
+    INDEX `fk_comment_idx`
+(
+    `board_id`
+    ASC
+) VISIBLE,
+    INDEX `fk_comment_idx1`
+(
+    `id`
+    ASC
+) VISIBLE,
+    INDEX `fk_comment_user_img_idx`
+(
+    `profile_img`
+    ASC
+) VISIBLE,
+    CONSTRAINT `fk_comment_board_id`
+    FOREIGN KEY
+(
+    `board_id`
+)
+    REFERENCES `SNS`.`board`
+(
+    `board_id`
+)
     ON DELETE CASCADE,
-  CONSTRAINT `fk_comment_user_id`
-    FOREIGN KEY (`id`)
-    REFERENCES `SNS`.`users` (`id`)
+    CONSTRAINT `fk_comment_user_id`
+    FOREIGN KEY
+(
+    `id`
+)
+    REFERENCES `SNS`.`users`
+(
+    `id`
+)
     ON DELETE CASCADE,
-  CONSTRAINT `fk_comment_user_img`
-    FOREIGN KEY (`profile_img`)
-    REFERENCES `SNS`.`users` (`profile_img`))
-ENGINE = InnoDB
-AUTO_INCREMENT = 225
-DEFAULT CHARACTER SET = utf8mb4
-COLLATE = utf8mb4_0900_ai_ci;
+    CONSTRAINT `fk_comment_user_img`
+    FOREIGN KEY
+(
+    `profile_img`
+)
+    REFERENCES `SNS`.`users`
+(
+    `profile_img`
+))
+    ENGINE = InnoDB
+    AUTO_INCREMENT = 225
+    DEFAULT CHARACTER SET = utf8mb4
+    COLLATE = utf8mb4_0900_ai_ci;
 
 
 -- -----------------------------------------------------
 -- Table `SNS`.`CommentLike`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `SNS`.`CommentLike` (
-  `commentlike_id` INT NOT NULL AUTO_INCREMENT,
-  `id` INT NOT NULL,
-  `comment_id` INT NOT NULL,
-  `date` DATETIME NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`commentlike_id`),
-  INDEX `fk_commentlike_user_id_idx` (`id` ASC) VISIBLE,
-  INDEX `fk_commentlike_comment_id_idx` (`comment_id` ASC) VISIBLE,
-  CONSTRAINT `fk_commentlike_comment_id`
-    FOREIGN KEY (`comment_id`)
-    REFERENCES `SNS`.`comment` (`comment_id`),
-  CONSTRAINT `fk_commentlike_user_id`
-    FOREIGN KEY (`id`)
-    REFERENCES `SNS`.`users` (`id`)
+CREATE TABLE IF NOT EXISTS `SNS`.`CommentLike`
+(
+    `commentlike_id`
+    INT
+    NOT
+    NULL
+    AUTO_INCREMENT,
+    `id`
+    INT
+    NOT
+    NULL,
+    `comment_id`
+    INT
+    NOT
+    NULL,
+    `date`
+    DATETIME
+    NULL
+    DEFAULT
+    CURRENT_TIMESTAMP,
+    PRIMARY
+    KEY
+(
+    `commentlike_id`
+),
+    INDEX `fk_commentlike_user_id_idx`
+(
+    `id`
+    ASC
+) VISIBLE,
+    INDEX `fk_commentlike_comment_id_idx`
+(
+    `comment_id`
+    ASC
+) VISIBLE,
+    CONSTRAINT `fk_commentlike_comment_id`
+    FOREIGN KEY
+(
+    `comment_id`
+)
+    REFERENCES `SNS`.`comment`
+(
+    `comment_id`
+),
+    CONSTRAINT `fk_commentlike_user_id`
+    FOREIGN KEY
+(
+    `id`
+)
+    REFERENCES `SNS`.`users`
+(
+    `id`
+)
     ON DELETE CASCADE)
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8mb4
-COLLATE = utf8mb4_0900_ai_ci;
+    ENGINE = InnoDB
+    DEFAULT CHARACTER SET = utf8mb4
+    COLLATE = utf8mb4_0900_ai_ci;
 
 
 -- -----------------------------------------------------
 -- Table `SNS`.`Notice`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `SNS`.`Notice` (
-  `notice_id` INT NOT NULL AUTO_INCREMENT,
-  `id` INT NOT NULL,
-  `title` VARCHAR(200) NOT NULL,
-  `content` VARCHAR(1000) NULL DEFAULT NULL,
-  `img` VARCHAR(500) NULL DEFAULT NULL,
-  `date` DATETIME NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`notice_id`),
-  INDEX `fk_notice_users_id_idx` (`id` ASC) VISIBLE,
-  CONSTRAINT `fk_notice_users_id`
-    FOREIGN KEY (`id`)
-    REFERENCES `SNS`.`users` (`id`)
+CREATE TABLE IF NOT EXISTS `SNS`.`Notice`
+(
+    `notice_id`
+    INT
+    NOT
+    NULL
+    AUTO_INCREMENT,
+    `id`
+    INT
+    NOT
+    NULL,
+    `title`
+    VARCHAR
+(
+    200
+) NOT NULL,
+    `content` VARCHAR
+(
+    1000
+) NULL DEFAULT NULL,
+    `img` VARCHAR
+(
+    500
+) NULL DEFAULT NULL,
+    `date` DATETIME NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY
+(
+    `notice_id`
+),
+    INDEX `fk_notice_users_id_idx`
+(
+    `id`
+    ASC
+) VISIBLE,
+    CONSTRAINT `fk_notice_users_id`
+    FOREIGN KEY
+(
+    `id`
+)
+    REFERENCES `SNS`.`users`
+(
+    `id`
+)
     ON DELETE CASCADE)
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8mb4
-COLLATE = utf8mb4_0900_ai_ci;
+    ENGINE = InnoDB
+    DEFAULT CHARACTER SET = utf8mb4
+    COLLATE = utf8mb4_0900_ai_ci;
 
 
 -- -----------------------------------------------------
 -- Table `SNS`.`Search`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `SNS`.`Search` (
-  `search_id` INT NOT NULL AUTO_INCREMENT,
-  `id` INT NOT NULL,
-  `keyword` VARCHAR(100) NOT NULL,
-  PRIMARY KEY (`search_id`),
-  INDEX `fk_search_users_id_idx` (`id` ASC) VISIBLE,
-  CONSTRAINT `fk_search_users_id`
-    FOREIGN KEY (`id`)
-    REFERENCES `SNS`.`users` (`id`)
+CREATE TABLE IF NOT EXISTS `SNS`.`Search`
+(
+    `search_id`
+    INT
+    NOT
+    NULL
+    AUTO_INCREMENT,
+    `id`
+    INT
+    NOT
+    NULL,
+    `keyword`
+    VARCHAR
+(
+    100
+) NOT NULL,
+    PRIMARY KEY
+(
+    `search_id`
+),
+    INDEX `fk_search_users_id_idx`
+(
+    `id`
+    ASC
+) VISIBLE,
+    CONSTRAINT `fk_search_users_id`
+    FOREIGN KEY
+(
+    `id`
+)
+    REFERENCES `SNS`.`users`
+(
+    `id`
+)
     ON DELETE CASCADE)
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8mb4
-COLLATE = utf8mb4_0900_ai_ci;
+    ENGINE = InnoDB
+    DEFAULT CHARACTER SET = utf8mb4
+    COLLATE = utf8mb4_0900_ai_ci;
 
 
 -- -----------------------------------------------------
 -- Table `SNS`.`alarm`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `SNS`.`alarm` (
-  `alarm_id` INT NOT NULL AUTO_INCREMENT,
-  `recipient_id` INT NOT NULL,
-  `sender_id` INT NOT NULL,
-  `content` VARCHAR(200) NULL DEFAULT NULL,
-  `board_id` INT NULL DEFAULT NULL,
-  `date` DATETIME NULL DEFAULT CURRENT_TIMESTAMP,
-  `isread` TINYINT(1) NULL DEFAULT '0',
-  PRIMARY KEY (`alarm_id`),
-  INDEX `fk_dd_user_id_idx` (`recipient_id` ASC) VISIBLE,
-  INDEX `fk_user_id_recipient_id_idx` (`sender_id` ASC) VISIBLE,
-  CONSTRAINT `fk_user_id_recipient_id`
-    FOREIGN KEY (`sender_id`)
-    REFERENCES `SNS`.`users` (`id`)
+CREATE TABLE IF NOT EXISTS `SNS`.`alarm`
+(
+    `alarm_id`
+    INT
+    NOT
+    NULL
+    AUTO_INCREMENT,
+    `recipient_id`
+    INT
+    NOT
+    NULL,
+    `sender_id`
+    INT
+    NOT
+    NULL,
+    `content`
+    VARCHAR
+(
+    200
+) NULL DEFAULT NULL,
+    `board_id` INT NULL DEFAULT NULL,
+    `date` DATETIME NULL DEFAULT CURRENT_TIMESTAMP,
+    `isread` TINYINT
+(
+    1
+) NULL DEFAULT '0',
+    PRIMARY KEY
+(
+    `alarm_id`
+),
+    INDEX `fk_dd_user_id_idx`
+(
+    `recipient_id`
+    ASC
+) VISIBLE,
+    INDEX `fk_user_id_recipient_id_idx`
+(
+    `sender_id`
+    ASC
+) VISIBLE,
+    CONSTRAINT `fk_user_id_recipient_id`
+    FOREIGN KEY
+(
+    `sender_id`
+)
+    REFERENCES `SNS`.`users`
+(
+    `id`
+)
     ON DELETE CASCADE,
-  CONSTRAINT `fk_user_id_sender_id`
-    FOREIGN KEY (`recipient_id`)
-    REFERENCES `SNS`.`users` (`id`)
+    CONSTRAINT `fk_user_id_sender_id`
+    FOREIGN KEY
+(
+    `recipient_id`
+)
+    REFERENCES `SNS`.`users`
+(
+    `id`
+)
     ON DELETE CASCADE)
-ENGINE = InnoDB
-AUTO_INCREMENT = 97
-DEFAULT CHARACTER SET = utf8mb4
-COLLATE = utf8mb4_0900_ai_ci;
+    ENGINE = InnoDB
+    AUTO_INCREMENT = 97
+    DEFAULT CHARACTER SET = utf8mb4
+    COLLATE = utf8mb4_0900_ai_ci;
 
 
 -- -----------------------------------------------------
 -- Table `SNS`.`boardlike`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `SNS`.`boardlike` (
-  `boardlike_id` INT NOT NULL AUTO_INCREMENT,
-  `id` INT NOT NULL,
-  `board_id` INT NOT NULL,
-  `date` DATETIME NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`boardlike_id`),
-  INDEX `fk_id_user_id_idx` (`id` ASC) VISIBLE,
-  INDEX `fk_boardid_board_id_idx` (`board_id` ASC) VISIBLE,
-  INDEX `fk_boardlike_user_id_idx` (`id` ASC) VISIBLE,
-  INDEX `fk_boardlike_board_id_idx` (`board_id` ASC) VISIBLE,
-  CONSTRAINT `fk_boardlike_board_id`
-    FOREIGN KEY (`board_id`)
-    REFERENCES `SNS`.`board` (`board_id`)
+CREATE TABLE IF NOT EXISTS `SNS`.`boardlike`
+(
+    `boardlike_id`
+    INT
+    NOT
+    NULL
+    AUTO_INCREMENT,
+    `id`
+    INT
+    NOT
+    NULL,
+    `board_id`
+    INT
+    NOT
+    NULL,
+    `date`
+    DATETIME
+    NULL
+    DEFAULT
+    CURRENT_TIMESTAMP,
+    PRIMARY
+    KEY
+(
+    `boardlike_id`
+),
+    INDEX `fk_id_user_id_idx`
+(
+    `id`
+    ASC
+) VISIBLE,
+    INDEX `fk_boardid_board_id_idx`
+(
+    `board_id`
+    ASC
+) VISIBLE,
+    INDEX `fk_boardlike_user_id_idx`
+(
+    `id`
+    ASC
+) VISIBLE,
+    INDEX `fk_boardlike_board_id_idx`
+(
+    `board_id`
+    ASC
+) VISIBLE,
+    CONSTRAINT `fk_boardlike_board_id`
+    FOREIGN KEY
+(
+    `board_id`
+)
+    REFERENCES `SNS`.`board`
+(
+    `board_id`
+)
     ON DELETE CASCADE,
-  CONSTRAINT `fk_boardLike_user_id`
-    FOREIGN KEY (`id`)
-    REFERENCES `SNS`.`users` (`id`)
+    CONSTRAINT `fk_boardLike_user_id`
+    FOREIGN KEY
+(
+    `id`
+)
+    REFERENCES `SNS`.`users`
+(
+    `id`
+)
     ON DELETE CASCADE
     ON UPDATE CASCADE)
-ENGINE = InnoDB
-AUTO_INCREMENT = 184
-DEFAULT CHARACTER SET = utf8mb4
-COLLATE = utf8mb4_0900_ai_ci;
+    ENGINE = InnoDB
+    AUTO_INCREMENT = 184
+    DEFAULT CHARACTER SET = utf8mb4
+    COLLATE = utf8mb4_0900_ai_ci;
 
 
 -- -----------------------------------------------------
 -- Table `SNS`.`communitychat`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `SNS`.`communitychat` (
-  `communitychat_id` INT NOT NULL AUTO_INCREMENT,
-  `id` INT NOT NULL,
-  `title` VARCHAR(500) NOT NULL,
-  `description` VARCHAR(500) NULL DEFAULT NULL,
-  `img` VARCHAR(200) NULL DEFAULT NULL,
-  `date` DATETIME NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`communitychat_id`),
-  INDEX `fk__idx` (`id` ASC) VISIBLE,
-  INDEX `idx_title` (`title` ASC) VISIBLE,
-  CONSTRAINT `fk_CommunityChat_user_id`
-    FOREIGN KEY (`id`)
-    REFERENCES `SNS`.`users` (`id`)
+CREATE TABLE IF NOT EXISTS `SNS`.`communitychat`
+(
+    `communitychat_id`
+    INT
+    NOT
+    NULL
+    AUTO_INCREMENT,
+    `id`
+    INT
+    NOT
+    NULL,
+    `title`
+    VARCHAR
+(
+    500
+) NOT NULL,
+    `description` VARCHAR
+(
+    500
+) NULL DEFAULT NULL,
+    `img` VARCHAR
+(
+    200
+) NULL DEFAULT NULL,
+    `date` DATETIME NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY
+(
+    `communitychat_id`
+),
+    INDEX `fk__idx`
+(
+    `id`
+    ASC
+) VISIBLE,
+    INDEX `idx_title`
+(
+    `title`
+    ASC
+) VISIBLE,
+    CONSTRAINT `fk_CommunityChat_user_id`
+    FOREIGN KEY
+(
+    `id`
+)
+    REFERENCES `SNS`.`users`
+(
+    `id`
+)
     ON DELETE CASCADE)
-ENGINE = InnoDB
-AUTO_INCREMENT = 12
-DEFAULT CHARACTER SET = utf8mb4
-COLLATE = utf8mb4_0900_ai_ci;
+    ENGINE = InnoDB
+    AUTO_INCREMENT = 12
+    DEFAULT CHARACTER SET = utf8mb4
+    COLLATE = utf8mb4_0900_ai_ci;
 
 
 -- -----------------------------------------------------
 -- Table `SNS`.`communitychat_join`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `SNS`.`communitychat_join` (
-  `ccj_id` INT NOT NULL AUTO_INCREMENT,
-  `communitychat_id` INT NOT NULL,
-  `title` VARCHAR(100) NOT NULL,
-  `imgpath` VARCHAR(200) NULL DEFAULT NULL,
-  `id` INT NOT NULL,
-  `date` VARCHAR(45) NULL DEFAULT NULL,
-  PRIMARY KEY (`ccj_id`),
-  INDEX `fk_cc_id_idx` (`communitychat_id` ASC) VISIBLE,
-  INDEX `fk_user_id_idx` (`id` ASC) VISIBLE,
-  INDEX `fk_cc_title_idx` (`title` ASC) VISIBLE,
-  CONSTRAINT `fk_cc_id`
-    FOREIGN KEY (`communitychat_id`)
-    REFERENCES `SNS`.`communitychat` (`communitychat_id`)
+CREATE TABLE IF NOT EXISTS `SNS`.`communitychat_join`
+(
+    `ccj_id`
+    INT
+    NOT
+    NULL
+    AUTO_INCREMENT,
+    `communitychat_id`
+    INT
+    NOT
+    NULL,
+    `title`
+    VARCHAR
+(
+    100
+) NOT NULL,
+    `imgpath` VARCHAR
+(
+    200
+) NULL DEFAULT NULL,
+    `id` INT NOT NULL,
+    `date` VARCHAR
+(
+    45
+) NULL DEFAULT NULL,
+    PRIMARY KEY
+(
+    `ccj_id`
+),
+    INDEX `fk_cc_id_idx`
+(
+    `communitychat_id`
+    ASC
+) VISIBLE,
+    INDEX `fk_user_id_idx`
+(
+    `id`
+    ASC
+) VISIBLE,
+    INDEX `fk_cc_title_idx`
+(
+    `title`
+    ASC
+) VISIBLE,
+    CONSTRAINT `fk_cc_id`
+    FOREIGN KEY
+(
+    `communitychat_id`
+)
+    REFERENCES `SNS`.`communitychat`
+(
+    `communitychat_id`
+)
     ON DELETE CASCADE,
-  CONSTRAINT `fk_cc_title`
-    FOREIGN KEY (`title`)
-    REFERENCES `SNS`.`communitychat` (`title`),
-  CONSTRAINT `fk_user_id`
-    FOREIGN KEY (`id`)
-    REFERENCES `SNS`.`users` (`id`)
+    CONSTRAINT `fk_cc_title`
+    FOREIGN KEY
+(
+    `title`
+)
+    REFERENCES `SNS`.`communitychat`
+(
+    `title`
+),
+    CONSTRAINT `fk_user_id`
+    FOREIGN KEY
+(
+    `id`
+)
+    REFERENCES `SNS`.`users`
+(
+    `id`
+)
     ON DELETE CASCADE)
-ENGINE = InnoDB
-AUTO_INCREMENT = 52
-DEFAULT CHARACTER SET = utf8mb4
-COLLATE = utf8mb4_0900_ai_ci;
+    ENGINE = InnoDB
+    AUTO_INCREMENT = 52
+    DEFAULT CHARACTER SET = utf8mb4
+    COLLATE = utf8mb4_0900_ai_ci;
 
 
 -- -----------------------------------------------------
 -- Table `SNS`.`communitychatmessage`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `SNS`.`communitychatmessage` (
-  `commessage_id` INT NOT NULL AUTO_INCREMENT,
-  `communitychat_id` INT NOT NULL,
-  `id` INT NOT NULL,
-  `nickname` VARCHAR(100) NOT NULL,
-  `profile_img` VARCHAR(100) NULL DEFAULT NULL,
-  `content` VARCHAR(500) NOT NULL,
-  `date` DATETIME NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`commessage_id`),
-  INDEX `fk__idx` (`communitychat_id` ASC) VISIBLE,
-  INDEX `fk__idx1` (`id` ASC) VISIBLE,
-  CONSTRAINT `fk_commchatmessa_chatid`
-    FOREIGN KEY (`communitychat_id`)
-    REFERENCES `SNS`.`communitychat` (`communitychat_id`)
+CREATE TABLE IF NOT EXISTS `SNS`.`communitychatmessage`
+(
+    `commessage_id`
+    INT
+    NOT
+    NULL
+    AUTO_INCREMENT,
+    `communitychat_id`
+    INT
+    NOT
+    NULL,
+    `id`
+    INT
+    NOT
+    NULL,
+    `nickname`
+    VARCHAR
+(
+    100
+) NOT NULL,
+    `profile_img` VARCHAR
+(
+    100
+) NULL DEFAULT NULL,
+    `content` VARCHAR
+(
+    500
+) NOT NULL,
+    `date` DATETIME NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY
+(
+    `commessage_id`
+),
+    INDEX `fk__idx`
+(
+    `communitychat_id`
+    ASC
+) VISIBLE,
+    INDEX `fk__idx1`
+(
+    `id`
+    ASC
+) VISIBLE,
+    CONSTRAINT `fk_commchatmessa_chatid`
+    FOREIGN KEY
+(
+    `communitychat_id`
+)
+    REFERENCES `SNS`.`communitychat`
+(
+    `communitychat_id`
+)
     ON DELETE CASCADE,
-  CONSTRAINT `fk_commchatmessa_user_id`
-    FOREIGN KEY (`id`)
-    REFERENCES `SNS`.`users` (`id`)
+    CONSTRAINT `fk_commchatmessa_user_id`
+    FOREIGN KEY
+(
+    `id`
+)
+    REFERENCES `SNS`.`users`
+(
+    `id`
+)
     ON DELETE CASCADE)
-ENGINE = InnoDB
-AUTO_INCREMENT = 65
-DEFAULT CHARACTER SET = utf8mb4
-COLLATE = utf8mb4_0900_ai_ci;
+    ENGINE = InnoDB
+    AUTO_INCREMENT = 65
+    DEFAULT CHARACTER SET = utf8mb4
+    COLLATE = utf8mb4_0900_ai_ci;
 
 
 -- -----------------------------------------------------
 -- Table `SNS`.`follow`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `SNS`.`follow` (
-  `follow_id` INT NOT NULL AUTO_INCREMENT,
-  `follower_id` INT NOT NULL,
-  `following_id` INT NOT NULL,
-  PRIMARY KEY (`follow_id`),
-  INDEX `fk_follower_idx` (`follower_id` ASC, `following_id` ASC) VISIBLE,
-  INDEX `fk_following_user_id_idx` (`following_id` ASC) VISIBLE,
-  CONSTRAINT `fk_follow_user_id`
-    FOREIGN KEY (`follower_id`)
-    REFERENCES `SNS`.`users` (`id`)
+CREATE TABLE IF NOT EXISTS `SNS`.`follow`
+(
+    `follow_id`
+    INT
+    NOT
+    NULL
+    AUTO_INCREMENT,
+    `follower_id`
+    INT
+    NOT
+    NULL,
+    `following_id`
+    INT
+    NOT
+    NULL,
+    PRIMARY
+    KEY
+(
+    `follow_id`
+),
+    INDEX `fk_follower_idx`
+(
+    `follower_id`
+    ASC,
+    `following_id`
+    ASC
+) VISIBLE,
+    INDEX `fk_following_user_id_idx`
+(
+    `following_id`
+    ASC
+) VISIBLE,
+    CONSTRAINT `fk_follow_user_id`
+    FOREIGN KEY
+(
+    `follower_id`
+)
+    REFERENCES `SNS`.`users`
+(
+    `id`
+)
     ON DELETE CASCADE,
-  CONSTRAINT `fk_following_user_id`
-    FOREIGN KEY (`following_id`)
-    REFERENCES `SNS`.`users` (`id`)
+    CONSTRAINT `fk_following_user_id`
+    FOREIGN KEY
+(
+    `following_id`
+)
+    REFERENCES `SNS`.`users`
+(
+    `id`
+)
     ON DELETE CASCADE)
-ENGINE = InnoDB
-AUTO_INCREMENT = 64
-DEFAULT CHARACTER SET = utf8mb4
-COLLATE = utf8mb4_0900_ai_ci;
+    ENGINE = InnoDB
+    AUTO_INCREMENT = 64
+    DEFAULT CHARACTER SET = utf8mb4
+    COLLATE = utf8mb4_0900_ai_ci;
 
 
 -- -----------------------------------------------------
 -- Table `SNS`.`userchat`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `SNS`.`userchat` (
-  `userchat_id` INT NOT NULL AUTO_INCREMENT,
-  `room_number` VARCHAR(50) NOT NULL,
-  `id` INT NOT NULL,
-  `profile_img` VARCHAR(200) NULL DEFAULT NULL,
-  `join_id` VARCHAR(200) NOT NULL,
-  `nickname` VARCHAR(100) NULL DEFAULT NULL,
-  `date` DATETIME NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`userchat_id`),
-  INDEX `fk_userchat_users_id_idx` (`id` ASC) VISIBLE,
-  INDEX `Userchat_roomNumber` (`room_number` ASC) VISIBLE,
-  INDEX `fk_nickname_users_nickname_idx` (`nickname` ASC) VISIBLE,
-  CONSTRAINT `fk_userchat_users_id`
-    FOREIGN KEY (`id`)
-    REFERENCES `SNS`.`users` (`id`)
+CREATE TABLE IF NOT EXISTS `SNS`.`userchat`
+(
+    `userchat_id`
+    INT
+    NOT
+    NULL
+    AUTO_INCREMENT,
+    `room_number`
+    VARCHAR
+(
+    50
+) NOT NULL,
+    `id` INT NOT NULL,
+    `profile_img` VARCHAR
+(
+    200
+) NULL DEFAULT NULL,
+    `join_id` VARCHAR
+(
+    200
+) NOT NULL,
+    `nickname` VARCHAR
+(
+    100
+) NULL DEFAULT NULL,
+    `date` DATETIME NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY
+(
+    `userchat_id`
+),
+    INDEX `fk_userchat_users_id_idx`
+(
+    `id`
+    ASC
+) VISIBLE,
+    INDEX `Userchat_roomNumber`
+(
+    `room_number`
+    ASC
+) VISIBLE,
+    INDEX `fk_nickname_users_nickname_idx`
+(
+    `nickname`
+    ASC
+) VISIBLE,
+    CONSTRAINT `fk_userchat_users_id`
+    FOREIGN KEY
+(
+    `id`
+)
+    REFERENCES `SNS`.`users`
+(
+    `id`
+)
     ON DELETE CASCADE)
-ENGINE = InnoDB
-AUTO_INCREMENT = 292
-DEFAULT CHARACTER SET = utf8mb4
-COLLATE = utf8mb4_0900_ai_ci;
+    ENGINE = InnoDB
+    AUTO_INCREMENT = 292
+    DEFAULT CHARACTER SET = utf8mb4
+    COLLATE = utf8mb4_0900_ai_ci;
 
 
 -- -----------------------------------------------------
 -- Table `SNS`.`userchatmessage`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `SNS`.`userchatmessage` (
-  `message_id` INT NOT NULL AUTO_INCREMENT,
-  `room_number` VARCHAR(50) NOT NULL,
-  `id` INT NOT NULL,
-  `share_board_id` INT NULL DEFAULT NULL,
-  `nickname` VARCHAR(100) NULL DEFAULT NULL,
-  `profile_img` VARCHAR(100) NULL DEFAULT NULL,
-  `content` VARCHAR(1000) NULL DEFAULT NULL,
-  `date` DATETIME NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`message_id`),
-  INDEX `fk_message__idx` (`id` ASC) VISIBLE,
-  INDEX `fk_userchat_roomNumbers_idx` (`room_number` ASC) VISIBLE,
-  INDEX `fk_ucm_img_idx` (`profile_img` ASC) VISIBLE,
-  CONSTRAINT `fk_message_user_id`
-    FOREIGN KEY (`id`)
-    REFERENCES `SNS`.`users` (`id`)
+CREATE TABLE IF NOT EXISTS `SNS`.`userchatmessage`
+(
+    `message_id`
+    INT
+    NOT
+    NULL
+    AUTO_INCREMENT,
+    `room_number`
+    VARCHAR
+(
+    50
+) NOT NULL,
+    `id` INT NOT NULL,
+    `share_board_id` INT NULL DEFAULT NULL,
+    `nickname` VARCHAR
+(
+    100
+) NULL DEFAULT NULL,
+    `profile_img` VARCHAR
+(
+    100
+) NULL DEFAULT NULL,
+    `content` VARCHAR
+(
+    1000
+) NULL DEFAULT NULL,
+    `date` DATETIME NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY
+(
+    `message_id`
+),
+    INDEX `fk_message__idx`
+(
+    `id`
+    ASC
+) VISIBLE,
+    INDEX `fk_userchat_roomNumbers_idx`
+(
+    `room_number`
+    ASC
+) VISIBLE,
+    INDEX `fk_ucm_img_idx`
+(
+    `profile_img`
+    ASC
+) VISIBLE,
+    CONSTRAINT `fk_message_user_id`
+    FOREIGN KEY
+(
+    `id`
+)
+    REFERENCES `SNS`.`users`
+(
+    `id`
+)
     ON DELETE CASCADE,
-  CONSTRAINT `fk_roomNumber`
-    FOREIGN KEY (`room_number`)
-    REFERENCES `SNS`.`userchat` (`room_number`)
+    CONSTRAINT `fk_roomNumber`
+    FOREIGN KEY
+(
+    `room_number`
+)
+    REFERENCES `SNS`.`userchat`
+(
+    `room_number`
+)
     ON DELETE CASCADE,
-  CONSTRAINT `fk_ucm_img`
-    FOREIGN KEY (`profile_img`)
-    REFERENCES `SNS`.`users` (`profile_img`))
-ENGINE = InnoDB
-AUTO_INCREMENT = 177
-DEFAULT CHARACTER SET = utf8mb4
-COLLATE = utf8mb4_0900_ai_ci;
+    CONSTRAINT `fk_ucm_img`
+    FOREIGN KEY
+(
+    `profile_img`
+)
+    REFERENCES `SNS`.`users`
+(
+    `profile_img`
+))
+    ENGINE = InnoDB
+    AUTO_INCREMENT = 177
+    DEFAULT CHARACTER SET = utf8mb4
+    COLLATE = utf8mb4_0900_ai_ci;
 
-USE `SNS`;
+USE
+`SNS`;
 
-DELIMITER $$
+DELIMITER
+$$
 USE `SNS`$$
 CREATE
 DEFINER=`root`@`localhost`
 TRIGGER `SNS`.`AfterUpdateNickname`
-AFTER UPDATE ON `SNS`.`users`
-FOR EACH ROW
+AFTER
+UPDATE ON `SNS`.`users`
+    FOR EACH ROW
 BEGIN
-    IF OLD.nickname <> NEW.nickname THEN
-        UPDATE board
-        SET nickname = NEW.nickname
-        WHERE id = OLD.id;
-    END IF;
+    IF
+OLD.nickname <> NEW.nickname THEN
+UPDATE board
+SET nickname = NEW.nickname
+WHERE id = OLD.id;
+END IF;
 END$$
 
 
 DELIMITER ;
 
-SET SQL_MODE=@OLD_SQL_MODE;
-SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
-SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
+SET
+SQL_MODE=@OLD_SQL_MODE;
+SET
+FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+SET
+UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
