@@ -11,6 +11,8 @@ import com.example.demo.board.dto.CommentDTO;
 import com.example.demo.board.entity.BoardEntity;
 import com.example.demo.board.entity.BoardLikeEntity;
 import com.example.demo.board.entity.CommentEntity;
+import com.example.demo.board.event.BoardEvent;
+import com.example.demo.board.event.BoardEventListener;
 import com.example.demo.board.repository.BoardCommentRepository;
 import com.example.demo.board.repository.BoardLikeRepository;
 import com.example.demo.board.repository.BoardRepository;
@@ -40,6 +42,7 @@ public class BoardService {
     public final BoardLikeRepository boardlike;
     public final FollowRepository fRepository;
     private final S3Config s3Config;
+    private final BoardEventListener boardEventListener;
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
@@ -65,21 +68,19 @@ public class BoardService {
     }
 
     public List<BoardDTO> getPost(int id) {
-        if (boardRepository.findById(id).isPresent()) {
-            List<BoardEntity> entity = boardRepository.findByidOrderByDateDesc(id);
-            List<BoardDTO> dto = BoardDTO.ToDtoList(entity);
-            return dto;
+        if (boardRepository.existsByUserId(id)) {
+            List<BoardEntity> entity = boardRepository.findByUser_IdOrderByDateDesc(id);
+            return BoardDTO.ToDtoList(entity);
         }
         return null;
     }
 
     public List<BoardLikeDTO> getLike(int userId) {
-        // 해당 userId에 해당하는 글을 찾습니다.
-        List<BoardEntity> userPosts = boardRepository.findByidOrderByDateDesc(userId);
+        List<BoardEntity> userPosts = boardRepository.findByUser_IdOrderByDateDesc(userId);
         if (!userPosts.isEmpty()) {
             List<BoardLikeDTO> dtos = new ArrayList<>();
             for (BoardEntity post : userPosts) {
-                List<BoardLikeEntity> likesForPost = boardlike.findByboardId(post.getBoard_id());
+                List<BoardLikeEntity> likesForPost = boardlike.findByboardId(post.getBoardId());
                 dtos.addAll(BoardLikeDTO.ToDtoList(likesForPost));
             }
 
@@ -105,27 +106,22 @@ public class BoardService {
         boardRepository.save(board);
     }
 
+    @Transactional
     public void writeComment(CommentDTO commentDTO) {
         CommentEntity commentEntity = CommentEntity.toEntity(commentDTO);
-        int writerId = boardRepository.findIdByboardId(commentDTO.getBoard_id());
+        BoardEntity entity = boardRepository.findByBoardId(commentDTO.getBoard_id());
+        int writerId = entity.getUser().getId();
 
         Optional<AlarmEntity> existingAlarm = alarmRepository.findByCriteria(writerId, commentDTO.getId(),
                 "", commentDTO.getBoard_id());
         if (!existingAlarm.isPresent() && commentDTO.getId() != writerId) {
-            AlarmEntity alarmEntity = new AlarmEntity();
-            UsersEntity recipient = new UsersEntity();
-            recipient.setId(commentDTO.getId());
-            alarmEntity.setRecipientId(writerId);
-            alarmEntity.setSender(recipient);
-            alarmEntity.setBoard_id(commentDTO.getBoard_id());
-            alarmEntity.setContent("님이 댓글을 달았습니다." + "(" + commentDTO.getComment() + ")");
-
-            alarmRepository.save(alarmEntity);
+            BoardEvent event = new BoardEvent(this,commentDTO.getId(), writerId, commentDTO.getBoard_id());
+            boardEventListener.publishEventComment(event);
         }
-
         boardCommentRepository.save(commentEntity);
     }
 
+    @Transactional
     public int boardLike(BoardLikeDTO dto, int writerId) {
         BoardLikeEntity entity = BoardLikeEntity.toEntity(dto);
         Optional<BoardLikeEntity> existingLike = boardlike.findByBoardIdAndUserId(dto.getBoard_id(), dto.getId());
@@ -137,15 +133,8 @@ public class BoardService {
         } else {
             Optional<AlarmEntity> existingAlarm = alarmRepository.findByCriteria(writerId, dto.getId(), "님이 글을 좋아합니다.", dto.getBoard_id());
             if (!existingAlarm.isPresent() && dto.getId() != writerId) {
-                AlarmEntity alarmEntity = new AlarmEntity();
-                UsersEntity recipient = new UsersEntity();
-                recipient.setId(dto.getId());
-                alarmEntity.setRecipientId(writerId);
-                alarmEntity.setSender(recipient);
-                alarmEntity.setBoard_id(dto.getBoard_id());
-                alarmEntity.setContent("님이 글을 좋아합니다.");
-
-                alarmRepository.save(alarmEntity);
+                BoardEvent event = new BoardEvent(this,dto.getId(), writerId, dto.getBoard_id());
+                boardEventListener.publishEventBoardLike(event);
             }
             boardlike.save(entity);
             return 1;
@@ -182,24 +171,17 @@ public class BoardService {
 
     public List<BoardDTO> getfollowPost(int userId) {
         List<Integer> followIds = fRepository.findFollowingIdByFollowerId(userId);
-        followIds.add(userId);
-        List<BoardEntity> entity = boardRepository.findByIds(followIds);
-        List<BoardDTO> dto = BoardDTO.ToDtoList(entity);
 
-        return dto;
+        List<BoardEntity> entity = boardRepository.findByUser_IdInOrderByDateDesc(followIds);
+
+        return BoardDTO.ToDtoList(entity);
     }
 
     public List<BoardLikeDTO> getfollowLike(List<BoardDTO> posts) {
-        // posts에 있는 게시글들의 ID 목록 가져오기
         List<Integer> postIds = posts.stream().map(BoardDTO::getBoard_id).collect(Collectors.toList());
-
-        // 가져온 게시글들에 대한 좋아요 정보 조회
         List<BoardLikeEntity> likeEntities = boardlike.findByBoardIds(postIds);
 
-        // DTO로 변환
-        List<BoardLikeDTO> likeDTOs = BoardLikeDTO.ToDtoList(likeEntities);
-
-        return likeDTOs;
+        return BoardLikeDTO.ToDtoList(likeEntities);
     }
 
     // 댓글 조회

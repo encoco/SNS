@@ -2,6 +2,7 @@ package com.example.demo.board.entity;
 
 
 import com.example.demo.board.dto.BoardDTO;
+import com.example.demo.user.entity.UsersEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -15,20 +16,26 @@ import lombok.*;
 public class BoardEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int board_id; //DB가서 pk id로 바꾸기
-    private int id;
-    private String nickname;
-    private String profile_img;
+    private int boardId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id", referencedColumnName = "id")
+    private UsersEntity user;
+
     private String img;
     private String video;
     private String content;
     private String date;
 
     public static BoardEntity toEntity(BoardDTO dto) {
-        return BoardEntity.builder()
-                .board_id(dto.getBoard_id())
+        // UserEntity 객체를 별도로 생성
+        UsersEntity userEntity = UsersEntity.builder()
                 .id(dto.getId())
-                .nickname(dto.getNickname())
+                .build();
+
+        return BoardEntity.builder()
+                .boardId(dto.getBoard_id())
+                .user(userEntity)
                 .img(dto.getImgpath())
                 .video(dto.getVideo())
                 .content(dto.getContent())
@@ -40,5 +47,4 @@ public class BoardEntity {
         this.content = content2;
         this.img = imgpath;
     }
-
 }

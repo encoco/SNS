@@ -45,11 +45,12 @@ function UserPage() {
                 const response = await api.get(`/userPosts?userId=${userId}`, {
                     withCredentials: true,
                 });
-
+                console.log(response.data);
                 setUserInfo(response.data.userInfo);
                 setPosts(response.data.posts);
                 setIsFollowing(response.data.follow);
                 setisLoading(false);
+                console.log(posts);
                 const likesCount = response.data.likes.reduce((acc, like) => {
                     acc[like.board_id] = (acc[like.board_id] || 0) + 1;
                     return acc;
@@ -180,7 +181,7 @@ function UserPage() {
                             <div className="col-span-2 flex justify-center items-center h-full">
                                 <p className="text-xl">로딩 중...</p>
                             </div>
-                        ) : posts.length === 0 ? (
+                        ) : (!posts || posts.length === 0) ? (
                             <div className="col-span-2 flex justify-center items-center h-full">
                                 <p className="text-xl">작성한 글이 없습니다.</p>
                             </div>

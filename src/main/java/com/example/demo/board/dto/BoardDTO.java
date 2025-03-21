@@ -53,9 +53,9 @@ public class BoardDTO {
 
     public static BoardDTO toDTO(BoardEntity entity) {
         return BoardDTO.builder()
-                .board_id(entity.getBoard_id())
-                .id(entity.getId())
-                .nickname(entity.getNickname())
+                .board_id(entity.getBoardId())
+                .id(entity.getUser().getId())
+                .nickname(entity.getUser().getNickname())
                 .imgpath(entity.getImg())
                 .video(entity.getVideo())
                 .content(entity.getContent())
@@ -68,11 +68,11 @@ public class BoardDTO {
         List<BoardDTO> dtos = new ArrayList<>();
         for (BoardEntity entity : entities) {
             BoardDTO dto = new BoardDTO();
-            dto.setBoard_id(entity.getBoard_id());
-            dto.setId(entity.getId());
-            dto.setNickname(entity.getNickname());
+            dto.setBoard_id(entity.getBoardId());
+            dto.setId(entity.getUser().getId());
+            dto.setNickname(entity.getUser().getNickname());
             dto.setImgpath(entity.getImg());
-            dto.setProfile_img(entity.getProfile_img());
+            dto.setProfile_img(entity.getUser().getProfile_img());
             dto.setVideo(entity.getVideo());
             dto.setDate(entity.getDate());
             dto.setContent(entity.getContent());

@@ -27,8 +27,8 @@ public class JwtFilter extends GenericFilterBean {
         String contextPath = httpRequest.getContextPath();
         String test = httpRequest.getRequestURI().substring(contextPath.length());
 
-        System.out.println("Request URI: " + test);
-        System.out.println("URI : " + requestURI);
+//        System.out.println("Request URI: " + test);
+//        System.out.println("URI : " + requestURI);
 
         if (requestURI.startsWith("/api/Login") || requestURI.startsWith("/api/Logout") || requestURI.startsWith("/")
                 || requestURI.equals("/index.html") || requestURI.startsWith("/api/checkId")

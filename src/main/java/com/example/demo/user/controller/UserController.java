@@ -119,10 +119,10 @@ public class UserController implements UserControllerDocs {
     }
 
 
-//    //WebController에 있던건데 혹시 몰라서 여기 짱박아두기.
-//    @GetMapping(value = {"", "/", "/Signup", "/index", "/BoarddWrite", "/mypage", "/UserPage/**", "/Message", "/Participate", "/Setting", "/Together"})
-//    public String forward() {
-//        return "forward:/index.html";
-//    }
+    //WebController에 있던건데 혹시 몰라서 여기 짱박아두기.
+    @GetMapping(value = {"", "/", "/Signup", "/index", "/BoarddWrite", "/mypage", "/UserPage/**", "/Message", "/Participate", "/Setting", "/Together"})
+    public String forward() {
+        return "forward:/index.html";
+    }
 }
 

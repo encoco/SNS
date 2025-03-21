@@ -53,9 +53,11 @@ public class BoardController implements BoardDocs {
         try {
             String token = jwtUtil.token(request.getHeader("Authorization"));
             int myId = jwtUtil.getUserIdFromToken(token);
-
+            System.out.println("어어그래");
             List<BoardDTO> posts = boardService.getPost(userId);
+            System.out.println(posts);
             List<BoardLikeDTO> like = boardService.getLike(userId);
+
             boolean follow = boardService.existFollow(userId, myId);
             SearchDTO user = userService.userInfo(userId);
             Map<String, Object> response = new HashMap<>();

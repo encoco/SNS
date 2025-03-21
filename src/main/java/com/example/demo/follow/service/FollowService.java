@@ -2,7 +2,7 @@ package com.example.demo.follow.service;
 
 import com.example.demo.follow.dto.FollowDTO;
 import com.example.demo.follow.entity.FollowEntity;
-import com.example.demo.follow.entity.FollowEvent;
+import com.example.demo.follow.event.FollowEvent;
 import com.example.demo.follow.event.FollowEventListener;
 import com.example.demo.follow.repository.FollowRepository;
 import jakarta.transaction.Transactional;

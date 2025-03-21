@@ -1,17 +1,18 @@
-package com.example.demo.follow.entity;
-
+package com.example.demo.board.event;
 
 import lombok.Getter;
 import org.springframework.context.ApplicationEvent;
 
 @Getter
-public class FollowEvent extends ApplicationEvent {
+public class BoardEvent extends ApplicationEvent {
     private final int recipientId;  // 나
     private final int senderId;     // 상대
+    private final int boardId;
 
-    public FollowEvent(Object source, int senderId, int recipientId) {
+    public BoardEvent(Object source, int senderId, int recipientId, int boardId) {
         super(source);
         this.recipientId = recipientId;
         this.senderId = senderId;
+        this.boardId = boardId;
     }
 }
