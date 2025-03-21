@@ -1,1 +1,4 @@
-05.05 유저검색 페이지 이동, 팔로우 버튼, 좋아요, OAuth 유저 랜덤 닉네임 부여
+수정중
+
+# 25.03.18 domain Architecture 변경 / swagger 활용 문서화 (Follow Alarm 수정)
+# 25.03.20 board alarm 수정 / BoardEntity에 id, profile_img, nickname 칼럼 삭제 후 UsersEntity Join 하여 사용( FetchType = LAZY ) 
