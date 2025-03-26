@@ -23,10 +23,13 @@ public class CCMEntity {
     int commessageId;
     @Column(name = "communitychat_id")
     int communitychatId;
+
     int id;
     String nickname;
-    String content;
     String profile_img;
+
+
+    String content;
 
     @Builder.Default
     private String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss"));

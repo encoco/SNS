@@ -57,6 +57,10 @@ function EditProfile({Open, Close, userInfo}) {
         if (profilePic) {
             formData.append('imgpath', profilePic);
         }
+        if( nickname === newNickname ) {
+            alert("같은 이름으로 변경할 수 없습니다.");
+            return false;
+        }
         try {
             const response = await api.post(`/WriteProfile`, formData, {
                 headers: {

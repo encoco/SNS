@@ -36,7 +36,7 @@ function Message() {
         }
     };
     useEffect(() => {
-        if (componentroom.roomNumber) {
+        if (componentroom.userchatId) {
             handleChatSelect(componentroom);
         }
     }, [componentroom]);
@@ -196,15 +196,16 @@ function Message() {
         try {
             setActiveView('chat');
             setMessages([]);// 채팅방 변경 시 메시지 초기화
+
             const response = await api.get(`/getMessage`, {
-                params: {roomNumber: room.roomNumber},
+                params: {userchatId: room.userchatId},
                 withCredentials: true,
             });
             setMessages(response.data);
         } catch (error) {
             console.error('Error fetching comments:', error);
         }
-        setSelectedChat(room.roomNumber);
+        setSelectedChat(room.userchatId);
         setRoom(room);
 
     };
@@ -238,7 +239,7 @@ function Message() {
 
     const handleChange = (room) => {
         handleChatSelect(room);
-        setSelectedChat(room.roomNumber);
+        setSelectedChat(room.userchatId);
     };
 
     const handleNewRoomCreated = (newRoom) => {
@@ -462,7 +463,7 @@ function Message() {
                                                             }
                                                         }}
                                                                 className={`flex items-center space-x-3 p-2 rounded-lg transition-colors w-full text-left 
-                                                 ${selectedChat === room.roomNumber ? 'bg-gray-200' : 'hover:bg-gray-100 dark:hover:bg-gray-800'}`}>
+                                                 ${selectedChat === room.userchatId ? 'bg-gray-200' : 'hover:bg-gray-100 dark:hover:bg-gray-800'}`}>
                                                             <div
                                                                 className="w-12 h-12 rounded-full overflow-hidden shrink-0">
                                                                 {(
@@ -566,22 +567,29 @@ function Message() {
                                     <div
                                         className={`overflow-y-auto ${isListExpanded ? 'max-h-60' : 'max-h-0'} transition-max-height duration-300 ease-in-out`}>
                                         {chatroom && chatroom.map((room, index) => (
-                                            <div key={`${room.userchatId}_${index}`}
+                                            <div key={`${room.chat_id}_${index}`}
                                                  className="flex justify-center items-center h-full">
-                                                <button onClick={() => {
-                                                    handleChatSelect(room);
-                                                    setIsListExpanded(false);
-                                                }}
-                                                        className={`flex items-center space-x-3 p-2 rounded-lg transition-colors w-full text-left 
-	                             				${selectedChat === room.roomNumber ? 'bg-gray-200' : 'hover:bg-gray-100 dark:hover:bg-gray-800'}`}>
-                                                    <div className="w-12 h-12 rounded-full overflow-hidden shrink-0">{(
+                                                <button
+                                                    onClick={() => {
+                                                        if (activeView === 'group') {
+                                                            handleCommChat(room);
+                                                        } else {
+                                                            handleChatSelect(room);
+                                                        }
+                                                    }}
+                                                    className={`flex items-center space-x-3 p-2 rounded-lg transition-colors w-full text-left 
+                ${selectedChat === room.chat_id ? 'bg-gray-200' : 'hover:bg-gray-100 dark:hover:bg-gray-800'}`}
+                                                >
+                                                    <div className="w-12 h-12 rounded-full overflow-hidden shrink-0">
                                                         <img
                                                             src={room.imgpath || room.profile_img || "/placeholder.svg"}
-                                                            alt={room.name} className="w-full h-full object-cover"/>)}
+                                                            alt={room.name}
+                                                            className="w-full h-full object-cover"
+                                                        />
                                                     </div>
                                                     <span className="text-sm font-medium text-gray-800 dark:text-white">
-														{truncateString(room.roomname, 10)}
-													</span>
+                {truncateString(room.roomname, 10)}
+            </span>
                                                 </button>
                                             </div>
                                         ))}
@@ -605,25 +613,25 @@ function Message() {
                                 {isListExpanded && (
                                     <div>
                                         {chatroom && chatroom.map((room, index) => (
-                                            <div key={`${room.ccjId}_${index}`}
-                                                 className="flex justify-center items-center h-full z-1">
-                                                <button onClick={() => {
-                                                    handleCommChat(room);
-                                                    setIsListExpanded(false);
-                                                }}
-                                                        className={`flex items-center space-x-3 p-2 rounded-lg transition-colors w-full text-left z-1 
-	                             				${selectedChat === room.roomNumber ? 'bg-gray-200' : 'hover:bg-gray-100 dark:hover:bg-gray-800'}`}>
-                                                    <div
-                                                        className="w-12 h-12 rounded-full overflow-hidden shrink-0 z-1">{(
+                                            <div key={`${room.chat_id}_${index}`} className="flex justify-center items-center h-full">
+                                                <button
+                                                    onClick={() => {
+                                                        handleChatSelect(room);
+                                                        setIsListExpanded(false);
+                                                    }}
+                                                    className={`flex items-center space-x-3 p-2 rounded-lg transition-colors w-full text-left 
+                ${selectedChat === room.chat_id ? 'bg-gray-200' : 'hover:bg-gray-100 dark:hover:bg-gray-800'}`}
+                                                >
+                                                    <div className="w-12 h-12 rounded-full overflow-hidden shrink-0">
                                                         <img
                                                             src={room.imgpath || room.profile_img || "/placeholder.svg"}
                                                             alt={room.name}
-                                                            className="w-full h-full object-cover z-1"/>)}
+                                                            className="w-full h-full object-cover"
+                                                        />
                                                     </div>
-                                                    <span
-                                                        className="text-sm font-medium text-gray-800 dark:text-white z-1">
-														{truncateString(room.roomname, 10)}
-													</span>
+                                                    <span className="text-sm font-medium text-gray-800 dark:text-white">
+                {truncateString(room.roomname, 10)}
+            </span>
                                                 </button>
                                             </div>
                                         ))}

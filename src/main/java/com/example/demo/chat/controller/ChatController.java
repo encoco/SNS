@@ -1,6 +1,6 @@
 package com.example.demo.chat.controller;
 
-import com.example.demo.chat.ChatDocs;
+import com.example.demo.chat.docs.ChatDocs;
 import com.example.demo.chat.dto.ChatDTO;
 import com.example.demo.chat.dto.ChatMessageDTO;
 import com.example.demo.chat.service.ChatService;
@@ -19,6 +19,7 @@ import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,11 +35,11 @@ public class ChatController implements ChatDocs {
     // 채팅 리스트 반환
     @MessageMapping("/chat/{roomNumber}")
     @SendTo("/api/sub/chat/{roomNumber}")
-    public ChatMessageDTO handleChatMessage(@DestinationVariable("roomNumber") String roomNumber,
+    public ChatMessageDTO handleChatMessage(@DestinationVariable("roomNumber") int chat_id,
                                             @Payload ChatMessageDTO message) {
         String token = message.getNickname();
 
-        message.setRoom_number(roomNumber);
+        message.setChat_id(chat_id);
         message.setId(jwtUtil.getUserIdFromToken(token));
         return chatService.saveChat(message);
     }
@@ -53,10 +54,10 @@ public class ChatController implements ChatDocs {
     }
 
     @GetMapping("/getMessage")
-    public ResponseEntity<?> getMessage(@RequestParam(value = "roomNumber") String roomNumber,
+    public ResponseEntity<?> getMessage(@RequestParam(value = "userchatId") int userchatId,
                                         HttpServletRequest request) {
-        List<ChatMessageDTO> dto = chatService.getMessage(roomNumber);
-        System.out.println("userchat : " + dto);
+        List<ChatMessageDTO> dto = chatService.getMessage(userchatId);
+        System.out.println("선택한  메시지는~~ : " + dto);
         return ResponseEntity.ok(dto);
     }
 
@@ -90,14 +91,15 @@ public class ChatController implements ChatDocs {
             List<Integer> userIds = (List<Integer>) requestData.get("id");
             userIds.add(userId);
             Map<String, Object> response = new HashMap<>();
-            ChatDTO dto = chatService.findRoom(userIds, userId);
-            if (dto != null) { // 찾아서 있으면 이미 있으니까 그 방으로 넘기기
-                response.put("1", dto);
+
+            ChatDTO dto = chatService.findOrCreateRoom(userIds, userId);
+            System.out.println("findOrCreateRoom 결과 : " + dto);
+            if (dto.isNew_room()) {//생성하고 생성한 정보 넘기기
+                response.put("0", dto);
                 return ResponseEntity.ok(response);
             }
-            // 위에서 return 안되면 없으니까 생성하고 생성한 정보 넘기기
-            dto = chatService.CreateRoom(userIds, userId);
-            response.put("0", dto);
+            // 찾아서 있으면 이미 있으니까 그 방으로 넘기기
+            response.put("1", dto);
             return ResponseEntity.ok(response);
 
         } catch (Exception e) {
@@ -169,18 +171,18 @@ public class ChatController implements ChatDocs {
         dto.setShare_board_id(board_id);
         ChatDTO cdto = chatService.findRoom(userIds, userId);
 
-        if (cdto != null) { // 찾아서 있으면 이미 있으니까 그 방으로 넘기기
-            dto.setRoom_number(cdto.getRoomNumber());
-            chatService.saveChat(dto);
-            messagingTemplate.convertAndSend("/api/sub/chat/" + cdto.getRoomNumber(), dto);
-            return ResponseEntity.ok(null);
-        }
-
-        // 위에서 return 안되면 없으니까 생성하고 생성한 정보 넘기기
-        ChatDTO Chat_DTO = chatService.CreateRoom(userIds, userId);
-        dto.setRoom_number(Chat_DTO.getRoomNumber());
-        chatService.saveChat(dto);
-        messagingTemplate.convertAndSend("/api/sub/chat/" + Chat_DTO.getRoomNumber(), dto);
+//        if (cdto != null) { // 찾아서 있으면 이미 있으니까 그 방으로 넘기기
+//            dto.setRoom_number(cdto.getRoomNumber());
+//            chatService.saveChat(dto);
+//            messagingTemplate.convertAndSend("/api/sub/chat/" + cdto.getRoomNumber(), dto);
+//            return ResponseEntity.ok(null);
+//        }
+//
+//        // 위에서 return 안되면 없으니까 생성하고 생성한 정보 넘기기
+//        ChatDTO Chat_DTO = chatService.createRoom(userIds, userId);
+//        dto.setRoom_number(Chat_DTO.getRoomNumber());
+//        chatService.saveChat(dto);
+//        messagingTemplate.convertAndSend("/api/sub/chat/" + Chat_DTO.getRoomNumber(), dto);
 
         return ResponseEntity.ok(null);
     }
@@ -189,6 +191,6 @@ public class ChatController implements ChatDocs {
     public ResponseEntity<?> findRoom(HttpServletRequest request, @RequestParam("id") int id) {
         String token = jwtUtil.token(request.getHeader("Authorization"));
         int myId = jwtUtil.getUserIdFromToken(token);
-        return ResponseEntity.ok(chatService.findRoom(id, myId));
+        return ResponseEntity.ok(chatService.findOrCreateRoom(Collections.singletonList(id), myId));
     }
 }

@@ -83,11 +83,11 @@ public class UserController implements UserControllerDocs {
         try {
             String token = jwtutil.token(request.getHeader("Authorization"));
             profile.setId(jwtutil.getUserIdFromToken(token));
-
-            if (!profile.getNickname().equals(profile.getOriginal()) && repository.existsByNickname(profile.getNickname())) {
+            System.out.println(profile);
+            UsersInfoDTO updatedProfile = Uservice.updateUserProfile(profile);
+            if(updatedProfile != null) {
                 return ResponseEntity.internalServerError().body("닉네임 중복");
             }
-            UsersInfoDTO updatedProfile = Uservice.updateUserProfile(profile);
             return ResponseEntity.ok(updatedProfile);
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body("프로필 업데이트 실패: " + e.getMessage());

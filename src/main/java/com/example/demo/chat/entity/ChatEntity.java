@@ -1,14 +1,14 @@
 package com.example.demo.chat.entity;
 
 import com.example.demo.chat.dto.ChatDTO;
+import com.example.demo.user.entity.UsersEntity;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
 @Builder
 @Data
@@ -20,25 +20,28 @@ public class ChatEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "userchat_id")
-    private int userchatId;
-    @Column(name = "room_number")
-    private String roomNumber;
     private int id;
-    @Column(name = "join_id")
-    private String joinId;
-    private String profile_img;
-    private String nickname;
+
+    @ToString.Exclude
+    @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.ALL)
+    private List<ChatParticipantEntity> participants = new ArrayList<>();
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id", referencedColumnName = "id")
+    private UsersEntity user;
+
     @Builder.Default
     private String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss"));
 
 
     public static ChatEntity toEntity(ChatDTO dto) {
-        return ChatEntity.builder()
-                .userchatId(dto.getUserchatId())
-                .roomNumber(dto.getRoomNumber())
+        UsersEntity userEntity = UsersEntity.builder()
                 .id(dto.getId())
-                .nickname(dto.getRoomname())
-                .joinId(dto.getJoinId())
+                .build();
+
+        return ChatEntity.builder()
+                .id(dto.getUserchatId())
+                .user(userEntity)
                 .date(dto.getDate())
                 .build();
     }

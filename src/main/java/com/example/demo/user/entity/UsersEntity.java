@@ -16,17 +16,31 @@ import lombok.*;
 public class UsersEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id; //DB가서 pk id로 바꾸기
+    private int id;
+
+    @Column(name = "username")
     private String username;
+
+    @Column(name = "nickname")
     private String nickname;
+
+    @Column(name = "password")
     private String password;
-    private String profile_img;
-    String state_message;
-    private String phone;
+
+    @Column(name = "email")
     private String email;
 
-    @Builder.Default
-    private String role = "ROLE_USER";
+    @Column(name = "phone")
+    private String phone;
+
+    @Column(name = "profile_img")
+    private String profile_img;
+
+    @Column(name = "state_message")
+    private String state_message;
+
+    @Column(name = "role")
+    private String role;
 
     public static UsersEntity toEntity(UsersDTO dto) {
         return UsersEntity.builder()

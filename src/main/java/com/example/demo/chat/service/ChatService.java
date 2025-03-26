@@ -5,7 +5,9 @@ import com.example.demo.chat.dto.ChatDTO;
 import com.example.demo.chat.dto.ChatMessageDTO;
 import com.example.demo.chat.entity.ChatEntity;
 import com.example.demo.chat.entity.ChatMessageEntity;
+import com.example.demo.chat.entity.ChatParticipantEntity;
 import com.example.demo.chat.repository.ChatMessageRepository;
+import com.example.demo.chat.repository.ChatParticipantRepository;
 import com.example.demo.chat.repository.ChatRepository;
 import com.example.demo.communityChat.dto.CCJDTO;
 import com.example.demo.communityChat.dto.CCMDTO;
@@ -22,16 +24,14 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class ChatService {
     private final ChatRepository chatRepository;
+    private final ChatParticipantRepository chatParticipantRepository;
     private final ChatMessageRepository messageRepository;
     private final CommuChatRepository commuRepository;
     private final CommuChatJoinRepository CCJRepository;
@@ -39,84 +39,136 @@ public class ChatService {
     private final UsersRepository usersRepository;
     private final BoardService boardService;
 
+    /**
+     * 내가 참여한 채팅방 목록 조회
+     */
     public List<ChatDTO> selectRoom(int userId) {
-        List<ChatEntity> entity = chatRepository.CustomfindById(userId);
-        if (entity != null) {
-            List<ChatDTO> dto = ChatDTO.ToDtoList(entity);
-            return dto;
-        }
-        return null;
+        List<ChatParticipantEntity> participants = chatParticipantRepository.findByUser_Id(userId);
+
+        return participants.stream()
+                .map(ChatParticipantEntity::getChatRoom)
+                .distinct()
+                .map(chat -> ChatDTO.toDTO(chat, userId))  // ✅ 내 ID 넘겨줌
+                .collect(Collectors.toList());
     }
 
+    /**
+     * 채팅방 생성
+     */
     @Transactional
-    public ChatDTO CreateRoom(List<Integer> userIds, int myId) {
-        String roomNumber = UUID.randomUUID().toString();
-        String ids = makeIds(userIds);
-        while (chatRepository.existsByRoomNumber(roomNumber)) {
-            roomNumber = UUID.randomUUID().toString();
-        }
+    public ChatDTO createRoom(List<Integer> userIds, int myId) {
+        System.out.println("없으니까 만들게~ createRoom");
+        UsersEntity creator = usersRepository.findById(myId).orElseThrow();
+        ChatEntity chatRoom = ChatEntity.builder()
+                .user(creator)
+                .build();
+        chatRepository.save(chatRoom);
 
+        // 참여자 등록
         for (Integer userId : userIds) {
-            ChatEntity chatUser = new ChatEntity();
-
-            chatUser.setRoomNumber(roomNumber);
-            chatUser.setId(userId);
-            chatUser.setJoinId(ids);
-
-            chatRepository.save(chatUser);
+            UsersEntity user = usersRepository.findById(userId).orElseThrow();
+            ChatParticipantEntity participant = ChatParticipantEntity.builder()
+                    .chatRoom(chatRoom)
+                    .user(user)
+                    .date(chatRoom.getDate())
+                    .build();
+            chatParticipantRepository.save(participant);
         }
-        ChatEntity create = chatRepository.findByJoinIdAndId(ids, myId);
-        return ChatDTO.toDTO(create);
+
+        // 본인도 추가
+        if (!userIds.contains(myId)) {
+            ChatParticipantEntity selfParticipant = ChatParticipantEntity.builder()
+                    .chatRoom(chatRoom)
+                    .user(creator)
+                    .date(chatRoom.getDate())
+                    .build();
+            chatParticipantRepository.save(selfParticipant);
+        }
+        ChatDTO dto = ChatDTO.toDTO(chatRoom,myId);
+        dto.setNew_room(true);
+        return dto;
     }
 
+    /**
+     * 주어진 유저 ID들과 정확히 일치하는 채팅방을 찾는다
+     */
     public ChatDTO findRoom(List<Integer> userIds, int myId) {
-        Collections.sort(userIds);
-        String userIdsString = userIds.stream().map(String::valueOf).collect(Collectors.joining(","));
-        ChatEntity selectE = chatRepository.findByJoinIdAndId(userIdsString, myId);
-        if (selectE != null)
-            return ChatDTO.toDTO(selectE);
+        System.out.println("아니왜요 갑자기?" + userIds + "    " + myId);
+        List<ChatParticipantEntity> myChats = chatParticipantRepository.findByUser_Id(myId);
+        System.out.println("findRoom myChats 결과 : " + myChats);
+        for (ChatParticipantEntity participant : myChats) {
+            ChatEntity chatRoom = participant.getChatRoom();
+            List<Integer> participantIds = chatParticipantRepository.findByChatRoom_Id(chatRoom.getId())
+                    .stream()
+                    .map(p -> p.getUser().getId())
+                    .sorted()
+                    .toList();
+
+            System.out.println("참여자 Id : " + participantIds);
+            List<Integer> input = new ArrayList<>(userIds);
+            input.sort(Comparator.naturalOrder());
+            System.out.println("input : " + input);
+
+            if (participantIds.equals(userIds)) {
+                System.out.println("있으니까 넘길게~ participantIds.equals(input)");
+                ChatDTO dto = ChatDTO.toDTO(chatRoom,myId);
+                dto.setNew_room(false);
+                return dto;
+            }
+        }
+
         return null;
     }
 
-    public String makeIds(List<Integer> userIds) {
-        Collections.sort(userIds);
-        String userIdsString = userIds.stream().map(String::valueOf).collect(Collectors.joining(","));
-        return userIdsString;
+    /**
+     * 1:1 채팅방을 찾거나 없으면 새로 만든다
+     */
+    @Transactional
+    public ChatDTO findOrCreateRoom(List<Integer> userIds, int myId) {
+        System.out.println("???");
+        ChatDTO existing = findRoom(userIds, myId);
+        // 있으면 false  없으면 True   방 생성 하냐/ 안하냐 기준
+        return (existing != null) ? existing : createRoom(userIds, myId);
     }
 
+    /**
+     * 채팅 메시지 저장
+     */
     public ChatMessageDTO saveChat(ChatMessageDTO message) {
         message.setNickname(usersRepository.findNicknameById(message.getId()));
         ChatMessageEntity entity = ChatMessageEntity.toEntity(message);
         messageRepository.save(entity);
 
-        UsersEntity user = usersRepository.findById(entity.getId()).orElseThrow(() -> new RuntimeException("User not found"));
+        UsersEntity user = usersRepository.findById(entity.getUser().getId())
+                .orElseThrow(() -> new RuntimeException("User not found"));
         message.setProfile_img(user.getProfile_img());
         return message;
     }
 
-    public List<ChatMessageDTO> getMessage(String roomNumber) {
-        List<ChatMessageEntity> entity = messageRepository.findByroomNumber(roomNumber);
+    /**
+     * 채팅방 내 메시지 조회
+     */
+    public List<ChatMessageDTO> getMessage(int userchatId) {
+        List<ChatMessageEntity> entity = messageRepository.findByChatRoom_Id(userchatId);
         return ChatMessageDTO.ToDtoList(entity);
     }
+
+    // ----------------------------- 커뮤니티 채팅 로직 -----------------------------
 
     public void CreateCommChat(CommunityChatDTO dto) {
         CommunityChatEntity entity = CommunityChatEntity.toEntity(dto);
         if (dto.getImg() != null)
             entity.setImg(boardService.uploadFile(dto.getImg(), "CommunityChat"));
         commuRepository.save(entity);
-
     }
 
     public List<CommunityChatDTO> selectAllCommuRoom() {
         List<CommunityChatEntity> entity = commuRepository.findAll();
         return CommunityChatDTO.toDTOList(entity);
-
     }
 
     public void joinCommunity(CommunityChatDTO dto) {
-        System.out.println("dto : " + dto);
         CommunityChatJoinEntity entity = CommunityChatJoinEntity.toEntity(dto);
-        System.out.println("entity : " + entity);
         CCJRepository.save(entity);
     }
 
@@ -129,7 +181,8 @@ public class ChatService {
         CCMEntity entity = CCMEntity.toEntity(message);
         ccmrepository.save(entity);
 
-        UsersEntity user = usersRepository.findById(entity.getId()).orElseThrow(() -> new RuntimeException("User not found"));
+        UsersEntity user = usersRepository.findById(entity.getId())
+                .orElseThrow(() -> new RuntimeException("User not found"));
         message.setProfile_img(user.getProfile_img());
         return message;
     }
@@ -138,37 +191,4 @@ public class ChatService {
         List<CCMEntity> entity = ccmrepository.findBycommunitychatId(communitychat_id);
         return CCMDTO.ToDtoList(entity);
     }
-
-    public ChatDTO findRoom(int id, int myId) {
-        List<Integer> userIds = new ArrayList<>(List.of(id, myId)); // 변경 가능한 리스트로 변환
-        String ids = makeIds(userIds);
-        try {
-            ChatEntity entity = chatRepository.findRoomNumberByJoinIdAndId(ids, myId);
-            if (entity == null) {
-                String roomNumber = UUID.randomUUID().toString();
-                while (chatRepository.existsByRoomNumber(roomNumber)) {
-                    roomNumber = UUID.randomUUID().toString();
-                }
-                for (Integer userId : userIds) {
-                    ChatEntity chatUser = new ChatEntity();
-
-                    chatUser.setRoomNumber(roomNumber);
-                    chatUser.setId(userId);
-                    chatUser.setJoinId(ids);
-
-                    chatRepository.save(chatUser);
-                }
-                ChatEntity create = chatRepository.findByJoinIdAndId(ids, myId);
-                System.out.println(create);
-                return ChatDTO.toDTO(create);
-            } else {
-                System.out.println(entity);
-                return ChatDTO.toDTO(entity);
-            }
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-        return null;
-    }
-
 }

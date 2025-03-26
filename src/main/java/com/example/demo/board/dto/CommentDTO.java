@@ -25,14 +25,14 @@ public class CommentDTO {
     @Schema(description = "유저 ID", example = "100")
     private int id;
 
-    @Schema(description = "댓글 내용", example = "이것은 댓글 내용입니다.")
-    private String comment;
-
     @Schema(description = "사용자 닉네임", example = "홍길동")
     private String nickname;
 
     @Schema(description = "사용자 프로필 이미지 경로", example = "이미지 경로")
     private String profile_img;
+
+    @Schema(description = "댓글 내용", example = "이것은 댓글 내용입니다.")
+    private String comment;
 
     @Builder.Default
     private String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss"));
@@ -41,10 +41,10 @@ public class CommentDTO {
         return CommentDTO.builder()
                 .comment_id(entity.getComment_id())
                 .board_id(entity.getBoardId())
-                .id(entity.getId())
-                .nickname(entity.getNickname())
+                .id(entity.getUser().getId())
+                .nickname(entity.getUser().getNickname())
                 .comment(entity.getComment())
-                .profile_img(entity.getProfile_img())
+                .profile_img(entity.getUser().getProfile_img())
                 .date(entity.getDate())
                 .build();
     }

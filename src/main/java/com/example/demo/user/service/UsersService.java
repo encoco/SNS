@@ -46,15 +46,19 @@ public class UsersService {
     @Transactional
     public UsersInfoDTO updateUserProfile(UsersDTO profile) {
         try {
+            if(usersRepository.existsByNickname(profile.getNickname())){
+                return null;
+            }
+
             UsersEntity entity = usersRepository.findByNickname(profile.getOriginal());
             entity.setNickname(profile.getNickname());
             entity.setState_message(profile.getState_message());
-            if (profile.getImgpath() != null) {
-                //entity.setProfile_img(bservice.uploadFile(profile.getImgpath(), "userProfile"));
-            }
+            System.out.println(entity);
+//            if (profile.getImgpath() != null) {
+//                entity.setProfile_img(bservice.uploadFile(profile.getImgpath(), "userProfile"));
+//            }
             usersRepository.save(entity);
-            UsersInfoDTO dto = UsersInfoDTO.toInfoDTO(entity);
-            return dto;
+            return UsersInfoDTO.toInfoDTO(entity);
 
         } catch (Exception e) {
             System.out.println(e);

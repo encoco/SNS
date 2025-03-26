@@ -1,4 +1,4 @@
-package com.example.demo.chat;
+package com.example.demo.chat.docs;
 
 import com.example.demo.chat.dto.ChatDTO;
 import com.example.demo.chat.dto.ChatMessageDTO;
@@ -38,7 +38,7 @@ public interface ChatDocs {
     @GetMapping("/getMessage")
     ResponseEntity<?> getMessage(
             @Parameter(description = "방 번호", required = true, example = "room1")
-            @RequestParam("roomNumber") String roomNumber,
+            @RequestParam("userchatId") int userchatId,
             @Parameter(hidden = true) HttpServletRequest request
     );
 
@@ -56,6 +56,7 @@ public interface ChatDocs {
                     description = "메시지 조회 중 오류",
                     content = @Content)
     })
+
     @GetMapping("/getCommMessage")
     ResponseEntity<?> getCommMessage(
             @Parameter(description = "커뮤니티 채팅 ID", required = true, example = "1")

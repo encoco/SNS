@@ -69,9 +69,11 @@ function Search({isOpen, onClose, onRoomCreated, roomList, RoomSelectChange}) {
             });
             if (response.data["1"]) {		//있을때
                 RoomSelectChange(response.data["1"]);
+                console.log("있음 : " , response.data["1"]);
                 handleOverlayClick(); // 모달 닫기
             } else if (response.data["0"]) {//없을때
                 onRoomCreated(response.data["0"]);
+                console.log("없음 : " ,response.data["0"]);
                 handleOverlayClick(); // 모달 닫기
             } else {
                 alert('다시 시도해주세요.');
