@@ -3,15 +3,14 @@ package com.example.demo.chat.entity;
 import com.example.demo.user.entity.UsersEntity;
 import jakarta.persistence.*;
 import lombok.*;
-import net.minidev.json.annotate.JsonIgnore;
 
 @Entity
-@Table(name = "chat_participant")
+@Table(name = "chat_member")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ChatParticipantEntity {
+public class ChatMemberEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -19,7 +18,7 @@ public class ChatParticipantEntity {
     @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "chat_id")
-    private ChatEntity chatRoom;
+    private ChatRoomEntity chatRoom;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")

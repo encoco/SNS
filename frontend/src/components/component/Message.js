@@ -145,10 +145,6 @@ function Message() {
         }
     };
 
-    const toggleChatOptions = () => {
-        setIsChatOptionsVisible(!isChatOptionsVisible);
-    };
-
     const handleCommChat = async (room) => {
         setSelectedChat(room.roomNumber);
         setActiveView('group');
@@ -156,7 +152,7 @@ function Message() {
         try {
             setMessages([]);// 채팅방 변경 시 메시지 초기화
             const response = await api.get(`/getCommMessage`, {
-                params: {communitychat_id: room.roomNumber},
+                params: {openChatId: room.roomNumber},
                 withCredentials: true,
             });
             setMessages(response.data);
@@ -172,6 +168,7 @@ function Message() {
             const response = await api.get(`/selectRoom`, {
                 withCredentials: true,
             });
+            console.log("일반챗 select 결과 : ", response.data);
             setChatRoom(response.data === "채팅방 없음" ? [] : response.data);
         } catch (error) {
             console.log(error);
@@ -183,9 +180,10 @@ function Message() {
         setActiveView('group');
         setSelectedChat("");
         try {
-            const response = await api.get(`/selectCommuRoom`, {
+            const response = await api.get(`/OpenRoom`, {
                 withCredentials: true,
             });
+            console.log("OpenRoom 결과 : " ,response.data);
             setChatRoom(response.data);
         } catch (error) {
             setChatRoom([]); // 오류 시 빈 배열로 초기화
@@ -197,8 +195,8 @@ function Message() {
             setActiveView('chat');
             setMessages([]);// 채팅방 변경 시 메시지 초기화
 
-            const response = await api.get(`/getMessage`, {
-                params: {userchatId: room.userchatId},
+            const response = await api.get(`/UserMessage`, {
+                params: {userChatId: room.userchatId},
                 withCredentials: true,
             });
             setMessages(response.data);
@@ -215,7 +213,7 @@ function Message() {
             setActiveView('group');
             setMessages([]);// 채팅방 변경 시 메시지 초기화
             const response = await api.get(`/getCommMessage`, {
-                params: {communitychat_id: room.communitychatId},
+                params: {openChatId: room.communitychatId},
                 withCredentials: true,
             });
 
@@ -453,7 +451,7 @@ function Message() {
                                             {chatroom && chatroom.length > 0 ? (
                                                 chatroom.map((room, index) => (
                                                     <div
-                                                        key={`${activeView === 'group' ? room.ccjId : room.userchatId}_${index}`}
+                                                        key={`${activeView === 'group' ? room.roomNumber : room.userchatId}_${index}`}
                                                         className="flex justify-center items-center h-full">
                                                         <button onClick={() => {
                                                             if (activeView === 'group') {
@@ -475,7 +473,7 @@ function Message() {
                                                             </div>
                                                             <span
                                                                 className="text-sm font-medium text-gray-800 dark:text-white">
-																{truncateString(room.roomname, 10)}
+																{truncateString(activeView === 'group' ? room.title : room.roomname, 10)}
 															</span>
                                                         </button>
                                                     </div>
@@ -561,7 +559,7 @@ function Message() {
                         {activeView === 'chat' && (
                             <div>
                                 <div className="p-4 border-b bg-gray-100" onClick={handleToggleList}>
-                                    {selectedChat && chatroom ? room.roomname : "채팅을 시작해주세요"}
+                                    {selectedChat && chatroom ? room.title : "채팅을 시작해주세요"}
                                 </div>
                                 {isListExpanded && (
                                     <div
@@ -582,13 +580,13 @@ function Message() {
                                                 >
                                                     <div className="w-12 h-12 rounded-full overflow-hidden shrink-0">
                                                         <img
-                                                            src={room.imgpath || room.profile_img || "/placeholder.svg"}
+                                                            src={room.imgpath || room.img || "/placeholder.svg"}
                                                             alt={room.name}
                                                             className="w-full h-full object-cover"
                                                         />
                                                     </div>
                                                     <span className="text-sm font-medium text-gray-800 dark:text-white">
-                {truncateString(room.roomname, 10)}
+                {truncateString(room.title, 10)}
             </span>
                                                 </button>
                                             </div>

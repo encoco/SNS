@@ -13,18 +13,18 @@ import java.util.List;
 @Builder
 @Data
 @Entity
-@Table(name = "userchat")
+@Table(name = "chat_room")
 @AllArgsConstructor
 @NoArgsConstructor
-public class ChatEntity {
+public class ChatRoomEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "userchat_id")
+    @Column(name = "chat_id")
     private int id;
 
     @ToString.Exclude
     @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.ALL)
-    private List<ChatParticipantEntity> participants = new ArrayList<>();
+    private List<ChatMemberEntity> participants = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id", referencedColumnName = "id")
@@ -34,12 +34,12 @@ public class ChatEntity {
     private String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss"));
 
 
-    public static ChatEntity toEntity(ChatDTO dto) {
+    public static ChatRoomEntity toEntity(ChatDTO dto) {
         UsersEntity userEntity = UsersEntity.builder()
                 .id(dto.getId())
                 .build();
 
-        return ChatEntity.builder()
+        return ChatRoomEntity.builder()
                 .id(dto.getUserchatId())
                 .user(userEntity)
                 .date(dto.getDate())

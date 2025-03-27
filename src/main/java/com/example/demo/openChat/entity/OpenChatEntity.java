@@ -1,6 +1,6 @@
-package com.example.demo.communityChat.entity;
+package com.example.demo.openChat.entity;
 
-import com.example.demo.communityChat.dto.CommunityChatDTO;
+import com.example.demo.openChat.dto.OpenChatDTO;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,14 +15,14 @@ import java.util.List;
 @Builder
 @Data
 @Entity
-@Table(name = "communitychat")
+@Table(name = "open_chat")
 @AllArgsConstructor
 @NoArgsConstructor
-public class CommunityChatEntity {
+public class OpenChatEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "communitychat_id")
-    private int communitychatId;
+    @Column(name = "openChatId")
+    private int openChatId;
     private int id;
     private String title;
     private String description;
@@ -31,9 +31,9 @@ public class CommunityChatEntity {
     @Builder.Default
     private String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss"));
 
-    public static CommunityChatEntity toEntity(CommunityChatDTO entity) {
-        return CommunityChatEntity.builder()
-                .communitychatId(entity.getCommunitychatId())
+    public static OpenChatEntity toEntity(OpenChatDTO entity) {
+        return OpenChatEntity.builder()
+                .openChatId(entity.getCommunitychatId())
                 .id(entity.getId())
                 .title(entity.getTitle())
                 .description(entity.getDescription())
@@ -42,11 +42,11 @@ public class CommunityChatEntity {
                 .build();
     }
 
-    public static List<CommunityChatEntity> toEntityList(List<CommunityChatDTO> entitis) {
-        List<CommunityChatEntity> dtos = new ArrayList<>();
-        for (CommunityChatDTO entity : entitis) {
-            CommunityChatEntity dto = new CommunityChatEntity();
-            dto.setCommunitychatId(entity.getCommunitychatId());
+    public static List<OpenChatEntity> toEntityList(List<OpenChatDTO> entitis) {
+        List<OpenChatEntity> dtos = new ArrayList<>();
+        for (OpenChatDTO entity : entitis) {
+            OpenChatEntity dto = new OpenChatEntity();
+            dto.setOpenChatId(entity.getCommunitychatId());
             dto.setId(entity.getId());
             dto.setTitle(entity.getTitle());
             dto.setDescription(entity.getDescription());

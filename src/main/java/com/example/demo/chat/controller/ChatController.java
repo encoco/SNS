@@ -4,9 +4,6 @@ import com.example.demo.chat.docs.ChatDocs;
 import com.example.demo.chat.dto.ChatDTO;
 import com.example.demo.chat.dto.ChatMessageDTO;
 import com.example.demo.chat.service.ChatService;
-import com.example.demo.communityChat.dto.CCJDTO;
-import com.example.demo.communityChat.dto.CCMDTO;
-import com.example.demo.communityChat.dto.CommunityChatDTO;
 import com.example.demo.config.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +27,6 @@ import java.util.Map;
 public class ChatController implements ChatDocs {
     private final JwtUtil jwtUtil;
     private final ChatService chatService;
-    private final SimpMessagingTemplate messagingTemplate;
 
     // 채팅 리스트 반환
     @MessageMapping("/chat/{roomNumber}")
@@ -44,27 +40,10 @@ public class ChatController implements ChatDocs {
         return chatService.saveChat(message);
     }
 
-    @MessageMapping("/commChat/{roomNumber}")
-    @SendTo("/api/sub/commChat/{roomNumber}")
-    public CCMDTO handleCommChatMessage(@DestinationVariable("roomNumber") int roomNumber, @Payload CCMDTO message) {
-        String token = message.getNickname();
-        message.setCommunitychat_id(roomNumber);
-        message.setId(jwtUtil.getUserIdFromToken(token));
-        return chatService.saveCommChat(message);
-    }
-
-    @GetMapping("/getMessage")
-    public ResponseEntity<?> getMessage(@RequestParam(value = "userchatId") int userchatId,
-                                        HttpServletRequest request) {
-        List<ChatMessageDTO> dto = chatService.getMessage(userchatId);
+    @GetMapping("/UserMessage")
+    public ResponseEntity<?> getMessage(@RequestParam(value = "userChatId") int userChatId, HttpServletRequest request) {
+        List<ChatMessageDTO> dto = chatService.getMessage(userChatId);
         System.out.println("선택한  메시지는~~ : " + dto);
-        return ResponseEntity.ok(dto);
-    }
-
-    @GetMapping("/getCommMessage")
-    public ResponseEntity<?> getCommMessage(@RequestParam(value = "communitychat_id") String communitychat_id) {
-        List<CCMDTO> dto = chatService.getCommMessage(Integer.parseInt(communitychat_id));
-        System.out.println("Commmessage : " + dto);
         return ResponseEntity.ok(dto);
     }
 
@@ -108,55 +87,8 @@ public class ChatController implements ChatDocs {
         }
     }
 
-    @PostMapping("/CreateCommChat")
-    public ResponseEntity<?> createCommChat(@ModelAttribute CommunityChatDTO dto, HttpServletRequest request) {
-        try {
-            String token = jwtUtil.token(request.getHeader("Authorization"));
-            dto.setId(jwtUtil.getUserIdFromToken(token));
-            chatService.CreateCommChat(dto);
-            return ResponseEntity.ok("");
 
-        } catch (Exception e) {
-            System.out.println(e);
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("selectRoom error");
-        }
-    }
 
-    @GetMapping("/selectAllCommuRoom")
-    public ResponseEntity<?> selectAllCommuRoom(HttpServletRequest request) {
-        List<CommunityChatDTO> dto = chatService.selectAllCommuRoom();
-        try {
-            if (dto != null) {
-                return ResponseEntity.ok(dto);
-            }
-            return ResponseEntity.ok("채팅방 없음");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("selectRoom error");
-        }
-    }
-
-    @PostMapping("/JoinCommuRoom")
-    public ResponseEntity<?> joinCommuRoom(@RequestBody CommunityChatDTO dto, HttpServletRequest request) {
-        String token = jwtUtil.token(request.getHeader("Authorization"));
-        dto.setId(jwtUtil.getUserIdFromToken(token));
-        chatService.joinCommunity(dto);
-        return ResponseEntity.ok(null);
-    }
-
-    @GetMapping("/selectCommuRoom")
-    public ResponseEntity<?> selectCommuRoom(HttpServletRequest request) {
-        String token = jwtUtil.token(request.getHeader("Authorization"));
-        List<CCJDTO> dto = chatService.selectCommuRoom(jwtUtil.getUserIdFromToken(token));
-        System.out.println(dto);
-        try {
-            if (dto != null) {
-                return ResponseEntity.ok(dto);
-            }
-            return ResponseEntity.ok("채팅방 없음");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("selectRoom error");
-        }
-    }
 
     @PostMapping("/SharePost")
     public ResponseEntity<?> sharePost(@RequestBody Map<String, Object> requestData, HttpServletRequest request) {

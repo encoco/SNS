@@ -1,13 +1,12 @@
-package com.example.demo.chat.entity;
+package com.example.demo.openChat.entity;
 
-import com.example.demo.chat.dto.ChatMessageDTO;
+import com.example.demo.openChat.dto.OpenChatMessageDTO;
 import com.example.demo.user.entity.UsersEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import net.minidev.json.annotate.JsonIgnore;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -15,39 +14,32 @@ import java.time.format.DateTimeFormatter;
 @Builder
 @Data
 @Entity
-@Table(name = "chat_message")
+@Table(name = "open_chat_message")
 @AllArgsConstructor
 @NoArgsConstructor
-public class ChatMessageEntity {
+public class OpenChatMessageEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int message_id;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "chat_id")
-    @JsonIgnore
-    private ChatRoomEntity chatRoom;
-
-    private String content;
+    @Column(name = "open_message_id")
+    int openMessageId;
+    @Column(name = "open_chat_id")
+    int openChatId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id", referencedColumnName = "id")
     private UsersEntity user;
 
-    private Integer share_board_id;
+    String content;
 
     @Builder.Default
     private String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss"));
 
-    public static ChatMessageEntity toEntity(ChatMessageDTO dto) {
+    public static OpenChatMessageEntity toEntity(OpenChatMessageDTO dto) {
         UsersEntity userEntity = UsersEntity.builder().id(dto.getId()).build();
-        ChatRoomEntity chat = ChatRoomEntity.builder().id(dto.getChat_id()).build();
-
-        return ChatMessageEntity.builder()
-                .message_id(dto.getMessage_id())
-                .chatRoom(chat)
+        return OpenChatMessageEntity.builder()
+                .openMessageId(dto.getOpenMessageId())
+                .openChatId(dto.getOpenChatId())
                 .user(userEntity)
-                .share_board_id(dto.getShare_board_id())
                 .content(dto.getContent())
                 .date(dto.getDate())
                 .build();

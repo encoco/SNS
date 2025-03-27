@@ -1,6 +1,6 @@
-package com.example.demo.communityChat.dto;
+package com.example.demo.openChat.dto;
 
-import com.example.demo.communityChat.entity.CommunityChatEntity;
+import com.example.demo.openChat.entity.OpenChatEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -17,7 +17,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Schema(description = "커뮤니티 채팅 DTO")
-public class CommunityChatDTO {
+public class OpenChatDTO {
     @Schema(description = "커뮤니티 채팅 ID", example = "1")
     private int communitychatId;
 
@@ -40,9 +40,9 @@ public class CommunityChatDTO {
     @Builder.Default
     private String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm"));
 
-    public static CommunityChatDTO toDTO(CommunityChatEntity entity) {
-        return CommunityChatDTO.builder()
-                .communitychatId(entity.getCommunitychatId())
+    public static OpenChatDTO toDTO(OpenChatEntity entity) {
+        return OpenChatDTO.builder()
+                .communitychatId(entity.getOpenChatId())
                 .id(entity.getId())
                 .title(entity.getTitle())
                 .description(entity.getDescription())
@@ -51,11 +51,11 @@ public class CommunityChatDTO {
                 .build();
     }
 
-    public static List<CommunityChatDTO> toDTOList(List<CommunityChatEntity> entitis) {
-        List<CommunityChatDTO> dtos = new ArrayList<>();
-        for (CommunityChatEntity entity : entitis) {
-            CommunityChatDTO dto = new CommunityChatDTO();
-            dto.setCommunitychatId(entity.getCommunitychatId());
+    public static List<OpenChatDTO> toDTOList(List<OpenChatEntity> entitis) {
+        List<OpenChatDTO> dtos = new ArrayList<>();
+        for (OpenChatEntity entity : entitis) {
+            OpenChatDTO dto = new OpenChatDTO();
+            dto.setCommunitychatId(entity.getOpenChatId());
             dto.setId(entity.getId());
             dto.setTitle(entity.getTitle());
             dto.setDescription(entity.getDescription());

@@ -1,16 +1,14 @@
 package com.example.demo.chat.dto;
 
-import com.example.demo.chat.entity.ChatEntity;
-import com.example.demo.chat.entity.ChatParticipantEntity;
+import com.example.demo.chat.entity.ChatRoomEntity;
+import com.example.demo.chat.entity.ChatMemberEntity;
 import com.example.demo.user.entity.UsersEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -38,12 +36,12 @@ public class ChatDTO {
     @Builder.Default
     private String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm"));
 
-    public static ChatDTO toDTO(ChatEntity entity, int myId) {
-        List<ChatParticipantEntity> participants = entity.getParticipants();
+    public static ChatDTO toDTO(ChatRoomEntity entity, int myId) {
+        List<ChatMemberEntity> participants = entity.getParticipants();
 
         String roomName = (participants != null)
                 ? participants.stream()
-                .map(ChatParticipantEntity::getUser)
+                .map(ChatMemberEntity::getUser)
                 .filter(u -> u.getId() != myId)
                 .map(UsersEntity::getNickname)
                 .collect(Collectors.joining("/"))

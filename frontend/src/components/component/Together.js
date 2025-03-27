@@ -38,7 +38,6 @@ function Together({onJoinRoom}) {
                 });
                 console.log("hi");
                 onJoinRoom(room); // Join 후 상위 컴포넌트에 알림
-
             } catch (error) {
                 console.log(error);
             }

@@ -1,23 +1,13 @@
 package com.example.demo.chat.service;
 
-import com.example.demo.board.service.BoardService;
 import com.example.demo.chat.dto.ChatDTO;
 import com.example.demo.chat.dto.ChatMessageDTO;
-import com.example.demo.chat.entity.ChatEntity;
+import com.example.demo.chat.entity.ChatRoomEntity;
 import com.example.demo.chat.entity.ChatMessageEntity;
-import com.example.demo.chat.entity.ChatParticipantEntity;
+import com.example.demo.chat.entity.ChatMemberEntity;
 import com.example.demo.chat.repository.ChatMessageRepository;
-import com.example.demo.chat.repository.ChatParticipantRepository;
+import com.example.demo.chat.repository.ChatMemberRepository;
 import com.example.demo.chat.repository.ChatRepository;
-import com.example.demo.communityChat.dto.CCJDTO;
-import com.example.demo.communityChat.dto.CCMDTO;
-import com.example.demo.communityChat.dto.CommunityChatDTO;
-import com.example.demo.communityChat.entity.CCMEntity;
-import com.example.demo.communityChat.entity.CommunityChatEntity;
-import com.example.demo.communityChat.entity.CommunityChatJoinEntity;
-import com.example.demo.communityChat.repository.CCMRepository;
-import com.example.demo.communityChat.repository.CommuChatJoinRepository;
-import com.example.demo.communityChat.repository.CommuChatRepository;
 import com.example.demo.user.entity.UsersEntity;
 import com.example.demo.user.repository.UsersRepository;
 import jakarta.transaction.Transactional;
@@ -31,22 +21,18 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ChatService {
     private final ChatRepository chatRepository;
-    private final ChatParticipantRepository chatParticipantRepository;
+    private final ChatMemberRepository chatParticipantRepository;
     private final ChatMessageRepository messageRepository;
-    private final CommuChatRepository commuRepository;
-    private final CommuChatJoinRepository CCJRepository;
-    private final CCMRepository ccmrepository;
     private final UsersRepository usersRepository;
-    private final BoardService boardService;
 
     /**
      * 내가 참여한 채팅방 목록 조회
      */
     public List<ChatDTO> selectRoom(int userId) {
-        List<ChatParticipantEntity> participants = chatParticipantRepository.findByUser_Id(userId);
+        List<ChatMemberEntity> participants = chatParticipantRepository.findByUser_Id(userId);
 
         return participants.stream()
-                .map(ChatParticipantEntity::getChatRoom)
+                .map(ChatMemberEntity::getChatRoom)
                 .distinct()
                 .map(chat -> ChatDTO.toDTO(chat, userId))  // ✅ 내 ID 넘겨줌
                 .collect(Collectors.toList());
@@ -59,7 +45,7 @@ public class ChatService {
     public ChatDTO createRoom(List<Integer> userIds, int myId) {
         System.out.println("없으니까 만들게~ createRoom");
         UsersEntity creator = usersRepository.findById(myId).orElseThrow();
-        ChatEntity chatRoom = ChatEntity.builder()
+        ChatRoomEntity chatRoom = ChatRoomEntity.builder()
                 .user(creator)
                 .build();
         chatRepository.save(chatRoom);
@@ -67,7 +53,7 @@ public class ChatService {
         // 참여자 등록
         for (Integer userId : userIds) {
             UsersEntity user = usersRepository.findById(userId).orElseThrow();
-            ChatParticipantEntity participant = ChatParticipantEntity.builder()
+            ChatMemberEntity participant = ChatMemberEntity.builder()
                     .chatRoom(chatRoom)
                     .user(user)
                     .date(chatRoom.getDate())
@@ -77,7 +63,7 @@ public class ChatService {
 
         // 본인도 추가
         if (!userIds.contains(myId)) {
-            ChatParticipantEntity selfParticipant = ChatParticipantEntity.builder()
+            ChatMemberEntity selfParticipant = ChatMemberEntity.builder()
                     .chatRoom(chatRoom)
                     .user(creator)
                     .date(chatRoom.getDate())
@@ -94,10 +80,10 @@ public class ChatService {
      */
     public ChatDTO findRoom(List<Integer> userIds, int myId) {
         System.out.println("아니왜요 갑자기?" + userIds + "    " + myId);
-        List<ChatParticipantEntity> myChats = chatParticipantRepository.findByUser_Id(myId);
+        List<ChatMemberEntity> myChats = chatParticipantRepository.findByUser_Id(myId);
         System.out.println("findRoom myChats 결과 : " + myChats);
-        for (ChatParticipantEntity participant : myChats) {
-            ChatEntity chatRoom = participant.getChatRoom();
+        for (ChatMemberEntity participant : myChats) {
+            ChatRoomEntity chatRoom = participant.getChatRoom();
             List<Integer> participantIds = chatParticipantRepository.findByChatRoom_Id(chatRoom.getId())
                     .stream()
                     .map(p -> p.getUser().getId())
@@ -153,42 +139,4 @@ public class ChatService {
         return ChatMessageDTO.ToDtoList(entity);
     }
 
-    // ----------------------------- 커뮤니티 채팅 로직 -----------------------------
-
-    public void CreateCommChat(CommunityChatDTO dto) {
-        CommunityChatEntity entity = CommunityChatEntity.toEntity(dto);
-        if (dto.getImg() != null)
-            entity.setImg(boardService.uploadFile(dto.getImg(), "CommunityChat"));
-        commuRepository.save(entity);
-    }
-
-    public List<CommunityChatDTO> selectAllCommuRoom() {
-        List<CommunityChatEntity> entity = commuRepository.findAll();
-        return CommunityChatDTO.toDTOList(entity);
-    }
-
-    public void joinCommunity(CommunityChatDTO dto) {
-        CommunityChatJoinEntity entity = CommunityChatJoinEntity.toEntity(dto);
-        CCJRepository.save(entity);
-    }
-
-    public List<CCJDTO> selectCommuRoom(int userIdFromToken) {
-        return CCJDTO.toDTOList(CCJRepository.findAllById(userIdFromToken));
-    }
-
-    public CCMDTO saveCommChat(CCMDTO message) {
-        message.setNickname(usersRepository.findNicknameById(message.getId()));
-        CCMEntity entity = CCMEntity.toEntity(message);
-        ccmrepository.save(entity);
-
-        UsersEntity user = usersRepository.findById(entity.getId())
-                .orElseThrow(() -> new RuntimeException("User not found"));
-        message.setProfile_img(user.getProfile_img());
-        return message;
-    }
-
-    public List<CCMDTO> getCommMessage(int communitychat_id) {
-        List<CCMEntity> entity = ccmrepository.findBycommunitychatId(communitychat_id);
-        return CCMDTO.ToDtoList(entity);
-    }
 }
