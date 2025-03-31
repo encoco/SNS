@@ -43,7 +43,7 @@ public class BoardController implements BoardDocs {
             response.put("likes", like);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
-            System.out.println("mainboardList error");
+            System.out.println("mainboardList error" + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("/boardList");
         }
     }

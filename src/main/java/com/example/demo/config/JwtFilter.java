@@ -24,13 +24,11 @@ public class JwtFilter extends GenericFilterBean {
         HttpServletResponse httpResponse = (HttpServletResponse) response;
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         String requestURI = httpRequest.getRequestURI();
-        String contextPath = httpRequest.getContextPath();
-        String test = httpRequest.getRequestURI().substring(contextPath.length());
 
 //        System.out.println("Request URI: " + test);
-//        System.out.println("URI : " + requestURI);
+        System.out.println("URI : " + requestURI);
 
-        if (requestURI.startsWith("/api/Login") || requestURI.startsWith("/api/Logout") || requestURI.startsWith("/")
+        if (requestURI.startsWith("/api/Login") || requestURI.startsWith("/api/Logout") //|| requestURI.startsWith("/")
                 || requestURI.equals("/index.html") || requestURI.startsWith("/api/checkId")
                 || requestURI.startsWith("/api/Signup") || requestURI.startsWith("/api/ws")) {
             chain.doFilter(request, response);
@@ -49,6 +47,7 @@ public class JwtFilter extends GenericFilterBean {
         }
 
         if (requestURI.startsWith("/api/refresh")) {
+            System.out.println("Refresh token: " + refreshToken);
             if (refreshToken != null) {
                 httpRequest.setAttribute("refreshToken", refreshToken);
                 chain.doFilter(httpRequest, response);
@@ -57,13 +56,10 @@ public class JwtFilter extends GenericFilterBean {
             }
             return;
         }
-
         if (accessToken != null && jwtUtil.validateToken(accessToken)) {
             chain.doFilter(request, response);
         } else {
-            /*
-             * System.out.println(requestURI); System.out.println("토큰 만료");
-             */
+             System.out.println(requestURI); System.out.println("토큰 만료");
             httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED);
         }
     }
