@@ -20,8 +20,10 @@ import java.time.format.DateTimeFormatter;
 public class OpenChatMessageEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+
     @Column(name = "open_message_id")
     int openMessageId;
+
     @Column(name = "open_chat_id")
     int openChatId;
 
