@@ -1,7 +1,6 @@
-# https://voltaic-net-93c.notion.site/SNS-9131d472ec2745659f969c0ed0350f23
 <div align="center">
 
-grooo (SNS 웹사이트)
+# grooo (SNS 웹사이트)
 <img src="https://img.shields.io/badge/프로젝트 기간-2024.02~2024.06-green?style=flat&logoColor=white" />
 </div>
 
